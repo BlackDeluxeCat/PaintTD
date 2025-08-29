@@ -63,6 +63,7 @@ public class LayerManager<T>{
         }
 
         public void with(Cons<Layer<A>> cons){
+            //从cons中获取自身
             cons.get(this);
         }
 
