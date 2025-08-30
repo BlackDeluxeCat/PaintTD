@@ -10,7 +10,6 @@ import static io.blackdeluxecat.painttd.Core.shaper;
 import static io.blackdeluxecat.painttd.game.Game.flowField;
 
 public class DrawMapGrid extends BaseSystem{
-
     @Override
     protected void processSystem(){
         shaper.begin(ShapeRenderer.ShapeType.Filled);
