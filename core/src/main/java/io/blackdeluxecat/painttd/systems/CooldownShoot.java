@@ -48,18 +48,19 @@ public class CooldownShoot extends IteratingSystem{
                 if(bm.get(entityId).type == BuildTypeComp.SINGLE_DAMAGE){
                     damageQueue.add(entityId, tgt, DamageQueue.DamageType.direct);
                 } else if (bm.get(entityId).type == BuildTypeComp.GROUP_DAMAGE) {
-                    Game.entities.queryCircle(
-                        pm.get(tgt).x,
-                        pm.get(tgt).y,
-                        20.0f,
-                        innerResults,
-                        new IntBoolf() {
-                            @Override
-                            public boolean get(int i) {
-                                return teamM.get(i).team != 0;
+                        Game.entities.queryCircle(
+                            pm.get(tgt).x,
+                            pm.get(tgt).y,
+                            20.0f,
+                            innerResults,
+                            i->{
+                                if (teamM.has(i)){
+                                    return teamM.get(i).team != 0;
+                                } else {
+                                    return false;
+                                }
                             }
-                        }
-                    );
+                        );
                     for(int i = 0; i < innerResults.size; i++){
                         int id = innerResults.get(i);
                         damageQueue.add(entityId, id, DamageQueue.DamageType.direct);

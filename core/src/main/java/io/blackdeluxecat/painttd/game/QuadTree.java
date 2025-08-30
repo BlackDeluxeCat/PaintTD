@@ -284,6 +284,9 @@ public class QuadTree{
     }
 
     public Vector2 pos(int entity){
+        if(pm.get(entity)==null){
+            return v;
+        }
         return pm.get(entity).out(v);
     }
 }
