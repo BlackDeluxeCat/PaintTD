@@ -13,6 +13,14 @@ public class PositionComp extends CopyableComponent{
         this.y = y;
     }
 
+    public int tileX(){
+        return Math.round(x);
+    }
+
+    public int tileY(){
+        return Math.round(y);
+    }
+
     @Override
     protected void reset(){
         x = 0;

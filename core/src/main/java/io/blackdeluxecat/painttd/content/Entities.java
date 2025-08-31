@@ -11,7 +11,7 @@ import static io.blackdeluxecat.painttd.game.Game.lfps;
 public class Entities{
     public static EntityType
         //enemies
-        unit, eraser, tileStain, tileStainCore,
+        unit, eraser, tileStain,
         //turrets
         building, pencil ,brush;
 
@@ -40,6 +40,7 @@ public class Entities{
                 def.add(new TargetPriorityComp(TargetPriorityComp.CLOSEST));
                 def.add(new TargetComp());
                 def.add(new CooldownComp(60f));
+                def.add(new ColorLevelComp());
 
                 def.add(new PartTextureComp("b-pencil"));
 
@@ -99,19 +100,11 @@ public class Entities{
         tileStain = new EntityType("tileStain", unit){
             {
                 groups.add("tileStain");
-                def.add(new MarkerComp.UseQuadTree());
-                def.add(new MarkerComp.PlaceSnapGrid());
+                def.add(new TileStainComp());
                 def.add(new CollideComp(CollideComp.OVERLAY, true).setCollidesMask(CollideComp.ENTITY));
 
                 def.add(new TeamComp(0));
-                def.add(new HealthComp(2));
-            }
-        };
-
-        tileStainCore = new EntityType("tileStainCore", tileStain){
-            {
-                groups.add("core");
-                def.add(new MarkerComp.CoreStain());
+                def.add(new HealthComp(-1));
             }
         };
     }

@@ -5,6 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.actions.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import io.blackdeluxecat.painttd.struct.func.*;
 
+/**
+ * Actor元素的包装类, 提供更多链式调用.
+ * 对类型不严格的场景, 可以复用静态的{@link #wrapper}
+ * 频繁更新的场景, 可以复用自行构造的单例
+ */
 public class ActorUtils<T extends Actor>{
     public static ActorUtils<Actor> wrapper = new ActorUtils<>();
 

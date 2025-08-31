@@ -15,7 +15,7 @@ public class HealthComp extends CopyableComponent{
 
     public HealthComp(float maxHealth){
         this.maxHealth = maxHealth;
-        this.health = maxHealth;
+        this.health = maxHealth == -1 ? 0 : maxHealth;
     }
 
     @Override

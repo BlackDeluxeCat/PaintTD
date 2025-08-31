@@ -1,6 +1,5 @@
 package io.blackdeluxecat.painttd.content.components.marker;
 
-import io.blackdeluxecat.painttd.*;
 import io.blackdeluxecat.painttd.content.components.*;
 
 public class MarkerComp extends CopyableComponent{
@@ -14,10 +13,6 @@ public class MarkerComp extends CopyableComponent{
 
     @Override
     protected void reset(){}
-
-    public static class CoreStain extends MarkerComp{
-        public CoreStain(){}
-    }
 
     /** 该组件标记的实体视为已失效 */
     public static class Dead extends MarkerComp{

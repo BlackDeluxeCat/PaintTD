@@ -2,17 +2,20 @@ package io.blackdeluxecat.painttd.game;
 
 import com.artemis.*;
 import com.artemis.managers.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.*;
 import io.blackdeluxecat.painttd.*;
 import io.blackdeluxecat.painttd.content.*;
 import io.blackdeluxecat.painttd.game.pathfind.*;
 import io.blackdeluxecat.painttd.game.request.*;
-import io.blackdeluxecat.painttd.map.Map;
+import io.blackdeluxecat.painttd.map.*;
 import io.blackdeluxecat.painttd.struct.*;
 import io.blackdeluxecat.painttd.systems.*;
 import io.blackdeluxecat.painttd.systems.render.*;
 import io.blackdeluxecat.painttd.systems.request.*;
 import io.blackdeluxecat.painttd.systems.utils.*;
+
+import java.awt.*;
 
 public class Game{
     public static float lfps = 60;
@@ -51,7 +54,21 @@ public class Game{
 
         //为单位创建默认组件。def中的组件来自new构造，没有进入池化管理，copy到world中的过程也只是属性拷贝，不涉及池化管理。
         Entities.create();
-        map.create(world, 30, 20);
+
+        ColorPalette palette = new ColorPalette();
+        palette.addColor(Color.FOREST.toIntBits());
+        palette.addColor(Color.RED.toIntBits());
+        palette.addColor(Color.ROYAL.toIntBits());
+        palette.addColor(Color.YELLOW.toIntBits());
+        palette.addColor(Color.PURPLE.toIntBits());
+
+        map.create(world, 30, 20, palette);
+        Vars.hud.mapEditorTable.buildColorPalette();
+        for(int x = 0; x < map.width; x++){
+            for(int y = 0; y < map.height; y++){
+                map.putEntity(Entities.tileStain.create().getId(), "tileStain", x, y);
+            }
+        }
         flowField = new FlowField(map);
         flowField.rebuild();
     }
@@ -68,6 +85,7 @@ public class Game{
     public static void createSystems(){
         logicPre.with(l -> {
             l.add(utils);
+            l.add(new FlowFieldCoreChangeDetect());
             l.add(new FlowFieldUpdate());
             l.add(new RebuildQuadTree());
         });
@@ -76,6 +94,7 @@ public class Game{
             l.add(new CollideQueueRemoveNoLongerOverlaps());
             l.add(new CollideDetect());
             l.add(new CollideEnemyRequestDamage());
+            l.add(new TileStainRequestDamage());
         });
 
         logicAI.with(l -> {
@@ -119,6 +138,7 @@ public class Game{
 
             //使用了ShapeRenderer的系统
             l.add(new DrawMapGrid());
+            l.add(new DrawColoredTileStain());
             l.add(new DrawUnitHitbox());
             l.add(new DrawTarget());
         });

@@ -2,19 +2,19 @@ package io.blackdeluxecat.painttd.content.components.logic;
 
 import io.blackdeluxecat.painttd.content.components.*;
 
-public class LevelComp extends CopyableComponent{
+public class ColorLevelComp extends CopyableComponent{
     public int level;
 
-    public LevelComp(){}
+    public ColorLevelComp(){}
 
-    public LevelComp(int level){
+    public ColorLevelComp(int level){
         this.level = level;
     }
 
     @Override
-    public LevelComp copy(CopyableComponent other){
-        LevelComp levelComp = (LevelComp)other;
-        level = levelComp.level;
+    public ColorLevelComp copy(CopyableComponent other){
+        ColorLevelComp colorLevelComp = (ColorLevelComp)other;
+        level = colorLevelComp.level;
         return this;
     }
 

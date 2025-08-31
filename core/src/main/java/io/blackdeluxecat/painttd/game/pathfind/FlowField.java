@@ -35,27 +35,33 @@ public class FlowField{
     public void rebuild(){
         for(int x = 0; x < map.width; x++){
             for(int y = 0; y < map.height; y++){
+                if(nodes[x][y] != null) Node.pool.free(nodes[x][y]);
+            }
+        }
+
+        ComponentMapper<TileStainComp> tileStainMapper = world.getMapper(TileStainComp.class);
+        ComponentMapper<HealthComp> hp = world.getMapper(HealthComp.class);
+
+        IntArray toDirty = new IntArray();
+
+        for(int x = 0; x < map.width; x++){
+            for(int y = 0; y < map.height; y++){
                 nodes[x][y] = Node.obtain();
                 nodes[x][y].x = x;
                 nodes[x][y].y = y;
                 nodes[x][y].cost = entry.cost(x, y);
                 nodes[x][y].stackCost = Float.MAX_VALUE;
+
+                int e = map.getEntityUnsafe(x, y, "tileStain");
+                if(e != -1 && tileStainMapper.get(e).isCore && hp.get(e).health > 0){
+                    nodes[x][y].stackCost = 0;
+                    toDirty.add(map.pos(x, y));
+                }
             }
         }
-        //终点
-        ComponentMapper<PositionComp> positionMapper = world.getMapper(PositionComp.class);
-        IntBag bag = (IntBag)groups.getEntityIds("core");
-        for(int i = 0; i < bag.size(); i++){
-            int entityId = bag.get(i);
-            if(world.getEntity(entityId) == null) continue;
-            PositionComp positionComp = positionMapper.get(entityId);
-            Node goal = nodes[Math.round(positionComp.x)][Math.round(positionComp.y)];
-            goal.cost = 0;
-            goal.stackCost = 0;
-            goal.parent = null;
 
-            //脏化终点邻居(TODO排除其他终点)
-            dirtyNeighbor(goal.x, goal.y);
+        for(int i = 0; i < toDirty.size; i++){
+            dirtyNeighbor(toDirty.get(i) % map.width, toDirty.get(i) / map.width);
         }
 
         //启动扩散
@@ -116,14 +122,14 @@ public class FlowField{
      */
     public void change(int changedX, int changedY){
         Node changed = nodes[changedX][changedY];
-        openList.add(changed);
+        if(!openList.contains(changed)) openList.add(changed);
         changed.stackCost = Float.MAX_VALUE;
         for(int i = 0; i < 4; i++){
             int nx = changedX + d4x[i];
             int ny = changedY + d4y[i];
             if(!entry.isValid(nx, ny)) continue;
             Node neighbor = nodes[nx][ny];
-            if(neighbor.parent == changed && !openList.contains(neighbor)) change(neighbor.x, neighbor.y);
+            if(neighbor.parent == changed && !openList.contains(neighbor)) change(neighbor.x, neighbor.y);  //递归脏化
         }
     }
 

@@ -3,28 +3,32 @@ package io.blackdeluxecat.painttd.ui;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.*;
 import io.blackdeluxecat.painttd.content.*;
+import io.blackdeluxecat.painttd.content.components.marker.*;
 import io.blackdeluxecat.painttd.game.Game;
+import io.blackdeluxecat.painttd.ui.fragment.*;
 
 import java.util.function.*;
 
 import static io.blackdeluxecat.painttd.Core.*;
 import static io.blackdeluxecat.painttd.game.Game.groups;
+import static io.blackdeluxecat.painttd.game.Game.world;
 import static io.blackdeluxecat.painttd.ui.Styles.*;
 
 public class Hud{
-    public @Null EntityType select;
-    public boolean drawSolid;
-    public WidgetGroup group;
+    public MapEditBrush current;
 
+    public WidgetGroup group;
     public Table buttons = new Table();
+    public MapEditorTable mapEditorTable;
 
     public void create(){
         group = new WidgetGroup();
         group.setFillParent(true);
         stage.addActor(group);
         stage.setDebugAll(true);
+
+        mapEditorTable = new MapEditorTable();
 
         fill(t -> {
             t.left().top();
@@ -47,67 +51,47 @@ public class Hud{
 
             buttons.add(new ActorUtils<>(new Table()).with(line1 -> {
                 Label label = new Label("", sLabel);
-                ActorUtils.wrapper.set(label).update(l -> ((Label)l).setText("选择建筑: " + (select == null ? "" : select.name)));
+                ActorUtils.wrapper.set(label).update(l -> ((Label)l).setText("选择建筑: " + (current == null ? "" : current.name)));
                 line1.add(label);
 
                 line1.add(new ActorUtils<>(new Table()).with(t1 -> {
                     t1.add(ActorUtils.wrapper
                             .set(new TextButton("敌人", sTextB))
                             .click(b -> {
-                              select = select == Entities.eraser ? null : Entities.eraser;
-                              drawSolid = false;
+                                current = bEnemy;
                             })
                             .actor);
 
                     t1.add(ActorUtils.wrapper
                             .set(new TextButton("基础塔", sTextB))
                             .click(b -> {
-                              select = select == Entities.pencil ? null : Entities.pencil;
-                              drawSolid = false;
+                                current = bTower;
                             })
                             .actor);
 
-                    t1.add(ActorUtils.wrapper
-                            .set(new TextButton("染色", sTextB))
-                            .click(b -> {
-                               select = select == Entities.tileStain ? null : Entities.tileStain;
-                               drawSolid = false;
-                            })
-                            .actor);
-
-                    t1.add(ActorUtils.wrapper
-                            .set(new TextButton("染色核心", sTextB))
-                            .click(b -> {
-                               select = select == Entities.tileStainCore ? null : Entities.tileStainCore;
-                               drawSolid = false;
-                            })
-                            .actor);
-
-                    t1.add(ActorUtils.wrapper
-                            .set(new TextButton("绘制墙体", sTextB))
-                            .click(b -> {
-                               drawSolid = !drawSolid;
-                               select = null;
-                            })
-                            .actor);
                 }).actor).growX();
 
             }).actor).growX().row();
 
-            buttons.add(new ActorUtils<>(new Table()).with(line2 -> {
-                line2.add(ActorUtils.wrapper
-                              .set(new TextButton("重置世界", sTextB))
-                              .click(b -> Game.loadMap())
-                              .actor);
-
-                line2.add(ActorUtils.wrapper
-                          .set(new TextButton("退出", sTextB))
-                          .click(b -> Gdx.app.exit())
-                          .actor);
-
-            }).actor).growX();
+            buttons.add(mapEditorTable).growX().row();
 
             t.add(buttons).growX();
+
+            t.add(new ActorUtils<>(new Table()).with(rt -> {
+                rt.add(ActorUtils.wrapper
+                          .set(new TextButton("取消", sTextB))
+                          .click(b -> {
+                              current = null;
+                          }).update(b -> b.setVisible(current != null)).actor).width(4 * buttonSize).growY();
+            }).actor).fill();
+
+            t.add(new ActorUtils<>(new Table()).with(rt -> {
+                rt.add(ActorUtils.wrapper
+                           .set(new TextButton("退出", sTextB))
+                           .click(b -> {
+                               Gdx.app.exit();
+                           }).actor).width(4 * buttonSize).growY();
+            }).actor).fill();
         }).bottom().left();
     }
 
@@ -118,4 +102,48 @@ public class Hud{
         group.addActor(table);
         return table;
     }
+
+    public abstract static class MapEditBrush{
+        public String name;
+
+        public MapEditBrush(String name){
+            this.name = name;
+        }
+
+        public abstract void draw(float worldX, float worldY);
+    }
+
+    public abstract static class EntityBrush extends MapEditBrush{
+        public EntityType type;
+
+        public EntityBrush(String name){
+            super(name);
+        }
+
+        public abstract void getType();
+
+        @Override
+        public void draw(float worldX, float worldY){
+            getType();
+            var e = type.create();
+            if(world.getMapper(MarkerComp.PlaceSnapGrid.class).has(e)){
+                worldX = Math.round(worldX);
+                worldY = Math.round(worldY);
+            }
+            Game.utils.setPosition(e.getId(), worldX, worldY);
+        }
+    }
+
+    public EntityBrush bEnemy = new EntityBrush("敌人"){
+                @Override
+                public void getType(){
+                    type = Entities.eraser;
+                }
+            },
+            bTower = new EntityBrush("基础塔"){
+                @Override
+                public void getType(){
+                    type = Entities.pencil;
+                }
+            };
 }

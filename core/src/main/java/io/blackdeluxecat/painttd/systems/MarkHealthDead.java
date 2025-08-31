@@ -9,7 +9,7 @@ public class MarkHealthDead extends IteratingSystem{
     public ComponentMapper<HealthComp> hm;
 
     public MarkHealthDead(){
-        super(Aspect.all(HealthComp.class).exclude(MarkerComp.Dead.class));
+        super(Aspect.all(HealthComp.class).exclude(MarkerComp.Dead.class, TileStainComp.class));
     }
 
     @Override

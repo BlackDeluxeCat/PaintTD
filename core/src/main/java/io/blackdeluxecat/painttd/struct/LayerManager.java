@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.utils.*;
 import io.blackdeluxecat.painttd.struct.func.*;
 
+
 public class LayerManager<T>{
     public final Array<Layer<T>> layers = new Array<>();
 

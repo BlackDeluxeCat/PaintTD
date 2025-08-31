@@ -22,26 +22,12 @@ public class Input{
     public static InputAdapter placementInput = new InputAdapter(){
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button){
-            if(Vars.hud.select != null){
-                var e = Vars.hud.select.create();
-                if(e.getComponent(PositionComp.class) != null){
-                    var v = Vars.v1;
-                    worldViewport.unproject(v.set(screenX, screenY));
-                    if(e.getComponent(MarkerComp.PlaceSnapGrid.class) != null){
-                        v.x = (int)v.x;
-                        v.y = (int)v.y;
-                    }
-                    utils.setPosition(e.getId(), v.x, v.y);
-                }
-                return true;
-            }else if(Vars.hud.drawSolid){
+            if(Vars.hud.current != null){
                 var v = Vars.v1;
                 worldViewport.unproject(v.set(screenX, screenY));
+                Vars.hud.current.draw(v.x, v.y);
 
-                var tile = map.get((int)v.x, (int)v.y);
-                if(tile != null){
-                    tile.setWall(!tile.isWall);
-                }
+                return true;
             }
             return false;
         }
