@@ -13,7 +13,7 @@ public class Entities{
         //enemies
         unit, eraser, tileStain,
         //turrets
-        building, pencil;
+        building, pencil ,brush;
 
     public static void createBuilding(){
         building = new EntityType("building"){
@@ -43,6 +43,31 @@ public class Entities{
                 def.add(new ColorLevelComp());
 
                 def.add(new PartTextureComp("b-pencil"));
+
+                def.add(new BuildTypeComp(BuildTypeComp.GROUP_DAMAGE));
+            }
+        };
+
+        //数值未调整
+        brush = new EntityType("brush", building){
+            {
+                def.add(new MarkerComp.UseQuadTree());
+                def.add(new TeamComp(0));
+
+                def.add(new HealthComp(1));
+
+                def.add(new EnergyComp(2));
+                def.add(new EnergyRegenComp(2 / lfps));
+
+                def.add(new RangeComp(8));
+                def.add(new DamageComp(1));
+                def.add(new TargetPriorityComp(TargetPriorityComp.CLOSEST));
+                def.add(new TargetComp());
+                def.add(new CooldownComp(60f));
+
+                def.add(new PartTextureComp("b-pencil"));
+
+                def.add(new BuildTypeComp(BuildTypeComp.GROUP_DAMAGE));
             }
         };
     }

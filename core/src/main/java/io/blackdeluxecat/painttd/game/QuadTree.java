@@ -99,6 +99,7 @@ public class QuadTree{
         root.query(x - radius, y - radius, radius * 2, radius * 2, result);
         for(int i = result.size - 1; i >= 0; i--){
             pos(result.get(i));
+            //比较平方大小来判断距离
             if(v.sub(x, y).len2() > radius * radius) result.removeIndex(i);
             if(filter != null && !filter.get(result.get(i))) result.removeIndex(i);
         }
@@ -144,6 +145,7 @@ public class QuadTree{
     }
 
     public static class QuadTreeNode implements Pool.Poolable{
+
         protected static final Pool<QuadTreeNode> pool = new Pool<>(128, 4096){
             protected QuadTreeNode newObject(){
                 return new QuadTreeNode();
@@ -282,6 +284,9 @@ public class QuadTree{
     }
 
     public Vector2 pos(int entity){
+        if(pm.get(entity)==null){
+            return v;
+        }
         return pm.get(entity).out(v);
     }
 }
