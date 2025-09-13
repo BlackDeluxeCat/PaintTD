@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.math.*;
 import io.blackdeluxecat.painttd.game.*;
 import io.blackdeluxecat.painttd.game.Game;
+import io.blackdeluxecat.painttd.ui.fragment.SettingTable;
 import io.blackdeluxecat.painttd.utils.*;
 
 import static io.blackdeluxecat.painttd.Core.*;
@@ -36,7 +37,8 @@ public class InputProcessors{
     public static InputAdapter cameraZoom = new InputAdapter(){
         @Override
         public boolean scrolled(float amountX, float amountY){
-            Vars.zoom = MathUtils.clamp(Vars.zoom - amountY * 5, 1f, 200);
+            //反转缩放
+            Vars.zoom = MathUtils.clamp(Vars.zoom - amountY * 5 * (SettingTable.mouseReverse?-1:1), 1f, 200);
             return super.scrolled(amountX, amountY);
         }
     },

@@ -21,7 +21,9 @@ public class Hud{
 
     public WidgetGroup group;
     public Table buttons = new Table();
+
     public MapEditorTable mapEditorTable;
+    public SettingTable settingTable;
 
     public void create(){
         group = new WidgetGroup();
@@ -30,7 +32,10 @@ public class Hud{
         stage.setDebugAll(true);
 
         mapEditorTable = new MapEditorTable();
+        settingTable = new SettingTable();
 
+
+        //调试信息
         fill(t -> {
             t.left().top();
             t.defaults().left();
@@ -81,6 +86,7 @@ public class Hud{
 
             }).actor).growX().row();
 
+            //加入
             buttons.add(mapEditorTable).growX().row();
 
             t.add(buttons).growX();
@@ -117,6 +123,19 @@ public class Hud{
                            }).actor).width(4 * buttonSize).growY();
             }).actor).fill();
         }).bottom().left();
+
+        //显示右上角设置按键
+        fill(t -> {
+            //初始化设置按钮位置和大小
+            t.right().top();
+            t.add(settingTable);
+        });
+
+        //设置主菜单
+        fill(t -> {
+            t.add(settingTable.settingList);
+        });
+
     }
 
     public Table fill(Consumer<Table> cons){
