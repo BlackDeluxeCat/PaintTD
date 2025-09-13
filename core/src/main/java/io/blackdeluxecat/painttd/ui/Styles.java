@@ -17,6 +17,8 @@ public class Styles{
     public static TextureAtlas.AtlasRegion white;
     public static TextureRegionDrawable whited;
 
+    public static TextButton.TextButtonStyle checkBox;
+
     public static void load(){
         sTextB = new TextButton.TextButtonStyle(null, null, null, standard);
         sLabel = new Label.LabelStyle(standard, Color.WHITE);
@@ -24,5 +26,7 @@ public class Styles{
 
         white = Core.atlas.findRegion("white");
         whited = new TextureRegionDrawable(white);
+
+        checkBox = new TextButton.TextButtonStyle(null,null,null, standard);
     }
 }
