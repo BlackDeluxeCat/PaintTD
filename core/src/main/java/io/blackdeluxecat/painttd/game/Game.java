@@ -163,9 +163,9 @@ public class Game{
             l.add(new TargetFind());
             l.add(new CooldownShoot());
             l.add(new ShootSingleTargetBullet());
-            l.add(new ShootAtkSingleFireDirectDamage());
-            l.add(new ShootAtkSingleFireSplashDamage());
-            l.add(new ShootAtkSingleFireSplashTileStain());
+//            l.add(new ShootAtkSingleFireDirectDamage());
+//            l.add(new ShootAtkSingleFireSplashDamage());
+//            l.add(new ShootAtkSingleFireSplashTileStain());
         });
 
         logic.with(l -> {
