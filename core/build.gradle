@@ -19,6 +19,10 @@ dependencies {
     api "net.onedaybeard.artemis:artemis-odb-serializer:$artemisOdbVersion"
     api "net.onedaybeard.artemis:artemis-odb-serializer-json-libgdx:$artemisOdbVersion"
 
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+    testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
     if (enableGraalNative == 'true') {
         implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
     }
@@ -29,6 +33,8 @@ project.ext.texturePacker = [ "assets-raw/", "assets/", "PaintTDAssets" ]
 tasks.register("texturePacker"){
     inputs.dir("${project.rootDir}/assets-raw/")
     outputs.dir("${project.rootDir}/assets/")
+
+    onlyIf { !gradle.taskGraph.hasTask(":core:test") }
 
     doLast {
         if (project.ext.has('texturePacker')) {
