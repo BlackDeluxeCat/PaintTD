@@ -7,7 +7,7 @@ import org.junit.*;
 public class TrajectoryTest{
     public static Application app;
 
-    public static TrajectoryProcessor line, circle, seq, parallel, scale;
+    public static TrajectoryProcessor line, circle, seq, parallel, scale, trigger;
 
     @Before
     public void setUp(){
@@ -18,16 +18,13 @@ public class TrajectoryTest{
             }
         };
 
-        circle = new TrajectoryProcessor(){
-            public static int sDegree = 0;
-            {
-                stateFloatsSize = 1;
-            }
+        circle = new TrajectoryProcessor(0, 0, 1, 0){
+            public Var degree = new Var("degree", 0, VarType.stateFloat);
 
             @Override
             public void reset(TrajectoryTree.TrajectoryNode node){
                 super.reset(node);
-                node.ssf(sDegree, 0f);
+                node.ssf(degree.v, 0f);
             }
 
             @Override
@@ -36,18 +33,15 @@ public class TrajectoryTest{
                 float radius = 10f;
                 float rotDirection = 1f;
 
-                float lastDegree = node.gsf(sDegree);
+                float lastDegree = node.gsf(degree.v);
                 float deltaDegree = deltaTicks * rotSpeed;
-                node.state.floats.set(sDegree, lastDegree + deltaDegree * rotDirection);
+                node.state.floats.set(degree.v, lastDegree + deltaDegree * rotDirection);
                 //计算圆周上移动至下一个点的步进向量
                 node.state.shift.set(1, 0).setLength(radius * deltaDegree / 180f * MathUtils.PI).rotateDeg(lastDegree).rotateDeg((90 + deltaDegree / 2f * rotDirection));
             }
         };
 
-        scale = new TrajectoryProcessor(){
-            {
-                maxChildrenSize = 1;
-            }
+        scale = new TrajectoryProcessor(1, 0, 0, 0){
             @Override
             public void update(float deltaTicks, TrajectoryTree.TrajectoryNode node){
                 float scale = 2f;
@@ -60,13 +54,10 @@ public class TrajectoryTest{
             }
         };
 
-        seq = new TrajectoryProcessor(){
-            public static int sChildIndex = 0;//使用stateInts的0号位存储当前子节点索引
-
-            {
-                stateIntsSize = 1;
-                maxChildrenSize = 100;
-            }
+        seq = new TrajectoryProcessor(100, 0, 0, 1){
+            //stateInts的0号位存储当前子节点索引
+            public Var current = new Var("current", 0, VarType.stateInt);
+            public Var2 repeat = new Var2("repeat", 0, VarType.parameter, 1, VarType.stateInt);
 
             @Override
             public void initial(TrajectoryTree.TrajectoryNode node){
@@ -80,12 +71,12 @@ public class TrajectoryTest{
 
                 if(node.children.size <= 0) return;
 
-                if(node.gsi(sChildIndex) >= node.children.size){
+                if(node.gsi(current.v) >= node.children.size){
                     complete(node);
                     node.state.shift.setZero();
                 }
 
-                var child = node.getChild(node.gsi(sChildIndex));
+                var child = node.getChild(node.gsi(current.v));
 
                 if(child != null && child.complete == TrajectoryTree.NodeState.process){
                     child.update(deltaTicks);
@@ -93,16 +84,12 @@ public class TrajectoryTest{
                 }
 
                 if(child == null || child.complete == TrajectoryTree.NodeState.complete){
-                    node.ssi(sChildIndex, node.gsi(sChildIndex) + 1);
+                    node.ssi(current.v, node.gsi(current.v) + 1);
                 }
             }
         };
 
-        parallel = new TrajectoryProcessor(){
-            {
-                maxChildrenSize = 100;
-            }
-
+        parallel = new TrajectoryProcessor(100, 0, 0, 0){
             @Override
             public void initial(TrajectoryTree.TrajectoryNode node){
                 super.initial(node);
@@ -124,6 +111,16 @@ public class TrajectoryTest{
                     complete(node);
                     node.state.shift.setZero();
                 }
+            }
+        };
+
+        trigger = new TrajectoryProcessor(){
+            public Runnable callback = () -> Gdx.app.log("trigger", "我是基本触发器, 触发一次");
+
+            @Override
+            public void update(float deltaTicks, TrajectoryTree.TrajectoryNode node){
+                callback.run();
+                complete(node);
             }
         };
     }
@@ -191,6 +188,60 @@ public class TrajectoryTest{
             Gdx.app.log("test4", i + " shift " + tree.getShift().x + " " + tree.getShift().y);
         }
         Gdx.app.log("test4", "预期结果: 0~9t为圆形直线步进相加, 10~14t为直线步进, 15~19t为零向量");
+    }
+
+    @Test
+    public void t5_trigger(){
+        Gdx.app.log("test5", "测试触发器");
+        TrajectoryTree tree = new TrajectoryTree();
+        var root = tree.add(seq, null);
+        //第一个子轨迹持续10t
+        var next = tree.add(circle, root);
+        next.parameter.maxTicks = 10;
+        //第二个子轨迹是单次触发器
+        tree.add(trigger, root);
+
+        for(int i = 0; i < 20; i++){
+            tree.update(1f);
+            Gdx.app.log("test5", i + " shift " + tree.getShift().x + " " + tree.getShift().y);
+        }
+
+        Gdx.app.log("test5", "预期结果: 0~9t为圆形步进, 10t有单次触发, 10~19t为零向量");
+    }
+
+    @Test
+    public void t6_copy(){
+        Gdx.app.log("test6", "测试复制");
+        TrajectoryTree tree = new TrajectoryTree();
+        var root = tree.add(parallel, null);
+        //第一个子轨迹持续10t
+        var next = tree.add(circle, root);
+        next.parameter.maxTicks = 10;
+        //第二个子轨迹持续15t
+        next = tree.add(line, root);
+        next.parameter.maxTicks = 15;
+        //5t的空结果
+
+        TrajectoryTree tree2 = new TrajectoryTree();
+        tree2.copy(tree);
+
+        for(int i = 0; i < 20; i++){
+            tree.update(1f);
+            tree2.update(1f);
+            Gdx.app.log("test6", i + " shift " + tree.getShift().x + " " + tree.getShift().y + " " + tree2.getShift().x + " " + tree2.getShift().y);
+        }
+
+        Gdx.app.log("test6", "预期结果: 两棵树输出相同. 0~9t为圆形直线步进相加, 10~14t为直线步进, 15~19t为零向量");
+
+        Gdx.app.log("test6", "测试拷贝是否清空状态");
+        TrajectoryTree tree3 = new TrajectoryTree();
+        tree3.copy(tree2);
+        for(int i = 0; i < 20; i++){
+            tree3.update(1f);
+            Gdx.app.log("test6", i + " shift " + tree3.getShift().x + " " + tree3.getShift().y);
+        }
+
+        Gdx.app.log("test6", "预期结果: 与前两棵树输出相同. 0~9t为圆形直线步进相加, 10~14t为直线步进, 15~19t为零向量");
     }
 
     @BeforeClass

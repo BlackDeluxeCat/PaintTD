@@ -23,19 +23,24 @@ public class TrajectoryTree{
     public TrajectoryNode add(TrajectoryProcessor type, @Null TrajectoryNode parent){
         TrajectoryNode newNode = TrajectoryNode.obtain();
         newNode.setProcessor(type);
-        newNode.tree = this;
-        nodes.add(newNode);
-        if(parent == null){
-            rootIndex = nodes.size - 1;
-            //TODO更新相关子节点
-        }else{
-            //子节点可用的情况下, 添加
-            parent.addChild(newNode);
-        }
+        add(newNode, parent);
         return newNode;
     }
 
+    public void add(TrajectoryNode child, @Null TrajectoryNode parent){
+        if(child == null) return;
+        child.tree = this;
+        nodes.add(child);
+        if(parent == null){
+            rootIndex = nodes.size - 1;
+        }else{
+            //子节点可用的情况下, 添加
+            parent.addChild(child);
+        }
+    }
+
     /** 从树中移除一个节点, 其子节点转移到其父节点上. */
+    @Deprecated
     public void remove(TrajectoryNode node){
         if(node == null) return;
         int removed = nodes.indexOf(node, true);
@@ -54,6 +59,22 @@ public class TrajectoryTree{
         }
         nodes.clear();
         rootIndex = 0;
+    }
+
+    public void copy(TrajectoryTree origin){
+        clear();
+        var originRoot = origin.nodes.get(origin.rootIndex);
+        var root = originRoot.copy();
+        add(root, null);
+        copyChild(originRoot, root);
+    }
+
+    protected void copyChild(TrajectoryNode originParent, TrajectoryNode parent){
+        for(var originChild : originParent.children){
+            var child = originChild.copy();
+            add(child, parent);
+            copyChild(originChild, child);
+        }
     }
 
     public void update(float delta){
@@ -223,7 +244,7 @@ public class TrajectoryTree{
         process,
         /** 节点完成 */
         complete,
-        /** 节点不可用 */
+        /** 节点不可用: 意外的空处理器, 树上下文不符合要求, etc. */
         invalid
     }
 }
