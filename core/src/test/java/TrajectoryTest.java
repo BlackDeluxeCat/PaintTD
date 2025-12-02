@@ -9,22 +9,38 @@ public class TrajectoryTest{
 
     public static Processor line, circle, seq, parallel, scale, trigger;
 
+    public static class LineProcessor extends Processor{
+        public static ParamVar directionX = new ParamVar("directionX", 0);
+        public static ParamVar directionY = new ParamVar("directionY", 1);
+
+        public LineProcessor(){
+            super(0, 2, 0, 0);
+        }
+
+        @Override
+        public void reset(Node node){
+            super.reset(node);
+            directionX.set(node, 0);
+            directionY.set(node, 1);
+        }
+
+        @Override
+        public void update(float deltaTicks, Node node){
+            node.state.shift.set(directionX.get(node), directionY.get(node)).setLength(1f + node.state.ticks * 0.1f);
+        }
+    }
+
     @Before
     public void setUp(){
-        line = new Processor(){
-            @Override
-            public void update(float deltaTicks, Node node){
-                node.state.shift.set(1f, 0f).setLength(1f + node.state.ticks * 0.1f);
-            }
-        };
+        line = new LineProcessor();
 
         circle = new Processor(0, 0, 1, 0){
-            public Var degree = new Var("degree", 0, VarType.stateFloat);
+            public StateFVar degree = new StateFVar("degree", 0);
 
             @Override
             public void reset(Node node){
                 super.reset(node);
-                node.ssf(degree.v, 0f);
+                degree.set(node, 0);
             }
 
             @Override
@@ -33,9 +49,9 @@ public class TrajectoryTest{
                 float radius = 10f;
                 float rotDirection = 1f;
 
-                float lastDegree = node.gsf(degree.v);
+                float lastDegree = degree.get(node);
                 float deltaDegree = deltaTicks * rotSpeed;
-                node.state.floats.set(degree.v, lastDegree + deltaDegree * rotDirection);
+                degree.set(node, lastDegree + deltaDegree * rotDirection);
                 //计算圆周上移动至下一个点的步进向量
                 node.state.shift.set(1, 0).setLength(radius * deltaDegree / 180f * MathUtils.PI).rotateDeg(lastDegree).rotateDeg((90 + deltaDegree / 2f * rotDirection));
             }
@@ -56,7 +72,7 @@ public class TrajectoryTest{
 
         seq = new Processor(100, 0, 0, 1){
             //stateInts的0号位存储当前子节点索引
-            public Var current = new Var("current", 0, VarType.stateInt);
+            public StateIVar current = new StateIVar("current", 0);
 
             @Override
             public void initial(Node node){
@@ -70,12 +86,14 @@ public class TrajectoryTest{
 
                 if(node.children.size <= 0) return;
 
-                if(node.gsi(current.v) >= node.children.size){
+                int cur = current.get(node);
+
+                if(cur >= node.children.size){
                     complete(node);
                     node.state.shift.setZero();
                 }
 
-                var child = node.getChild(node.gsi(current.v));
+                var child = node.getChild(cur);
 
                 if(child != null && child.complete == Node.NodeState.process){
                     child.update(deltaTicks);
@@ -83,7 +101,7 @@ public class TrajectoryTest{
                 }
 
                 if(child == null || child.complete == Node.NodeState.complete){
-                    node.ssi(current.v, node.gsi(current.v) + 1);
+                    current.set(node, cur + 1);
                 }
             }
         };
@@ -113,12 +131,10 @@ public class TrajectoryTest{
             }
         };
 
-        trigger = new Processor(){
-            public Runnable callback = () -> Gdx.app.log("trigger", "我是基本触发器, 触发一次");
-
+        trigger = new Processor(0, 1, 0, 0){
             @Override
             public void update(float deltaTicks, Node node){
-                callback.run();
+                node.tree.fire((int)node.gp(0), node);
                 complete(node);
             }
         };
@@ -190,22 +206,57 @@ public class TrajectoryTest{
     }
 
     @Test
-    public void t5_trigger(){
-        Gdx.app.log("test5", "测试触发器");
+    public void t5_triggerAndContext(){
+        Gdx.app.log("test5", "测试触发器和上下文");
+        Vector2 vec = new Vector2(-1, -2);
+        Vector2 copy = vec.cpy();
+
+        Context testX = new Context(){
+            @Override
+            public float get(){
+                return vec.x;
+            }
+        };
+
+        Context testY = new Context(){
+            @Override
+            public float get(){
+                return vec.y;
+            }
+        };
+
         Tree tree = new Tree();
+        tree.addContext(testX);
+        tree.addContext(testY);
+        tree.triggers.add((t, n) -> {
+            Gdx.app.log("test5", "树触0号被调用");
+        });
+        tree.triggers.add((t, n) -> {
+            Gdx.app.log("test5", "树触1号被调用, 检查触发唤起节点的param 0号位 值为: " + n.gp(0));
+            copy.x = n.gp(0);
+            Gdx.app.log("test5", "修改外部向量的副本copy.x为该值");
+        });
+
         var root = tree.add(seq, null);
-        //第一个子轨迹持续10t
-        var next = tree.add(circle, root);
-        next.parameter.maxTicks = 10;
-        //第二个子轨迹是单次触发器
-        tree.add(trigger, root);
+        //直线轨迹持续10t
+        var lineNode = tree.add(line, root);
+        lineNode.parameter.maxTicks = 10;
+        //为直线注入指定的方向
+        testX.addInjection(lineNode, LineProcessor.directionX);
+        testY.addInjection(lineNode, LineProcessor.directionY);
+
+        //第二个子轨迹是单次触发
+        var triNode = tree.add(trigger, root);
+        //为触发处理器注入指定的树触发器
+        //触发1号树触发器
+        triNode.parameter.data.set(0, 1);
 
         for(int i = 0; i < 20; i++){
             tree.update(1f);
             Gdx.app.log("test5", i + " shift " + tree.getShift().x + " " + tree.getShift().y);
         }
 
-        Gdx.app.log("test5", "预期结果: 0~9t为圆形步进, 10t有单次触发, 10~19t为零向量");
+        Gdx.app.log("test5", "预期结果: 0~9t为直线步进, 与外部向量vec = " + vec + "同向; 10t单次触发'树触1号'报告节点参数并将外部向量copy更新为:" + copy + "; 10~19t为零向量");
     }
 
     @Test

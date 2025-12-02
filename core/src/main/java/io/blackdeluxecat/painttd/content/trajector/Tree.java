@@ -12,9 +12,16 @@ public class Tree{
     /** 根节点索引 */
     public int rootIndex;
     public Array<Node> nodes = new Array<>();
-    public Array<ContextInjector> contexts = new Array<>();
+
+    /** 上下文, 注入与外部的交互 */
+    public Array<Context> contexts = new Array<>();
+    public Array<Trigger> triggers = new Array<>();
 
     public Tree(){
+    }
+
+    public void addContext(Context context){
+        contexts.add(context);
     }
 
     public Node add(Processor type, @Null Node parent){
@@ -78,7 +85,17 @@ public class Tree{
         if(nodes == null) return;
         if(nodes.size == 0) return;
         if(rootIndex >= nodes.size) return;
+        //处理上下文注入
+        for(var context : contexts){
+            context.process();
+        }
+        //更新节点
         nodes.get(rootIndex).update(delta);
+    }
+
+    /** 触发器. */
+    public void fire(int triggerIndex, Node sender){
+        triggers.get(triggerIndex).trigger(sender.tree, sender);
     }
 
     public Vector2 getShift(){
