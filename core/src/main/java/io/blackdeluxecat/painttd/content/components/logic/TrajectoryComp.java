@@ -1,10 +1,10 @@
 package io.blackdeluxecat.painttd.content.components.logic;
 
-import io.blackdeluxecat.painttd.content.*;
 import io.blackdeluxecat.painttd.content.components.*;
+import io.blackdeluxecat.painttd.content.trajector.*;
 
 public class TrajectoryComp extends CopyableComponent{
-    public TrajectoryTree tree;
+    public Tree tree;
 
     public TrajectoryComp(){
     }
