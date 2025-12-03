@@ -1,10 +1,10 @@
-package io.blackdeluxecat.painttd.android;
+package io.bdc.painttd.android;
 
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import io.blackdeluxecat.painttd.PaintTowerDefence;
+import io.bdc.painttd.PaintTowerDefence;
 
 /**
  * Launches the Android application.

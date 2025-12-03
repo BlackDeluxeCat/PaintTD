@@ -8,7 +8,7 @@ apply plugin: 'com.android.application'
 
 
 android {
-    namespace "io.blackdeluxecat.painttd"
+    namespace "io.bdc.painttd"
     compileSdk 35
     sourceSets {
         main {
@@ -30,7 +30,7 @@ android {
         }
     }
     defaultConfig {
-        applicationId 'io.blackdeluxecat.painttd'
+        applicationId 'io.bdc.painttd'
         minSdkVersion 26
         targetSdkVersion 35
         versionCode 1
@@ -126,7 +126,7 @@ tasks.register('run', Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'io.blackdeluxecat.painttd/io.blackdeluxecat.painttd.android.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'io.bdc.painttd/io.bdc.painttd.android.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"

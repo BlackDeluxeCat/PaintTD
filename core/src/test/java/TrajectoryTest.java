@@ -1,7 +1,7 @@
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.backends.headless.*;
 import com.badlogic.gdx.math.*;
-import io.blackdeluxecat.painttd.content.trajector.*;
+import io.bdc.painttd.content.trajector.*;
 import org.junit.*;
 
 public class TrajectoryTest{

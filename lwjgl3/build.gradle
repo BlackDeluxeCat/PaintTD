@@ -18,7 +18,7 @@ apply plugin: 'io.github.fourlastor.construo'
 import io.github.fourlastor.construo.Target
 
 sourceSets.main.resources.srcDirs += [rootProject.file('assets').path]
-mainClassName = 'io.blackdeluxecat.painttd.lwjgl3.Lwjgl3Launcher'
+mainClassName = 'io.bdc.painttd.lwjgl3.Lwjgl3Launcher'
 application.setMainClass(mainClassName)
 eclipse.project.name = appName + '-lwjgl3'
 java.sourceCompatibility = JavaVersion.VERSION_17
@@ -133,7 +133,7 @@ construo {
             architecture.set(Target.Architecture.AARCH64)
             jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.15%2B6/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.15_6.tar.gz")
             // macOS needs an identifier
-            identifier.set("io.blackdeluxecat.painttd." + appName)
+            identifier.set("io.bdc.painttd." + appName)
             // Optional: icon for macOS, as an ICNS file
             macIcon.set(project.file("icons/logo.icns"))
         }
@@ -141,7 +141,7 @@ construo {
             architecture.set(Target.Architecture.X86_64)
             jdkUrl.set("https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.15%2B6/OpenJDK17U-jdk_x64_mac_hotspot_17.0.15_6.tar.gz")
             // macOS needs an identifier
-            identifier.set("io.blackdeluxecat.painttd." + appName)
+            identifier.set("io.bdc.painttd." + appName)
             // Optional: icon for macOS, as an ICNS file
             macIcon.set(project.file("icons/logo.icns"))
         }
