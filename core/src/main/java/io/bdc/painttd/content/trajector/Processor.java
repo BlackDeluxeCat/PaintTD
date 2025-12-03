@@ -12,6 +12,7 @@ public abstract class Processor{
         this(0, 0, 0, 0);
     }
 
+    /** 注册变量位 */
     public Processor(int maxChildrenSize, int parameterSize, int stateFloatsSize, int stateIntsSize){
         this.maxChildrenSize = maxChildrenSize;
         this.parameterSize = parameterSize;
@@ -34,12 +35,17 @@ public abstract class Processor{
 
     public abstract void update(float deltaTicks, Node node);
 
-    /** 完成的回调 */
+    /** 节点完成的判断规则. */
+    public boolean shouldComplete(Node node){
+        return node.parameter.maxTicks <= node.state.ticks;
+    }
+
+    /** 节点完成的回调 */
     public void complete(Node node){
         node.complete = Node.NodeState.complete;
     }
 
-    /** 创建副本的回调 */
+    /** 创建副本节点的回调 */
     public void copyTo(Node node, Node copy){
     }
 

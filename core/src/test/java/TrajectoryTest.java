@@ -57,79 +57,85 @@ public class TrajectoryTest{
             }
         };
 
-        scale = new Processor(1, 0, 0, 0){
-            @Override
-            public void update(float deltaTicks, Node node){
-                float scale = 2f;
-                if(node.children.size <= 0) return;
-                var child = node.children.get(0);
-                if(child != null){
-                    child.update(deltaTicks);
-                    node.state.shift.set(child.state.shift).scl(scale);
-                }
-            }
-        };
+//        scale = new Processor(1, 0, 0, 0){
+//            @Override
+//            public void update(float deltaTicks, Node node){
+//                float scale = 2f;
+//                if(node.children.size <= 0) return;
+//                var child = node.children.get(0);
+//                if(child != null){
+//                    child.update(deltaTicks);
+//                    node.state.shift.set(child.state.shift).scl(scale);
+//                }
+//            }
+//        };
 
-        seq = new Processor(100, 0, 0, 1){
-            //stateInts的0号位存储当前子节点索引
-            public StateIVar current = new StateIVar("current", 0);
+        scale = new ScaleProcessor();
 
-            @Override
-            public void initial(Node node){
-                super.initial(node);
-                node.parameter.maxTicks = Float.MAX_VALUE;
-            }
+        seq = new SeqProcessor(100);
 
-            @Override
-            public void update(float deltaTicks, Node node){
-                node.state.shift.setZero();
+        parallel = new ParallelProcessor(100);
 
-                if(node.children.size <= 0) return;
+//        seq = new Processor(100, 0, 0, 1){
+//            //stateInts的0号位存储当前子节点索引
+//            public StateIVar current = new StateIVar("current", 0);
+//
+//            @Override
+//            public void initial(Node node){
+//                super.initial(node);
+//                node.parameter.maxTicks = Float.MAX_VALUE;
+//            }
+//
+//            @Override
+//            public void update(float deltaTicks, Node node){
+//                node.state.shift.setZero();
+//
+//                if(node.children.size <= 0) return;
+//
+//                int cur = current.get(node);
+//
+//                if(cur >= node.children.size){
+//                    complete(node);
+//                    node.state.shift.setZero();
+//                }
+//
+//                var child = node.getChild(cur);
+//
+//                if(child != null && child.complete == Node.NodeState.process){
+//                    child.update(deltaTicks);
+//                    node.state.shift.set(child.state.shift);
+//                }
+//
+//                if(child == null || child.complete == Node.NodeState.complete){
+//                    current.set(node, cur + 1);
+//                }
+//            }
+//        };
 
-                int cur = current.get(node);
-
-                if(cur >= node.children.size){
-                    complete(node);
-                    node.state.shift.setZero();
-                }
-
-                var child = node.getChild(cur);
-
-                if(child != null && child.complete == Node.NodeState.process){
-                    child.update(deltaTicks);
-                    node.state.shift.set(child.state.shift);
-                }
-
-                if(child == null || child.complete == Node.NodeState.complete){
-                    current.set(node, cur + 1);
-                }
-            }
-        };
-
-        parallel = new Processor(100, 0, 0, 0){
-            @Override
-            public void initial(Node node){
-                super.initial(node);
-                node.parameter.maxTicks = Float.MAX_VALUE;
-            }
-
-            @Override
-            public void update(float deltaTicks, Node node){
-                node.state.shift.setZero();
-                int count = 0;
-                for(var child : node.children){
-                    if(child.complete != Node.NodeState.process) continue;
-                    child.update(deltaTicks);
-                    node.state.shift.add(child.state.shift);
-                    count++;
-                }
-
-                if(count <= 0){
-                    complete(node);
-                    node.state.shift.setZero();
-                }
-            }
-        };
+//        parallel = new Processor(100, 0, 0, 0){
+//            @Override
+//            public void initial(Node node){
+//                super.initial(node);
+//                node.parameter.maxTicks = Float.MAX_VALUE;
+//            }
+//
+//            @Override
+//            public void update(float deltaTicks, Node node){
+//                node.state.shift.setZero();
+//                int count = 0;
+//                for(var child : node.children){
+//                    if(child.complete != Node.NodeState.process) continue;
+//                    child.update(deltaTicks);
+//                    node.state.shift.add(child.state.shift);
+//                    count++;
+//                }
+//
+//                if(count <= 0){
+//                    complete(node);
+//                    node.state.shift.setZero();
+//                }
+//            }
+//        };
 
         trigger = new Processor(0, 1, 0, 0){
             @Override
@@ -292,6 +298,43 @@ public class TrajectoryTest{
         }
 
         Gdx.app.log("test6", "预期结果: 与前两棵树输出相同. 0~9t为圆形直线步进相加, 10~14t为直线步进, 15~19t为零向量");
+    }
+
+    @Test
+    public void t7_combo1(){
+        Gdx.app.log("test7", "测试组合1");
+
+        Tree tree = new Tree();
+
+        var root = tree.add(seq, null);
+
+        //第一个串行持续5+5+5t
+        var seq1 = tree.add(seq, root);
+        var r1 = tree.add(line, seq1);
+        r1.parameter.maxTicks = 5;
+        var r2 = tree.add(line, seq1);
+        r2.parameter.maxTicks = 5;
+        var scl1 = tree.add(scale, seq1);
+        var r3 = tree.add(line, scl1);
+        r3.parameter.maxTicks = 5;
+
+        //第二个并行持续5t
+        var para1 = tree.add(parallel, root);
+        var r4 = tree.add(line, para1);
+        r4.parameter.maxTicks = 5;
+        var r5 = tree.add(line, para1);
+        r5.parameter.maxTicks = 5;
+        var r6 = tree.add(line, para1);
+        r6.parameter.maxTicks = 5;
+
+        //第三个轨迹持续8t
+        var f1 = tree.add(circle, root);
+        f1.parameter.maxTicks = 8;
+
+        for(int i = 0; i < 40; i++){
+            tree.update(1f);
+            Gdx.app.log("test7", i + " shift " + tree.getShift());
+        }
     }
 
     @BeforeClass

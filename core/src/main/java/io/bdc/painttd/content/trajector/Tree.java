@@ -13,6 +13,8 @@ public class Tree{
     public int rootIndex;
     public Array<Node> nodes = new Array<>();
 
+    public Vector2 shift = new Vector2();
+
     /** 上下文, 注入与外部的交互 */
     public Array<Context> contexts = new Array<>();
     public Array<Trigger> triggers = new Array<>();
@@ -90,7 +92,12 @@ public class Tree{
             context.process();
         }
         //更新节点
-        nodes.get(rootIndex).update(delta);
+        var root = nodes.get(rootIndex);
+        shift.setZero();
+        if(root.complete == Node.NodeState.process){
+            root.update(delta);
+            shift.set(root.state.shift);
+        }
     }
 
     /** 触发器. */
@@ -99,6 +106,6 @@ public class Tree{
     }
 
     public Vector2 getShift(){
-        return nodes.get(rootIndex).state.shift;
+        return shift;
     }
 }

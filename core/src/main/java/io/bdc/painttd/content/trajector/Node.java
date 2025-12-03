@@ -44,19 +44,24 @@ public class Node implements Pool.Poolable{
     }
 
     public void update(float delta){
+        //对节点的complete状态的逻辑性检查和结果运用一般在处理器层对子节点进行, 节点层的检查是防御性代码
+
         if(complete == NodeState.complete || complete == NodeState.invalid) return;
+
         if(processor == null){
             Gdx.app.debug("TrajectoryTree", "Node has no processor");
             complete = NodeState.invalid;
             return;
         }
-        if(complete == NodeState.process && state.ticks < parameter.maxTicks){
+
+        if(complete == NodeState.process){
             processor.update(delta, this);
             state.ticks += delta;
-        }
 
-        if(complete == NodeState.process && state.ticks >= parameter.maxTicks){
-            processor.complete(this);
+            //在当前帧检查节点完成
+            if(processor.shouldComplete(this)){
+                processor.complete(this);
+            }
         }
     }
 
@@ -131,7 +136,8 @@ public class Node implements Pool.Poolable{
     }
 
     public static class TrajectoryParameter implements Pool.Poolable{
-        public float maxTicks = 300;
+        /** 节点最大有效时间. 默认地, 累计时长超过该值, 节点标记为已完成. */
+        public float maxTicks = Float.MAX_VALUE;
         public FloatArray data = new FloatArray(0);
 
         public TrajectoryParameter(){}
