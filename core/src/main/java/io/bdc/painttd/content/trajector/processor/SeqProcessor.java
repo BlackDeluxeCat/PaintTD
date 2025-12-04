@@ -1,10 +1,14 @@
-package io.bdc.painttd.content.trajector;
+package io.bdc.painttd.content.trajector.processor;
+
+import io.bdc.painttd.content.trajector.*;
 
 public class SeqProcessor extends Processor{
     public static StateIVar current = new StateIVar("current", 0);
+    public static ParamVar repeat = new ParamVar("repeat", 0);
+    public static StateIVar repeatCount = new StateIVar("repeatCount", 1);
 
     public SeqProcessor(int maxChildren){
-        super(maxChildren, 0, 0, 1);
+        super(maxChildren, 1, 0, 2);
     }
 
     @Override
@@ -13,9 +17,13 @@ public class SeqProcessor extends Processor{
     }
 
     @Override
-    public void reset(Node node){
-        super.reset(node);
+    public void restart(Node node){
+        super.restart(node);
         current.set(node, 0);
+        repeatCount.set(node, 0);
+        for(var c : node.children){
+            c.processor.restart(c);
+        }
     }
 
     @Override
@@ -40,7 +48,23 @@ public class SeqProcessor extends Processor{
         }
 
         if(child == null || child.complete == Node.NodeState.complete){
-            current.set(node, cur + 1);
+            cur++;
+
+            //重复时节点的重置
+            if(cur >= node.children.size){
+                int max = (int)repeat.get(node), count = repeatCount.get(node);
+                count++;
+                if(count < max){
+                    repeatCount.set(node, count);
+                    cur = 0;
+
+                    for(var c : node.children){
+                        c.processor.restart(c);
+                    }
+                }
+            }
+
+            current.set(node, cur);
         }
     }
 }

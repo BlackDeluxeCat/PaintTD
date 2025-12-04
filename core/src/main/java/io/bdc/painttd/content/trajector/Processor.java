@@ -25,11 +25,12 @@ public abstract class Processor{
         node.parameter.data.setSize(parameterSize);
         node.state.floats.setSize(stateFloatsSize);
         node.state.ints.setSize(stateIntsSize);
-        reset(node);
+        restart(node);
     }
 
     /** 将节点状态重置. 适合为节点状态提供初始值 */
-    public void reset(Node node){
+    public void restart(Node node){
+        node.complete = Node.NodeState.process;
         node.state.ticks = 0f;
     }
 

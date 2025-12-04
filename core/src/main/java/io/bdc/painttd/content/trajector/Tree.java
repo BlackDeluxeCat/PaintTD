@@ -15,15 +15,11 @@ public class Tree{
 
     public Vector2 shift = new Vector2();
 
-    /** 上下文, 注入与外部的交互 */
-    public Array<Context> contexts = new Array<>();
+    /** 上下文主动注入环境数据 */
+    public Context context;
     public Array<Trigger> triggers = new Array<>();
 
     public Tree(){
-    }
-
-    public void addContext(Context context){
-        contexts.add(context);
     }
 
     public Node add(Processor type, @Null Node parent){
@@ -83,14 +79,21 @@ public class Tree{
         }
     }
 
+    /** 关键. 注入对象到所有节点. */
+    public void inject(Object object){
+        if(nodes == null) return;
+        if(nodes.size == 0) return;
+        if(rootIndex >= nodes.size) return;
+
+        context.inject(object);
+    }
+
+    /** 关键. 更新节点. */
     public void update(float delta){
         if(nodes == null) return;
         if(nodes.size == 0) return;
         if(rootIndex >= nodes.size) return;
-        //处理上下文注入
-        for(var context : contexts){
-            context.process();
-        }
+
         //更新节点
         var root = nodes.get(rootIndex);
         shift.setZero();

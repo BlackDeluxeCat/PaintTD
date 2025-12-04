@@ -1,4 +1,6 @@
-package io.bdc.painttd.content.trajector;
+package io.bdc.painttd.content.trajector.processor;
+
+import io.bdc.painttd.content.trajector.*;
 
 public class ParallelProcessor extends Processor{
     public static StateIVar incompleteCount = new StateIVar("incompleteCount", 0);
@@ -13,8 +15,8 @@ public class ParallelProcessor extends Processor{
     }
 
     @Override
-    public void reset(Node node){
-        super.reset(node);
+    public void restart(Node node){
+        super.restart(node);
         incompleteCount.set(node, node.children.size);
     }
 

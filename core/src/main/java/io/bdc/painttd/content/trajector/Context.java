@@ -1,34 +1,27 @@
 package io.bdc.painttd.content.trajector;
 
-
+import com.artemis.*;
+import com.artemis.annotations.*;
 import com.badlogic.gdx.utils.*;
 
-/**
- * 树上下文, 批量注入
- */
-public abstract class Context{
-    public Array<Injection> injections = new Array<>();
+public class Context{
+    //测试上下文, 暂未TODO实现泛型
+    @EntityId public Entity context;
+    public Array<VarInjector<Entity>> injectors = new Array<>();
 
-    public abstract float get();
-
-    public void addInjection(Node node, Processor.Var var){
-        Injection injection = new Injection();
-        injection.node = node;
-        injection.var = var;
-        injections.add(injection);
-    }
-
-    public void process(){
-        float value = get();
-        for(Injection injection : injections){
-            if(injection.var instanceof Processor.FloatVar fv){
-                fv.set(injection.node, value);
-            }
+    public void inject(Object object){
+        context = parse(object);
+        //注入对象
+        for(var injector : injectors){
+            injector.inject(context);
         }
     }
 
-    public static class Injection{
-        public Node node;
-        public Processor.Var var;
+    public Entity parse(Object object){
+        if(object instanceof Entity){
+            return (Entity) object;
+        }else{
+            return null;
+        }
     }
 }

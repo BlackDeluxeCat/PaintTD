@@ -1,4 +1,6 @@
-package io.bdc.painttd.content.trajector;
+package io.bdc.painttd.content.trajector.processor;
+
+import io.bdc.painttd.content.trajector.*;
 
 public class ScaleProcessor extends Processor{
     public static ParamVar scaleX = new ParamVar("scaleX", 0);
