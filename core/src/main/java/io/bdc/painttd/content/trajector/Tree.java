@@ -16,7 +16,7 @@ public class Tree{
     public Vector2 shift = new Vector2();
 
     /** 上下文主动注入环境数据 */
-    public Context context;
+    public Context<?> context;
     public Array<Trigger> triggers = new Array<>();
 
     public Tree(){

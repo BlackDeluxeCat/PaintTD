@@ -160,7 +160,7 @@ public class Game{
         });
 
         logicShootAI.with(l -> {
-            l.add(new TargetFind());
+            l.add(new TargetSingleFind());
             l.add(new CooldownShoot());
             l.add(new ShootSingleTargetBullet());
 //            l.add(new ShootAtkSingleFireDirectDamage());

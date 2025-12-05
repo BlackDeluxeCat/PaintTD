@@ -3,12 +3,13 @@ package io.bdc.painttd.systems;
 import com.artemis.*;
 import com.artemis.systems.*;
 import io.bdc.painttd.content.components.logic.*;
+import io.bdc.painttd.content.components.marker.*;
 
-public class TrajectorySystem extends IteratingSystem{
+public class TrajectoryUpdate extends IteratingSystem{
     public ComponentMapper<TrajectoryComp> tm;
 
-    public TrajectorySystem(){
-        super(Aspect.all(TrajectoryComp.class));
+    public TrajectoryUpdate(){
+        super(Aspect.all(TrajectoryComp.class).exclude(MarkerComp.Dead.class));
     }
 
     @Override
