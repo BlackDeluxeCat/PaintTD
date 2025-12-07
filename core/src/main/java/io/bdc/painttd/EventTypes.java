@@ -4,7 +4,7 @@ import io.bdc.painttd.utils.*;
 
 /**单例事件*/
 public class EventTypes{
-    public static BulletSpawnEvent bulletSpawnEvent = new BulletSpawnEvent();
+    public static BulletSpawnEvent projectileSpawnEvent = new BulletSpawnEvent();
     public static CollideEvent collideEvent = new CollideEvent();
     public static DamageEvent damageEvent = new DamageEvent();
     public static CollideDamageEvent collideDamageEvent = new CollideDamageEvent();
@@ -14,7 +14,7 @@ public class EventTypes{
 
     public static class BulletSpawnEvent extends Events.Event{
         public int source;
-        public int b;
+        public int projectile;
     }
 
     public static class CollideEvent extends Events.Event{

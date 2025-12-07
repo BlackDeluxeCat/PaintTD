@@ -4,13 +4,9 @@ import io.bdc.painttd.content.components.*;
 
 public class TargetPosComp extends CopyableComponent{
     public float x, y;
+    public boolean shoot;
 
     public TargetPosComp(){
-    }
-
-    public TargetPosComp(float x, float y){
-        this.x = x;
-        this.y = y;
     }
 
     @Override
@@ -24,6 +20,7 @@ public class TargetPosComp extends CopyableComponent{
         TargetPosComp o = (TargetPosComp)other;
         x = o.x;
         y = o.y;
+        shoot = o.shoot;
         return this;
     }
 }

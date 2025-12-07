@@ -13,6 +13,7 @@ import io.bdc.painttd.map.*;
 import io.bdc.painttd.systems.*;
 import io.bdc.painttd.systems.render.*;
 import io.bdc.painttd.systems.request.*;
+import io.bdc.painttd.systems.targeting.*;
 import io.bdc.painttd.systems.utils.*;
 import io.bdc.painttd.utils.*;
 
@@ -161,8 +162,9 @@ public class Game{
 
         logicShootAI.with(l -> {
             l.add(new TargetSingleFind());
+            l.add(new TargetSingleToTargetPos());
             l.add(new CooldownShoot());
-            l.add(new ShootSingleTargetBullet());
+            l.add(new ShootBullet());
 //            l.add(new ShootAtkSingleFireDirectDamage());
 //            l.add(new ShootAtkSingleFireSplashDamage());
 //            l.add(new ShootAtkSingleFireSplashTileStain());

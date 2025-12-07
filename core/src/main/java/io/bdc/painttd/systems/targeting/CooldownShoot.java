@@ -1,9 +1,10 @@
-package io.bdc.painttd.systems;
+package io.bdc.painttd.systems.targeting;
 
 import com.artemis.*;
 import com.artemis.systems.*;
 import io.bdc.painttd.content.components.logic.*;
 import io.bdc.painttd.content.components.marker.*;
+import io.bdc.painttd.systems.*;
 
 /**
  * 带有冷却的武器的攻击

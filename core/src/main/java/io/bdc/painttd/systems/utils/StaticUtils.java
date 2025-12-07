@@ -21,6 +21,7 @@ public class StaticUtils extends BaseSystem{
     public ComponentMapper<TileStainComp> tileStainMapper;
     public ComponentMapper<EntityTypeComp> entityTypeMapper;
     public ComponentMapper<TileComp> tileMapper;
+    public ComponentMapper<MarkerComp.Dead> deadMapper;
 
     public ComponentMapper<TargetSingleComp> targetSingleMapper;
     public ComponentMapper<TargetPosComp> targetPosMapper;
@@ -112,6 +113,10 @@ public class StaticUtils extends BaseSystem{
         PositionComp p = positionMapper.get(e);
         p.x = x;
         p.y = y;
+    }
+
+    public boolean isDead(int e){
+        return deadMapper.has(e);
     }
 
     public void markDead(int e){

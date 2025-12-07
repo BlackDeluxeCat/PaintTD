@@ -108,9 +108,26 @@ public class EntityTypes{
                 add(new DamageComp(1));
 
                 add(new TargetPriorityComp(TargetPriorityComp.CLOSEST));
+                add(new TargetPosComp());
                 add(new TargetSingleComp());
                 add(new CooldownComp(60f));
                 add(new ColorLevelComp(2));
+
+                add(new BulletTypeComp(1, new EntityType("pencileBullet", bullet, cHide){
+                    {
+                        add(new HealthComp(1f));
+                        add(new PositionComp());
+                        add(new HitboxComp(0.2f).z(1));
+                        add(new VelocityComp());
+                        add(new MoveSpeedComp(12f / lfps));
+                        add(new CollideComp(CollideComp.UNIT, false).setCollidesMask(CollideComp.UNIT));
+
+                        add(new MarkerComp.CollideAttacker());
+                        add(new TargetPosComp());
+                        add(new TargetSingleComp());
+                        add(new StainSplashComp(1));
+                    }
+                }));
 
                 add(new PartTextureComp("b-pencil"));
             }
@@ -125,6 +142,7 @@ public class EntityTypes{
 
                 add(new RangeComp(10));
                 add(new TargetPriorityComp(TargetPriorityComp.CLOSEST));
+                add(new TargetPosComp());
                 add(new TargetSingleComp());
                 add(new BulletTypeComp(1, new EntityType("brushBullet", bullet, cHide){
                     {
@@ -179,6 +197,7 @@ public class EntityTypes{
                     }
                 }));
                 add(new TargetPriorityComp(TargetPriorityComp.CLOSEST));
+                add(new TargetPosComp());
                 add(new TargetSingleComp());
                 add(new CooldownComp(200f));
                 add(new ColorLevelComp(1));
