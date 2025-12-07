@@ -11,7 +11,7 @@ public class LineProcessor extends Processor{
     @Override
     public void initial(Node node){
         super.initial(node);
-        speed.set(node, 1);
+        speed.set(node, 0.05f);
         directionX.set(node, 1);
         directionY.set(node, 0);
     }

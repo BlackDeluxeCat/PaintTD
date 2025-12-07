@@ -3,15 +3,15 @@ package io.bdc.painttd.content.trajector;
 import com.badlogic.gdx.utils.*;
 
 public abstract class Context<T>{
-    transient public T context;
     public Array<VarInjector<T>> injectors = new Array<>();
 
-    public void addInjector(VarInjector<T> injector){
+    public <A extends VarInjector<T>> A addInjector(A injector){
         injectors.add(injector);
+        return injector;
     }
 
     public void inject(Object object){
-        context = parse(object);
+        T context = parse(object);
         //注入对象
         for(var injector : injectors){
             injector.inject(context);

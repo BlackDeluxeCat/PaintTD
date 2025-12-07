@@ -7,7 +7,11 @@ import io.bdc.painttd.content.components.logic.physics.*;
 import io.bdc.painttd.content.components.logic.target.*;
 import io.bdc.painttd.content.components.marker.*;
 import io.bdc.painttd.content.components.render.*;
+import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.content.trajector.context.*;
+import io.bdc.painttd.content.trajector.processor.*;
 
+import static io.bdc.painttd.content.Paths.*;
 import static io.bdc.painttd.game.Game.*;
 
 public class EntityTypes{
@@ -113,7 +117,7 @@ public class EntityTypes{
                 add(new CooldownComp(60f));
                 add(new ColorLevelComp(2));
 
-                add(new BulletTypeComp(1, new EntityType("pencileBullet", bullet, cHide){
+                add(new BulletTypeComp(1, new EntityType("pencilBullet", bullet, cHide){
                     {
                         add(new HealthComp(1f));
                         add(new PositionComp());
@@ -126,6 +130,18 @@ public class EntityTypes{
                         add(new TargetPosComp());
                         add(new TargetSingleComp());
                         add(new StainSplashComp(1));
+
+                        var tc = new TrajectoryComp();
+                        add(tc);
+                        var tree = tc.tree;
+                        var context = new EntityContext();
+                        tree.context = context;
+
+                        var r = tree.add(seq, null);
+                        SeqProcessor.repeat.set(r, 100000);
+
+                        var l = tree.add(line, r);
+                        LineProcessor.speed.set(l, 1f / lfps);
                     }
                 }));
 

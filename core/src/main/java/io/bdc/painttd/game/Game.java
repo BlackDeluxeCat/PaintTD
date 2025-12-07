@@ -165,16 +165,14 @@ public class Game{
             l.add(new TargetSingleToTargetPos());
             l.add(new CooldownShoot());
             l.add(new ShootBullet());
-//            l.add(new ShootAtkSingleFireDirectDamage());
-//            l.add(new ShootAtkSingleFireSplashDamage());
-//            l.add(new ShootAtkSingleFireSplashTileStain());
         });
 
         logic.with(l -> {
             l.add(new HealthRegen());
             l.add(new MovementAccelerationPush());
             l.add(new MovementVelGenFlowField());
-            l.add(new MovementVelGenSingleTgtBulletHoming());
+            l.add(new MovementVelGenTrajectory());
+
             l.add(new MovementVelPush());
 
             l.add(new MovementProjectileLimitPosition());
