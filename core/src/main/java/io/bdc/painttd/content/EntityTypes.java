@@ -138,10 +138,10 @@ public class EntityTypes{
                         tree.context = context;
 
                         var r = tree.add(seq, null);
-                        SeqProcessor.repeat.set(r, 100000);
+                        SeqProcessor.repeat.setFloat(100000, r);
 
                         var l = tree.add(line, r);
-                        LineProcessor.speed.set(l, 1f / lfps);
+                        LineProcessor.speed.setFloat(1f / lfps, l);
                     }
                 }));
 

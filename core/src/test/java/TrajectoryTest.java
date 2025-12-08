@@ -3,6 +3,7 @@ import com.badlogic.gdx.backends.headless.*;
 import com.badlogic.gdx.math.*;
 import io.bdc.painttd.content.trajector.*;
 import io.bdc.painttd.content.trajector.processor.*;
+import io.bdc.painttd.content.trajector.var.*;
 import org.junit.*;
 
 public class TrajectoryTest{
@@ -11,8 +12,8 @@ public class TrajectoryTest{
     public static Processor line, circle, seq, parallel, scale, trigger, line2;
 
     public static class LineProcessor extends Processor{
-        public static ParamVar directionX = new ParamVar("directionX", 0);
-        public static ParamVar directionY = new ParamVar("directionY", 1);
+        public static ParamF directionX = new ParamF("directionX", 0);
+        public static ParamF directionY = new ParamF("directionY", 1);
 
         public LineProcessor(){
             super(0, 2, 0, 0);
@@ -21,13 +22,13 @@ public class TrajectoryTest{
         @Override
         public void restart(Node node){
             super.restart(node);
-            directionX.set(node, 0);
-            directionY.set(node, 1);
+            directionX.setFloat(0, node);
+            directionY.setFloat(1, node);
         }
 
         @Override
         public void update(float deltaTicks, Node node){
-            node.state.shift.set(directionX.get(node), directionY.get(node)).setLength(1f + node.state.ticks * 0.1f);
+            node.state.shift.set(directionX.asFloat(node), directionY.asFloat(node)).setLength(1f + node.state.ticks * 0.1f);
         }
     }
 
@@ -38,12 +39,12 @@ public class TrajectoryTest{
         line2 = new io.bdc.painttd.content.trajector.processor.LineProcessor();
 
         circle = new Processor(0, 0, 1, 0){
-            public StateFVar degree = new StateFVar("degree", 0);
+            public StateF degree = new StateF("degree", 0);
 
             @Override
             public void restart(Node node){
                 super.restart(node);
-                degree.set(node, 0);
+                degree.setFloat(0, node);
             }
 
             @Override
@@ -52,9 +53,9 @@ public class TrajectoryTest{
                 float radius = 10f;
                 float rotDirection = 1f;
 
-                float lastDegree = degree.get(node);
+                float lastDegree = degree.asFloat(node);
                 float deltaDegree = deltaTicks * rotSpeed;
-                degree.set(node, lastDegree + deltaDegree * rotDirection);
+                degree.setFloat(lastDegree + deltaDegree * rotDirection, node);
                 //计算圆周上移动至下一个点的步进向量
                 node.state.shift.set(1, 0).setLength(radius * deltaDegree / 180f * MathUtils.PI).rotateDeg(lastDegree).rotateDeg((90 + deltaDegree / 2f * rotDirection));
             }
@@ -272,7 +273,7 @@ public class TrajectoryTest{
         Gdx.app.log("test8", "测试seq重复");
         Tree tree = new Tree();
         var root = tree.add(seq, null);
-        SeqProcessor.repeat.set(root, 5);
+        SeqProcessor.repeat.setFloat(5, root);
         //第一个子轨迹持续4t
         var next = tree.add(line, root);
         next.parameter.maxTicks = 4;

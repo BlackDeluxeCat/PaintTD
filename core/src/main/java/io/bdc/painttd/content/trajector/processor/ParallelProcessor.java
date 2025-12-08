@@ -1,9 +1,10 @@
 package io.bdc.painttd.content.trajector.processor;
 
 import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.content.trajector.var.StateI;
 
 public class ParallelProcessor extends Processor{
-    public static StateIVar incompleteCount = new StateIVar("incompleteCount", 0);
+    public static StateI incompleteCount = new StateI("incompleteCount", 0);
 
     public ParallelProcessor(int maxChildren){
         super(maxChildren, 0, 0, 1);
@@ -17,12 +18,12 @@ public class ParallelProcessor extends Processor{
     @Override
     public void restart(Node node){
         super.restart(node);
-        incompleteCount.set(node, node.children.size);
+        incompleteCount.setInt(node.children.size, node);
     }
 
     @Override
     public boolean shouldComplete(Node node){
-        return incompleteCount.get(node) == 0;
+        return incompleteCount.asInt(node) == 0;
     }
 
     @Override
@@ -37,6 +38,6 @@ public class ParallelProcessor extends Processor{
             }
         }
 
-        incompleteCount.set(node, incomplete);
+        incompleteCount.setInt(incomplete, node);
     }
 }

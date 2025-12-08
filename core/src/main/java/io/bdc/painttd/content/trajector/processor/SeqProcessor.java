@@ -1,11 +1,13 @@
 package io.bdc.painttd.content.trajector.processor;
 
 import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.content.trajector.var.StateI;
+import io.bdc.painttd.content.trajector.var.ParamF;
 
 public class SeqProcessor extends Processor{
-    public static StateIVar current = new StateIVar("current", 0);
-    public static ParamVar repeat = new ParamVar("repeat", 0);
-    public static StateIVar repeatCount = new StateIVar("repeatCount", 1);
+    public static StateI current = new StateI("current", 0);
+    public static ParamF repeat = new ParamF("repeat", 0);
+    public static StateI repeatCount = new StateI("repeatCount", 1);
 
     public SeqProcessor(int maxChildren){
         super(maxChildren, 1, 0, 2);
@@ -19,8 +21,8 @@ public class SeqProcessor extends Processor{
     @Override
     public void restart(Node node){
         super.restart(node);
-        current.set(node, 0);
-        repeatCount.set(node, 0);
+        current.setInt(0, node);
+        repeatCount.setInt(0, node);
         for(var c : node.children){
             c.processor.restart(c);
         }
@@ -28,7 +30,7 @@ public class SeqProcessor extends Processor{
 
     @Override
     public boolean shouldComplete(Node node){
-        int cur = current.get(node);
+        int cur = current.asInt(node);
         return node.children.size <= 0 || cur >= node.children.size;
     }
 
@@ -38,7 +40,7 @@ public class SeqProcessor extends Processor{
 
         if(node.children.size <= 0) return;
 
-        int cur = current.get(node);
+        int cur = current.asInt(node);
 
         var child = node.getChild(cur);
 
@@ -52,10 +54,10 @@ public class SeqProcessor extends Processor{
 
             //重复时节点的重置
             if(cur >= node.children.size){
-                int max = (int)repeat.get(node), count = repeatCount.get(node);
+                int max = repeat.asInt(node), count = repeatCount.asInt(node);
                 count++;
                 if(count < max){
-                    repeatCount.set(node, count);
+                    repeatCount.setInt(count, node);
                     cur = 0;
 
                     for(var c : node.children){
@@ -64,7 +66,7 @@ public class SeqProcessor extends Processor{
                 }
             }
 
-            current.set(node, cur);
+            current.setInt(cur, node);
         }
     }
 }

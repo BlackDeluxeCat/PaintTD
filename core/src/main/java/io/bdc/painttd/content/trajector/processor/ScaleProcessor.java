@@ -1,10 +1,11 @@
 package io.bdc.painttd.content.trajector.processor;
 
 import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.content.trajector.var.ParamF;
 
 public class ScaleProcessor extends Processor{
-    public static ParamVar scaleX = new ParamVar("scaleX", 0);
-    public static ParamVar scaleY = new ParamVar("scaleY", 1);
+    public static ParamF scaleX = new ParamF("scaleX", 0);
+    public static ParamF scaleY = new ParamF("scaleY", 1);
 
     public ScaleProcessor(){
         super(1, 2, 0, 0);
@@ -13,8 +14,8 @@ public class ScaleProcessor extends Processor{
     @Override
     public void initial(Node node){
         super.initial(node);
-        scaleX.set(node, 2);
-        scaleY.set(node, 2);
+        scaleX.setFloat(2, node);
+        scaleY.setFloat(2, node);
     }
 
     @Override
@@ -30,7 +31,7 @@ public class ScaleProcessor extends Processor{
         Node child = node.children.get(0);
         if(child != null){
             child.update(deltaTicks);
-            node.state.shift.set(child.state.shift).scl(scaleX.get(node), scaleY.get(node));
+            node.state.shift.set(child.state.shift).scl(scaleX.asFloat(node), scaleY.asFloat(node));
         }
     }
 }

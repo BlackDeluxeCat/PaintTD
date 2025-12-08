@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.*;
 public abstract class VarInjector<T>{
     public Array<Injection> injections = new Array<>();
 
-    public void addInjection(Node node, Processor.Var var){
+    public void addInjection(Node node, Processor.InnerVar var){
         Injection injection = new Injection();
         injection.node = node;
         injection.var = var;
@@ -33,7 +33,7 @@ public abstract class VarInjector<T>{
 
     public static class Injection{
         public Node node;
-        public Processor.Var var;
+        public Processor.InnerVar var;
         public NullHandle handle = NullHandle.setDef;
 
         public enum NullHandle{

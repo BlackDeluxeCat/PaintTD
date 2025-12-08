@@ -53,14 +53,14 @@ public abstract class Processor{
     public void build(Node node, Table table){
     }
 
-    /** 定义每个变量位的用途 */
-    public static class Var{
+    /** 定义有意义的数据位 */
+    public static class InnerVar{
         /** 变量显示名 */
         public String name;
         /** 标识该变量所在索引号 */
         public int index;
 
-        public Var(String name, int i){
+        public InnerVar(String name, int i){
             this.name = name;
             this.index = i;
         }
@@ -71,7 +71,7 @@ public abstract class Processor{
         void set(Node node, float value);
     }
 
-    public static class ParamVar extends Var implements FloatVar{
+    public static class ParamVar extends InnerVar implements FloatVar{
         public ParamVar(String name, int i){
             super(name, i);
         }
@@ -85,7 +85,7 @@ public abstract class Processor{
         }
     }
 
-    public static class StateFVar extends Var implements FloatVar{
+    public static class StateFVar extends InnerVar implements FloatVar{
         public StateFVar(String name, int i){
             super(name, i);
         }
@@ -99,7 +99,7 @@ public abstract class Processor{
         }
     }
 
-    public static class StateIVar extends Var{
+    public static class StateIVar extends InnerVar{
         public StateIVar(String name, int i){
             super(name, i);
         }
@@ -110,6 +110,10 @@ public abstract class Processor{
 
         public void set(Node node, int value){
             node.state.ints.set(index, value);
+        }
+
+        public void set(Node node, float floatValue){
+            set(node, (int)floatValue);
         }
     }
 }
