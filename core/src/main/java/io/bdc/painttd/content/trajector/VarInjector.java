@@ -9,22 +9,15 @@ import com.badlogic.gdx.utils.*;
 public abstract class VarInjector<T>{
     public Array<Injection> injections = new Array<>();
 
-    public void addInjection(Node node, Processor.InnerVar var){
+    public void addInjection(Node node){
         Injection injection = new Injection();
         injection.node = node;
-        injection.var = var;
         injections.add(injection);
     }
 
     public void inject(T object){
         float value = get(object);
         for(Injection injection : injections){
-            if(injection.var instanceof Processor.FloatVar fv){
-                //如果对象有效, 注入值. 如果对象无效且注入处理为setDef, 注入get到的默认值
-                if(object != null || injection.handle == Injection.NullHandle.setDef){
-                    fv.set(injection.node, value);
-                }
-            }
         }
     }
 
@@ -33,7 +26,6 @@ public abstract class VarInjector<T>{
 
     public static class Injection{
         public Node node;
-        public Processor.InnerVar var;
         public NullHandle handle = NullHandle.setDef;
 
         public enum NullHandle{
