@@ -22,6 +22,28 @@ public class Tree{
     public Tree(){
     }
 
+    public int add(Node node){
+        node.tree = this;
+        int index = nodes.size;
+        nodes.add(node);
+        return index;
+    }
+
+    public int add(Processor type){
+        Node newNode = Node.obtain();
+        newNode.setProcessor(type);
+        return add(newNode);
+    }
+
+    public @Null Node get(int index){
+        if(index < 0 || index >= nodes.size) return null;
+        return nodes.get(index);
+    }
+
+    public int get(Node node){
+        return nodes.indexOf(node, true);
+    }
+
     public Node add(Processor type, @Null Node parent){
         Node newNode = Node.obtain();
         newNode.setProcessor(type);
@@ -30,30 +52,30 @@ public class Tree{
     }
 
     public void add(Node child, @Null Node parent){
-        if(child == null) return;
-        child.tree = this;
-        nodes.add(child);
-        if(parent == null){
-            rootIndex = nodes.size - 1;
-        }else{
-            //子节点可用的情况下, 添加
-            parent.addChild(child);
-        }
+//        if(child == null) return;
+//        child.tree = this;
+//        nodes.add(child);
+//        if(parent == null){
+//            rootIndex = nodes.size - 1;
+//        }else{
+//            //子节点可用的情况下, 添加
+//            parent.addChild(child);
+//        }
     }
 
-    /** 从树中移除一个节点, 其子节点转移到其父节点上. */
-    @Deprecated
-    public void remove(Node node){
-        if(node == null) return;
-        int removed = nodes.indexOf(node, true);
-        if(removed == -1) return;
-        nodes.removeIndex(removed);
-        //尝试将所有子节点接到父节点末尾
-        for(var child : node.children){
-            node.parent.addChild(child);
-        }
-        node.free();
-    }
+//    /** 从树中移除一个节点, 其子节点转移到其父节点上. */
+//    @Deprecated
+//    public void remove(Node node){
+//        if(node == null) return;
+//        int removed = nodes.indexOf(node, true);
+//        if(removed == -1) return;
+//        nodes.removeIndex(removed);
+//        //尝试将所有子节点接到父节点末尾
+//        for(var child : node.children){
+//            node.parent.addChild(child);
+//        }
+//        node.free();
+//    }
 
     public void clear(){
         for(var node : nodes){
@@ -65,18 +87,10 @@ public class Tree{
 
     public void copy(Tree origin){
         clear();
-        var originRoot = origin.nodes.get(origin.rootIndex);
-        var root = originRoot.copy();
-        add(root, null);
-        copyChild(originRoot, root);
-    }
-
-    protected void copyChild(Node originParent, Node parent){
-        for(var originChild : originParent.children){
-            var child = originChild.copy();
-            add(child, parent);
-            copyChild(originChild, child);
+        for(var node : origin.nodes){
+            add(node.copy());
         }
+        rootIndex = origin.rootIndex;
     }
 
     /** 关键. 注入对象到所有节点. */
@@ -89,18 +103,13 @@ public class Tree{
     }
 
     /** 关键. 更新节点. */
-    public void update(float delta){
+    public void update(float tick){
         if(nodes == null) return;
         if(nodes.size == 0) return;
         if(rootIndex >= nodes.size) return;
 
-        //更新节点
         var root = nodes.get(rootIndex);
-        shift.setZero();
-        if(root.complete == Node.NodeState.process){
-            root.update(delta);
-            shift.set(root.state.shift);
-        }
+        root.update(tick);
     }
 
     /** 触发器. */

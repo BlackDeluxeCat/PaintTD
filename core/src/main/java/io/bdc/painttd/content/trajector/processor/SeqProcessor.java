@@ -1,13 +1,12 @@
 package io.bdc.painttd.content.trajector.processor;
 
 import io.bdc.painttd.content.trajector.*;
-import io.bdc.painttd.content.trajector.var.StateI;
-import io.bdc.painttd.content.trajector.var.ParamF;
+import io.bdc.painttd.content.trajector.var.PortFloat;
 
 public class SeqProcessor extends Processor{
-    public static StateI current = new StateI("current", 0);
-    public static ParamF repeat = new ParamF("repeat", 0);
-    public static StateI repeatCount = new StateI("repeatCount", 1);
+    public static PortFloat current = new PortFloat("current", 0);
+    public static PortFloat repeat = new PortFloat("repeat", 1);
+    public static PortFloat repeatCount = new PortFloat("repeatCount", 2);
 
     public SeqProcessor(int maxChildren){
         super(maxChildren, 1, 0, 2);
@@ -35,7 +34,7 @@ public class SeqProcessor extends Processor{
     }
 
     @Override
-    public void update(float deltaTicks, Node node){
+    public void update(float frame, Node node){
         node.state.shift.setZero();
 
         if(node.children.size <= 0) return;
@@ -45,7 +44,7 @@ public class SeqProcessor extends Processor{
         var child = node.getChild(cur);
 
         if(child != null && child.complete == Node.NodeState.process){
-            child.update(deltaTicks);
+            child.update(frame);
             node.state.shift.set(child.state.shift);
         }
 

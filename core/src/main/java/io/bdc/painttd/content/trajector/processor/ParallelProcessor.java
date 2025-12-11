@@ -1,10 +1,10 @@
 package io.bdc.painttd.content.trajector.processor;
 
 import io.bdc.painttd.content.trajector.*;
-import io.bdc.painttd.content.trajector.var.StateI;
+import io.bdc.painttd.content.trajector.var.*;
 
 public class ParallelProcessor extends Processor{
-    public static StateI incompleteCount = new StateI("incompleteCount", 0);
+    public static PortFloat incompleteCount = new PortFloat("incompleteCount", 0);
 
     public ParallelProcessor(int maxChildren){
         super(maxChildren, 0, 0, 1);
@@ -27,12 +27,12 @@ public class ParallelProcessor extends Processor{
     }
 
     @Override
-    public void update(float deltaTicks, Node node){
+    public void update(float frame, Node node){
         node.state.shift.setZero();
         int incomplete = 0;
         for(var child : node.children){
             if(child != null && child.complete == Node.NodeState.process){
-                child.update(deltaTicks);
+                child.update(frame);
                 node.state.shift.add(child.state.shift);
                 if(child.complete != Node.NodeState.complete) incomplete++;
             }

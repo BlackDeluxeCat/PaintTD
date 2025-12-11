@@ -4,29 +4,44 @@ import com.badlogic.gdx.math.*;
 import io.bdc.painttd.content.trajector.*;
 import io.bdc.painttd.content.trajector.var.*;
 
+@Deprecated
 public class LineProcessor extends Processor{
     //每帧步进
-    public static ParamF speed = new ParamF("speed", 0);
+    public PortFloat speed;
 
-    public static ParamF x = new ParamF("x", 1);
-    public static ParamF y = new ParamF("y", 2);
+    public PortFloat x;
+    public PortFloat y;
 
-    public static Vector2V direction = new Vector2V("direction"){
-        @Override
-        public Vector2 get(Node node){
-            return tmp.set(x.asFloat(node), y.asFloat(node));
-        }
-
-        @Override
-        public void set(Vector2 value, Node node){
-            speed.setFloat(value.len(), node);
-            x.setFloat(value.x, node);
-            y.setFloat(value.y, node);
-        }
-    };
+    public PortVector2 direction;
 
     public LineProcessor(){
-        super(0, 3, 0, 0);
+        super(3);
+    }
+
+    @Override
+    public void registerVars(){
+        super.registerVars();
+        speed = new PortFloat("speed", 0);
+
+        x = new PortFloat("x", 1);
+        y = new PortFloat("y", 2);
+
+        direction = new PortVector2("direction"){
+            @Override
+            public Vector2 get(Node node){
+                return tmp.set(x.asFloat(node), y.asFloat(node));
+            }
+
+            @Override
+            public void set(Vector2 value, Node node){
+                speed.setFloat(value.len(), node);
+                x.setFloat(value.x, node);
+                y.setFloat(value.y, node);
+            }
+        };
+
+        inputs.add(speed);
+        inputs.add(direction);
     }
 
     @Override
@@ -37,7 +52,7 @@ public class LineProcessor extends Processor{
     }
 
     @Override
-    public void update(float deltaTicks, Node node){
-        node.state.shift.set(x.asFloat(node), y.asFloat(node)).setLength(speed.asFloat(node));
+    public void update(float frame, Node node){
+        node.shift.set(x.asFloat(node), y.asFloat(node)).setLength(speed.asFloat(node));
     }
 }
