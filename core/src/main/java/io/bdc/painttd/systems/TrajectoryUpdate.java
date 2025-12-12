@@ -14,8 +14,7 @@ public class TrajectoryUpdate extends IteratingSystem{
 
     @Override
     protected void process(int entityId){
-        var tree = tm.get(entityId).tree;
-        tree.inject(entityId);
-        tree.update(1f);
+        var net = tm.get(entityId).net;
+        net.update(1f);
     }
 }

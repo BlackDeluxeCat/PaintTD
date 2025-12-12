@@ -7,11 +7,7 @@ import io.bdc.painttd.content.components.logic.physics.*;
 import io.bdc.painttd.content.components.logic.target.*;
 import io.bdc.painttd.content.components.marker.*;
 import io.bdc.painttd.content.components.render.*;
-import io.bdc.painttd.content.trajector.*;
-import io.bdc.painttd.content.trajector.context.*;
-import io.bdc.painttd.content.trajector.processor.*;
 
-import static io.bdc.painttd.content.Paths.*;
 import static io.bdc.painttd.game.Game.*;
 
 public class EntityTypes{

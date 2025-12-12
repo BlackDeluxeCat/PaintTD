@@ -1,15 +1,9 @@
 package io.bdc.painttd.content.trajector.var;
 
-import com.badlogic.gdx.utils.*;
-import io.bdc.painttd.content.trajector.*;
-
 public interface Linkable{
-    void readLink(Link link, Node self);
+    /** 对远端port做读取 */
+    void syncLink(Linkable port);
 
-    @Null
-    Linkable parseLink(Link link, Node self);
-
-    default boolean canParseLink(Link link, Node self){
-        return parseLink(link, self) != null;
-    }
+    /** 对编辑器中创建link做有效性检查 */
+    boolean canLink(Linkable port);
 }
