@@ -4,10 +4,10 @@ import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.content.trajector.*;
 
 public abstract class LinkableVar extends BaseVar implements Pool.Poolable{
-    public int sourceNode;
-    public int sourceOutputPort;
+    public int sourceNode = -1;
+    public int sourceOutputPort = -1;
     public boolean cacheValue;
-    public float cachedFrame;
+    public float cachedFrame = Float.NEGATIVE_INFINITY;
 
     public LinkableVar(boolean cacheValue){
         this.cacheValue = cacheValue;
