@@ -8,14 +8,14 @@ public class FloatV extends LinkableVar{
     }
 
     @Override
-    public void syncLink(Linkable port){
+    public void readLink(LinkableVar port){
         if(port instanceof FloatV parsedPort){
             cache = parsedPort.cache;
         }
     }
 
     @Override
-    public boolean canLink(Linkable source){
+    public boolean canLink(LinkableVar source){
         return source instanceof FloatV;
     }
 }

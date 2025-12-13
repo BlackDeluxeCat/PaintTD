@@ -10,14 +10,14 @@ public class Vector2V extends LinkableVar{
     }
 
     @Override
-    public void syncLink(Linkable port){
+    public void readLink(LinkableVar port){
         if(port instanceof Vector2V parsedPort){
             cache.set(parsedPort.cache);
         }
     }
 
     @Override
-    public boolean canLink(Linkable source){
+    public boolean canLink(LinkableVar source){
         return source instanceof Vector2V;
     }
 }

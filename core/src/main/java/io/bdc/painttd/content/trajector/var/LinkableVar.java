@@ -3,7 +3,7 @@ package io.bdc.painttd.content.trajector.var;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.content.trajector.*;
 
-public abstract class LinkableVar extends BaseVar implements Linkable, Pool.Poolable{
+public abstract class LinkableVar extends BaseVar implements Pool.Poolable{
     public int sourceNode;
     public int sourceOutputPort;
     public boolean cacheValue;
@@ -22,11 +22,17 @@ public abstract class LinkableVar extends BaseVar implements Linkable, Pool.Pool
         //禁用缓存强制重新同步 || 缓存帧与本次请求不同需要重新同步
         //重新计算上游节点, 同步远端数据到自身缓存
         if(!cacheValue || cachedFrame != frame){
-            source.calc(frame);
+            source.syncLink(this, frame, sourceOutputPort);
             cachedFrame = frame;
-            syncLink(source.getOutput(sourceOutputPort));
         }
     }
+
+
+    /** 对远端port做读取 */
+    public abstract void readLink(@Null LinkableVar port);
+
+    /** 对编辑器中创建link做有效性检查 */
+    public abstract boolean canLink(LinkableVar port);
 
     /** 重置变量. */
     @Override
