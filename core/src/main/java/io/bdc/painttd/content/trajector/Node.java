@@ -22,9 +22,10 @@ public abstract class Node implements Pool.Poolable{
 
     public abstract void calc(float frame);
 
-    public void syncLink(LinkableVar downStream, float frame, int targetOutputPort){
+    /** 下游请求sync的output端口提供者, 先使用帧更新计算, 再返回端口. 可以在这里进行端口转发和帧重映射. */
+    public @Null LinkableVar getSyncOutput(float frame, int targetOutputPort){
         calc(frame);
-        downStream.readLink(getOutput(targetOutputPort));
+        return getOutput(targetOutputPort);
     }
 
     public LinkableVar getOutput(int index){

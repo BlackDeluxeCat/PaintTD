@@ -8,17 +8,9 @@ public class RouterV extends LinkableVar{
         super(false);
     }
 
-    /** 维护路由信息, 代理触发上游更新 */
+    /** 路由变量标识上游节点转发关系, 无需实际同步 */
     @Override
     public void sync(Net net, float frame){
-        if(sourceNode == -1 || sourceOutputPort == -1) return;
-        Node source = net.get(sourceNode);
-        if(source == null) return;
-
-        if(!cacheValue || cachedFrame != frame){
-            source.syncLink(this, frame, sourceOutputPort);
-            cachedFrame = frame;
-        }
     }
 
     /** 路由变量不缓存实际值 */

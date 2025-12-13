@@ -6,6 +6,8 @@ import io.bdc.painttd.content.trajector.var.*;
 public abstract class BaseSingleFrameRemapForwardingNode extends Node{
     public RouterV inPort = new RouterV();
     public RouterV outPort = new RouterV();
+    
+    protected float remappedFrame;
 
     @Override
     public void registerVars(){
@@ -13,15 +15,22 @@ public abstract class BaseSingleFrameRemapForwardingNode extends Node{
         outputs.add(outPort);
     }
 
+    /** 重映射帧, 赋给remappedFrame */
     @Override
-    public void calc(float frame){
-    }
+    public abstract void calc(float frame);
 
     @Override
-    public void syncLink(LinkableVar downStream, float frame, int targetOutputPort){
-        calc(frame);
+    public LinkableVar getSyncOutput(float frame, int targetOutputPort){
+        Node source = net.get(inPort.sourceNode);
+        if(source == null) return null;
+
         if(targetOutputPort == 0){
-            net.get(inPort.sourceNode).syncLink(downStream, transform(frame), inPort.sourceOutputPort);
+            //重映射帧
+            calc(frame);
+            //转发sync请求到上游节点
+            return source.getSyncOutput(remappedFrame, inPort.sourceOutputPort);
+        }else{
+            return null;
         }
     }
 
@@ -32,15 +41,11 @@ public abstract class BaseSingleFrameRemapForwardingNode extends Node{
 
     @Override
     public void free(){
-
-    }
-
-    public float transform(float frame){
-        return frame;
     }
 
     @Override
     public void reset(){
-
+        inPort.reset();
+        outPort.reset();
     }
 }

@@ -13,22 +13,29 @@ public abstract class LinkableVar extends BaseVar implements Pool.Poolable{
         this.cacheValue = cacheValue;
     }
 
-    /** 从链接中同步到变量内部缓存. */
+    /** 同步决策者, 判断是否需要向上游节点请求同步. */
     public void sync(Net net, float frame){
         if(sourceNode == -1 || sourceOutputPort == -1) return;
         Node source = net.get(sourceNode);
         if(source == null) return;
 
         //禁用缓存强制重新同步 || 缓存帧与本次请求不同需要重新同步
-        //重新计算上游节点, 同步远端数据到自身缓存
         if(!cacheValue || cachedFrame != frame){
-            source.syncLink(this, frame, sourceOutputPort);
+            //获取上游节点的输出端口
+            LinkableVar sourcePort = source.getSyncOutput(frame, sourceOutputPort);
+            
+            //上游节点转发与映射失败时返回null, 结束本次同步
+            if(sourcePort == null) return;
+            
+            //读取上游节点的输出端口
+            readLink(sourcePort);
+            
+            //同步成功后更新缓存
             cachedFrame = frame;
         }
     }
 
-
-    /** 对远端port做读取 */
+    /** 做读取 */
     public abstract void readLink(@Null LinkableVar port);
 
     /** 对编辑器中创建link做有效性检查 */
