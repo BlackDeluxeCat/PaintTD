@@ -11,6 +11,7 @@ public class Vars{
 
     public static boolean inGame, inMenu = true;
 
+    public static NodeGraphEditorDialog nodeGraphEditorDialog = new NodeGraphEditorDialog();
     public static MenuGroup menu = new MenuGroup();
     public static HudGroup hud = new HudGroup();
     public static PreferenceDialog preferenceDialog = new PreferenceDialog();

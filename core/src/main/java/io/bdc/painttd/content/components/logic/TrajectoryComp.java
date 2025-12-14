@@ -4,7 +4,7 @@ import io.bdc.painttd.content.components.*;
 import io.bdc.painttd.content.trajector.*;
 
 public class TrajectoryComp extends CopyableComponent{
-    public Net net = new Net();
+    public NodeGraph nodeGraph = new NodeGraph();
 
     public TrajectoryComp(){
     }
@@ -12,13 +12,13 @@ public class TrajectoryComp extends CopyableComponent{
     @Override
     public CopyableComponent copy(CopyableComponent other){
         if(other instanceof TrajectoryComp otherComp){
-            net.copy(otherComp.net);
+            nodeGraph.copy(otherComp.nodeGraph);
         }
         return this;
     }
 
     @Override
     protected void reset(){
-        net.clear();
+        nodeGraph.clear();
     }
 }

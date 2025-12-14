@@ -8,7 +8,11 @@ public abstract class Node implements Pool.Poolable{
     public Array<LinkableVar> inputs = new Array<>();
     public Array<LinkableVar> outputs = new Array<>();
 
-    public transient Net net;
+    public transient NodeGraph nodeGraph;
+
+    //编辑器元素信息
+    public float x, y;
+    public boolean minimized, flipIOPosition;
 
     public Node(){
         registerVars();
@@ -16,8 +20,8 @@ public abstract class Node implements Pool.Poolable{
 
     public abstract void registerVars();
 
-    public void setNet(Net net){
-        this.net = net;
+    public void setNet(NodeGraph nodeGraph){
+        this.nodeGraph = nodeGraph;
     }
 
     /** 缓存版本计算, 缓存决策者, input端口同步启动者, 更新计算

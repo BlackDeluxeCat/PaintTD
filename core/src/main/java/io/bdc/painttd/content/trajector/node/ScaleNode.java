@@ -30,8 +30,8 @@ public class ScaleNode extends Node{
 
     @Override
     public boolean calc(float frame){
-        scaleI.sync(net, frame);
-        shiftI.sync(net, frame);
+        scaleI.sync(nodeGraph, frame);
+        shiftI.sync(nodeGraph, frame);
         shiftO.cache.set(shiftI.cache).scl(scaleI.cache);
         return true;
     }

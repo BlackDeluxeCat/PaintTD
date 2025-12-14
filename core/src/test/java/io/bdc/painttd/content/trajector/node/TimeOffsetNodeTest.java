@@ -3,7 +3,7 @@ package io.bdc.painttd.content.trajector.node;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.backends.headless.*;
 import io.bdc.painttd.content.trajector.*;
-import io.bdc.painttd.content.trajector.Net;
+import io.bdc.painttd.content.trajector.NodeGraph;
 import io.bdc.painttd.content.trajector.var.*;
 import org.junit.*;
 
@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class TimeOffsetNodeTest {
     public static HeadlessApplication app;
 
-    private Net net;
+    private NodeGraph nodeGraph;
     private TimeOffsetNode timeOffsetNode;
     private TestSourceNode sourceNode;
     
@@ -81,32 +81,32 @@ public class TimeOffsetNodeTest {
     @Before
     public void setUp() {
         // 初始化网络
-        net = new Net();
+        nodeGraph = new NodeGraph();
         
         // 创建源节点
         sourceNode = new TestSourceNode();
-        int sourceIndex = net.add(sourceNode);
+        int sourceIndex = nodeGraph.add(sourceNode);
         
         // 创建时间偏移节点
         timeOffsetNode = new TimeOffsetNode();
-        int offsetIndex = net.add(timeOffsetNode);
+        int offsetIndex = nodeGraph.add(timeOffsetNode);
 
         // 设置连接：源节点 -> 时间偏移节点
         timeOffsetNode.inPort.sourceNode = sourceIndex;
         timeOffsetNode.inPort.sourceOutputPort = 0;
         
         // 设置网络根节点
-        net.rootIndex = offsetIndex;
+        nodeGraph.rootIndex = offsetIndex;
         
         // 设置节点的网络引用
-        sourceNode.net = net;
-        timeOffsetNode.net = net;
+        sourceNode.nodeGraph = nodeGraph;
+        timeOffsetNode.nodeGraph = nodeGraph;
     }
     
     @After
     public void tearDown() {
-        if (net != null) {
-            net.clear();
+        if (nodeGraph != null) {
+            nodeGraph.clear();
         }
     }
     
@@ -121,6 +121,7 @@ public class TimeOffsetNodeTest {
         float expectedFrame = inputFrame + 5.0f; // 15.0f
         
         // 获取同步输出
+        timeOffsetNode.calc(inputFrame);
         LinkableVar result = timeOffsetNode.getSyncOutput(inputFrame, 0);
         
         assertNotNull("同步输出不应为 null", result);
@@ -174,8 +175,8 @@ public class TimeOffsetNodeTest {
                 return true;
             }
         };
-        int offsetSourceIndex = net.add(offsetSource);
-        offsetSource.net = net;
+        int offsetSourceIndex = nodeGraph.add(offsetSource);
+        offsetSource.nodeGraph = nodeGraph;
         
         // 连接偏移量源
         timeOffsetNode.offset.sourceNode = offsetSourceIndex;

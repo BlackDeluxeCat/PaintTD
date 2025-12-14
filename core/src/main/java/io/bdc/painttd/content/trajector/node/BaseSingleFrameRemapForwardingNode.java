@@ -24,7 +24,7 @@ public abstract class BaseSingleFrameRemapForwardingNode extends Node{
     /** 转发提供inPort所连接的端口 */
     @Override
     public LinkableVar getSyncOutput(float frame, int targetOutputPort){
-        Node source = net.get(inPort.sourceNode);
+        Node source = nodeGraph.get(inPort.sourceNode);
         if(source == null) return null;
 
         if(targetOutputPort == 0){

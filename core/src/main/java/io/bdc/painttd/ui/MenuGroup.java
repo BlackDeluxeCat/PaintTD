@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.*;
+import io.bdc.painttd.content.trajector.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.io.*;
 
@@ -51,6 +52,13 @@ public class MenuGroup extends Table{
                                  Vars.inGame = true;
                                  Vars.inMenu = false;
                                  SaveHandler.load("save0");
+                             })
+                             .actor);
+
+        buttons.addActor(ActorUtils.wrapper
+                             .set(new TextButton(Core.i18n.get("menu.testNodeGraphEditor"), Styles.sTextB))
+                             .click(b -> {
+                                 Vars.nodeGraphEditorDialog.show(new NodeGraph());
                              })
                              .actor);
 

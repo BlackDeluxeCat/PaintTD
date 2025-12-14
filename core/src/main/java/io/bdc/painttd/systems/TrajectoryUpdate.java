@@ -14,7 +14,7 @@ public class TrajectoryUpdate extends IteratingSystem{
 
     @Override
     protected void process(int entityId){
-        var net = tm.get(entityId).net;
+        var net = tm.get(entityId).nodeGraph;
         net.update(1f);
     }
 }

@@ -3,7 +3,7 @@ package io.bdc.painttd.content.trajector;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 
-public class Net{
+public class NodeGraph{
     public int rootIndex;
     public Array<Node> nodes = new Array<>();
     public Vector2 output = new Vector2();
@@ -11,7 +11,7 @@ public class Net{
 
     public float frame;
 
-    public Net(){
+    public NodeGraph(){
     }
 
     public int add(Node node){
@@ -49,7 +49,7 @@ public class Net{
         rootIndex = 0;
     }
 
-    public void copy(Net origin){
+    public void copy(NodeGraph origin){
         clear();
         for(var node : origin.nodes){
             add(node.obtainCopy());

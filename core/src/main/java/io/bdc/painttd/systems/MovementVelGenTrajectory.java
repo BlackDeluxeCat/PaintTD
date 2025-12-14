@@ -17,6 +17,6 @@ public class MovementVelGenTrajectory extends IteratingSystem{
     protected void process(int entityId){
         TrajectoryComp trajectory = trajectoryMapper.get(entityId);
         VelocityComp velocity = velocityMapper.get(entityId);
-        velocity.set(trajectory.net.output);
+        velocity.set(trajectory.nodeGraph.output);
     }
 }

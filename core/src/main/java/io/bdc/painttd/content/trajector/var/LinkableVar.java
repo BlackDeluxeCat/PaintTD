@@ -14,9 +14,9 @@ public abstract class LinkableVar extends BaseVar implements Pool.Poolable{
     /** input端口同步行为发起者, 向上游节点请求同步.
      * @return 是否上游节点更新且同步到本地
      */
-    public boolean sync(Net net, float frame){
+    public boolean sync(NodeGraph nodeGraph, float frame){
         if(sourceNode == -1 || sourceOutputPort == -1) return false;
-        Node source = net.get(sourceNode);
+        Node source = nodeGraph.get(sourceNode);
         if(source == null) return false;
 
         //请求上游节点检查(和可能的计算), 返回true即上游计算更新, 需要同步
