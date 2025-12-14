@@ -33,10 +33,11 @@ public class TimeOffsetNodeTest {
         }
         
         @Override
-        public void calc(float frame) {
+        public boolean calc(float frame) {
             // 简单的测试逻辑：输出帧号
             output.cache = frame;
             lastSyncFrame = frame;
+            return true;
         }
         
         @Override
@@ -167,9 +168,10 @@ public class TimeOffsetNodeTest {
         // 创建一个特殊的偏移量源节点，总是返回固定值
         TestSourceNode offsetSource = new TestSourceNode() {
             @Override
-            public void calc(float frame) {
+            public boolean calc(float frame) {
                 // 重写 calc 方法，总是返回固定的偏移量
                 output.cache = 7.5f;
+                return true;
             }
         };
         int offsetSourceIndex = net.add(offsetSource);

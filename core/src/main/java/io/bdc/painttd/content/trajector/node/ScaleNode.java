@@ -29,10 +29,11 @@ public class ScaleNode extends Node{
     }
 
     @Override
-    public void calc(float frame){
+    public boolean calc(float frame){
         scaleI.sync(net, frame);
         shiftI.sync(net, frame);
         shiftO.cache.set(shiftI.cache).scl(scaleI.cache);
+        return true;
     }
 
     @Override

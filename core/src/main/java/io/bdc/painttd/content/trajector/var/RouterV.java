@@ -3,14 +3,22 @@ package io.bdc.painttd.content.trajector.var;
 import io.bdc.painttd.content.trajector.*;
 
 
+/**
+ * 路由变量, 用于节点间连接, 仅持有转发信息, 无任何缓存
+ * <p>应在外部使用这些转发信息
+ * <p>例: 外部方法使用转发信息. {@code Node upStreamNode = node.net.get(inputRouterV.sourceNode);}
+ */
 public class RouterV extends LinkableVar{
     public RouterV(){
         super(false);
     }
 
-    /** 路由变量标识上游节点转发关系, 无需实际同步 */
+    /** 无逻辑, 不应被调用
+     * @return 接口一致性, 无实际意义
+     */
     @Override
-    public void sync(Net net, float frame){
+    public boolean sync(Net net, float frame){
+        return false;
     }
 
     /** 路由变量不缓存实际值 */

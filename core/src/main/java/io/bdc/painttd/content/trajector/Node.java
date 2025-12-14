@@ -20,11 +20,13 @@ public abstract class Node implements Pool.Poolable{
         this.net = net;
     }
 
-    public abstract void calc(float frame);
+    /** 缓存版本计算, 缓存决策者, input端口同步启动者, 更新计算
+     * @return 是否更新了缓存
+     * */
+    public abstract boolean calc(float frame);
 
-    /** 下游请求sync的output端口提供者, 先使用帧更新计算, 再返回端口. 可以在这里进行端口转发和帧重映射. */
+    /** 下游请求sync的output端口提供者 可以重写转发端口. */
     public @Null LinkableVar getSyncOutput(float frame, int targetOutputPort){
-        calc(frame);
         return getOutput(targetOutputPort);
     }
 
