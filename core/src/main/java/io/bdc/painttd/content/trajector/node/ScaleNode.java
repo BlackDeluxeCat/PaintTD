@@ -4,6 +4,13 @@ import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.content.trajector.*;
 import io.bdc.painttd.content.trajector.var.*;
 
+@NodeInfo(
+    displayName = "node.scale.name",
+    description = "node.scale.description",
+    backgroundColor = "#4CAF50",  // 绿色，表示变换节点
+    icon = "scale_icon",
+    category = "transform"
+)
 public class ScaleNode extends Node{
     public Vector2V scaleI = new Vector2V(true){
         @Override

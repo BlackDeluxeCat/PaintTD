@@ -1,5 +1,6 @@
 package io.bdc.painttd.ui;
 
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.*;
@@ -13,6 +14,7 @@ public class BaseDialog extends Table{
 
     public BaseDialog(String title){
         setFillParent(true);
+        setTouchable(Touchable.enabled);
         pad(40);
 
         titleLabel = new Label(title, Styles.sLabel);

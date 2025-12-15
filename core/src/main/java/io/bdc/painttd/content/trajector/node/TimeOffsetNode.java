@@ -3,6 +3,13 @@ package io.bdc.painttd.content.trajector.node;
 import io.bdc.painttd.content.trajector.*;
 import io.bdc.painttd.content.trajector.var.*;
 
+@NodeInfo(
+    displayName = "node.timeOffset.name",
+    description = "node.timeOffset.description",
+    backgroundColor = "#FF9800",  // 橙色，表示时间相关节点
+    icon = "time_icon",
+    category = "time"
+)
 public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode{
     public FloatV offset = new FloatV(false);
 
