@@ -1,8 +1,8 @@
-package io.bdc.painttd.content.trajector.node;
+package io.bdc.painttd.game.path.node;
 
 import com.badlogic.gdx.utils.*;
-import io.bdc.painttd.content.trajector.*;
-import io.bdc.painttd.content.trajector.var.*;
+import io.bdc.painttd.game.path.*;
+import io.bdc.painttd.game.path.var.*;
 
 @NodeInfo(
     displayName = "node.scale.name",
@@ -30,17 +30,17 @@ import io.bdc.painttd.content.trajector.var.*;
         )
     }
 )
-public class ScaleNode extends Node{
-    public Vector2V scaleI = new Vector2V(true){
+public class ScaleNode extends Node {
+    public Vector2V scaleI = new Vector2V(true) {
         @Override
-        public void reset(){
+        public void reset() {
             cache.set(1f, 1f);
         }
     };
 
-    public Vector2V shiftI = new Vector2V(true){
+    public Vector2V shiftI = new Vector2V(true) {
         @Override
-        public void reset(){
+        public void reset() {
             cache.set(0f, 0f);
         }
     };
@@ -48,14 +48,14 @@ public class ScaleNode extends Node{
     public Vector2V shiftO = new Vector2V(false);
 
     @Override
-    public void registerVars(){
+    public void registerVars() {
         inputs.add(shiftI);
         inputs.add(scaleI);
         outputs.add(shiftO);
     }
 
     @Override
-    public boolean calc(float frame){
+    public boolean calc(float frame) {
         scaleI.sync(nodeGraph, frame);
         shiftI.sync(nodeGraph, frame);
         shiftO.cache.set(shiftI.cache).scl(scaleI.cache);
@@ -63,19 +63,19 @@ public class ScaleNode extends Node{
     }
 
     @Override
-    public ScaleNode obtain(){
+    public ScaleNode obtain() {
         return pool.obtain();
     }
 
     private final Pool<ScaleNode> pool = new ReflectionPool<>(ScaleNode.class, 100);
 
     @Override
-    public void free(){
+    public void free() {
         pool.free(this);
     }
 
     @Override
-    public void reset(){
+    public void reset() {
         scaleI.reset();
         shiftI.reset();
         shiftO.reset();

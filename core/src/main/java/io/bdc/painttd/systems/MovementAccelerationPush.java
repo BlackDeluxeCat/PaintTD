@@ -5,16 +5,16 @@ import com.artemis.systems.*;
 import io.bdc.painttd.content.components.logic.physics.*;
 
 @IsLogicProcess
-public class MovementAccelerationPush extends IteratingSystem{
+public class MovementAccelerationPush extends IteratingSystem {
     ComponentMapper<AccelerationComp> accelerationMapper;
     ComponentMapper<VelocityComp> velocityMapper;
 
-    public MovementAccelerationPush(){
+    public MovementAccelerationPush() {
         super(Aspect.all(VelocityComp.class, AccelerationComp.class));
     }
 
     @Override
-    protected void process(int entityId){
+    protected void process(int entityId) {
         AccelerationComp acceleration = accelerationMapper.get(entityId);
         VelocityComp velocity = velocityMapper.get(entityId);
         velocity.x += acceleration.x;

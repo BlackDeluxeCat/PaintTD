@@ -1,6 +1,6 @@
-package io.bdc.painttd.content.trajector;
+package io.bdc.painttd.game.path;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.*;
 
@@ -44,20 +44,20 @@ public class NodeMetadata {
     /**
      * 构造函数
      *
-     * @param nodeType 节点类型
-     * @param displayNameKey 显示名key
-     * @param descriptionKey 描述key
+     * @param nodeType        节点类型
+     * @param displayNameKey  显示名key
+     * @param descriptionKey  描述key
      * @param backgroundColor 背景色
-     * @param iconName 图标名
-     * @param category 分类
-     * @param inputPorts 输入端口
-     * @param outputPorts 输出端口
+     * @param iconName        图标名
+     * @param category        分类
+     * @param inputPorts      输入端口
+     * @param outputPorts     输出端口
      */
-    public NodeMetadata(String nodeType, String displayNameKey, 
-                       String descriptionKey, Color backgroundColor,
-                       String iconName, String category,
-                       Array<PortMetadata> inputPorts,
-                       Array<PortMetadata> outputPorts) {
+    public NodeMetadata(String nodeType, String displayNameKey,
+                        String descriptionKey, Color backgroundColor,
+                        String iconName, String category,
+                        Array<PortMetadata> inputPorts,
+                        Array<PortMetadata> outputPorts) {
         this.nodeType = nodeType;
         this.displayNameKey = displayNameKey;
         this.descriptionKey = descriptionKey;
@@ -91,6 +91,7 @@ public class NodeMetadata {
      * 根据变量名获取输入端口元数据
      *
      * @param varName 变量字段名
+     *
      * @return 端口元数据，如果不存在则返回null
      */
     public PortMetadata getInputPortMetadata(String varName) {
@@ -106,6 +107,7 @@ public class NodeMetadata {
      * 根据变量名获取输出端口元数据
      *
      * @param varName 变量字段名
+     *
      * @return 端口元数据，如果不存在则返回null
      */
     public PortMetadata getOutputPortMetadata(String varName) {
@@ -138,13 +140,13 @@ public class NodeMetadata {
     @Override
     public String toString() {
         return "NodeMetadata{" +
-                "nodeType='" + nodeType + '\'' +
-                ", displayNameKey='" + displayNameKey + '\'' +
-                ", backgroundColor=" + backgroundColor +
-                ", category='" + category + '\'' +
-                ", inputPorts=" + inputPorts.size +
-                ", outputPorts=" + outputPorts.size +
-                '}';
+                   "nodeType='" + nodeType + '\'' +
+                   ", displayNameKey='" + displayNameKey + '\'' +
+                   ", backgroundColor=" + backgroundColor +
+                   ", category='" + category + '\'' +
+                   ", inputPorts=" + inputPorts.size +
+                   ", outputPorts=" + outputPorts.size +
+                   '}';
     }
 
     @Override
@@ -152,7 +154,7 @@ public class NodeMetadata {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NodeMetadata that = (NodeMetadata) o;
+        NodeMetadata that = (NodeMetadata)o;
 
         return nodeType.equals(that.nodeType);
     }
@@ -181,20 +183,21 @@ public class NodeMetadata {
         public final boolean isInput;
         /** 所属节点类型，用于自动生成key */
         private final String nodeType;
+
         /**
          * 构造函数
          *
-         * @param varName 变量字段名
+         * @param varName        变量字段名
          * @param displayNameKey 显示名key
          * @param descriptionKey 描述key
-         * @param portColor 端口颜色
-         * @param iconName 端口图标
-         * @param isInput 是否为输入端口
-         * @param nodeType 节点类型
+         * @param portColor      端口颜色
+         * @param iconName       端口图标
+         * @param isInput        是否为输入端口
+         * @param nodeType       节点类型
          */
         public PortMetadata(String varName, String displayNameKey,
-                           String descriptionKey, Color portColor,
-                           String iconName, boolean isInput, String nodeType) {
+                            String descriptionKey, Color portColor,
+                            String iconName, boolean isInput, String nodeType) {
             this.varName = varName;
             this.displayNameKey = displayNameKey;
             this.descriptionKey = descriptionKey;
@@ -203,6 +206,7 @@ public class NodeMetadata {
             this.isInput = isInput;
             this.nodeType = nodeType;
         }
+
         /**
          * 获取本地化的显示名称
          *

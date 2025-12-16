@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.viewport.*;
 import io.bdc.painttd.ui.*;
 
-public class Vars{
+public class Vars {
     public static ScreenViewport worldViewport = new ScreenViewport();
     public static float zoom = 64f, lerpZoom = zoom;
 

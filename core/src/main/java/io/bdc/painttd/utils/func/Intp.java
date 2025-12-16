@@ -1,5 +1,5 @@
 package io.bdc.painttd.utils.func;
 
-public interface Intp{
+public interface Intp {
     int get();
 }

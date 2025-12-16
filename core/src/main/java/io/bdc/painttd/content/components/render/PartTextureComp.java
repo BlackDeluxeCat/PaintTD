@@ -8,22 +8,22 @@ import io.bdc.painttd.content.components.*;
 import static io.bdc.painttd.Core.*;
 
 @Transient
-public class PartTextureComp extends CopyableComponent{
+public class PartTextureComp extends CopyableComponent {
     public String textureName;
     public TextureAtlas.AtlasRegion atlasRegion;
     public TextureRegionDrawable drawable;
 
-    public PartTextureComp(){
+    public PartTextureComp() {
     }
 
-    public PartTextureComp(String textureName){
+    public PartTextureComp(String textureName) {
         this.textureName = textureName;
         this.atlasRegion = atlas.findRegion(textureName);
         this.drawable = new TextureRegionDrawable(atlasRegion);
     }
 
     @Override
-    public PartTextureComp copy(CopyableComponent other){
+    public PartTextureComp copy(CopyableComponent other) {
         PartTextureComp partTextureComp = (PartTextureComp)other;
         this.textureName = partTextureComp.textureName;
         this.atlasRegion = partTextureComp.atlasRegion;
@@ -32,14 +32,14 @@ public class PartTextureComp extends CopyableComponent{
     }
 
     @Override
-    protected void reset(){
+    protected void reset() {
         this.textureName = null;
         this.atlasRegion = null;
         this.drawable = null;
     }
 
     @Override
-    public void refill(CopyableComponent def){
+    public void refill(CopyableComponent def) {
         this.copy(def);
     }
 }

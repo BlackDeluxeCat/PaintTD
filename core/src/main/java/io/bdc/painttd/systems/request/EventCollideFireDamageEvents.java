@@ -6,12 +6,12 @@ import io.bdc.painttd.*;
 import io.bdc.painttd.content.components.logic.*;
 import io.bdc.painttd.content.components.marker.*;
 import io.bdc.painttd.systems.*;
-import io.bdc.painttd.utils.Events;
+import io.bdc.painttd.utils.*;
 
-import static io.bdc.painttd.game.Game.utils;
+import static io.bdc.painttd.game.Game.*;
 
 @IsLogicProcess
-public class EventCollideFireDamageEvents extends BaseSystem{
+public class EventCollideFireDamageEvents extends BaseSystem {
     public Object tokenCollideDamageEvent, tokenCollideSplashEvent, tokenCollideStainSplashEvent, tokenOnCollideDeadEvent;
 
     @All(value = {TeamComp.class, HealthComp.class})
@@ -33,13 +33,14 @@ public class EventCollideFireDamageEvents extends BaseSystem{
     ComponentMapper<StainSplashComp> stainSplashMapper;
 
     @Override
-    protected void initialize(){
+    protected void initialize() {
         super.initialize();
 
         tokenCollideDamageEvent = Events.on(EventTypes.CollideEvent.class, e -> {
-            if(e.handled) return;
-            if(!collideAspect.isInterested(world.getEntity(e.source)) || !collideAspect.isInterested(world.getEntity(e.target))) return;
-            if(utils.isTeammateOrFriendly(e.source, e.target)) return;
+            if (e.handled) return;
+            if (!collideAspect.isInterested(world.getEntity(e.source)) || !collideAspect.isInterested(world.getEntity(e.target)))
+                return;
+            if (utils.isTeammateOrFriendly(e.source, e.target)) return;
 
             var event = EventTypes.collideDamageEvent;
             event.reset();
@@ -49,18 +50,18 @@ public class EventCollideFireDamageEvents extends BaseSystem{
         });
 
         tokenOnCollideDeadEvent = Events.on(EventTypes.CollideEvent.class, e -> {
-            if(!onCollideDeadAspect.isInterested(world.getEntity(e.source))) return;
+            if (!onCollideDeadAspect.isInterested(world.getEntity(e.source))) return;
             utils.markDead(e.source);
         });
 
         tokenCollideSplashEvent = Events.on(EventTypes.CollideEvent.class, e -> {
-            if(e.handled) return;
-            if(utils.isTeammateOrFriendly(e.source, e.target)) return;
-            if(e.source == -1 || !splashAspect.isInterested(world.getEntity(e.source))) return;
+            if (e.handled) return;
+            if (utils.isTeammateOrFriendly(e.source, e.target)) return;
+            if (e.source == -1 || !splashAspect.isInterested(world.getEntity(e.source))) return;
 
             PositionComp pos = positionMapper.get(e.source);
             DamageSplashComp dmg = damageSplashMapper.get(e.source);
-            if(dmg == null) return;
+            if (dmg == null) return;
 
             var event = EventTypes.splashDamageEvent;
             event.reset();
@@ -73,8 +74,8 @@ public class EventCollideFireDamageEvents extends BaseSystem{
         });
 
         tokenCollideStainSplashEvent = Events.on(EventTypes.CollideEvent.class, e -> {
-            if(e.handled) return;
-            if(e.source == -1 || !stainAspect.isInterested(world.getEntity(e.source))) return;
+            if (e.handled) return;
+            if (e.source == -1 || !stainAspect.isInterested(world.getEntity(e.source))) return;
 
             PositionComp pos = positionMapper.get(e.source);
             StainSplashComp dmg = stainSplashMapper.get(e.source);
@@ -91,7 +92,7 @@ public class EventCollideFireDamageEvents extends BaseSystem{
     }
 
     @Override
-    protected void dispose(){
+    protected void dispose() {
         super.dispose();
         Events.off(tokenCollideDamageEvent);
         Events.off(tokenCollideSplashEvent);
@@ -99,6 +100,6 @@ public class EventCollideFireDamageEvents extends BaseSystem{
     }
 
     @Override
-    protected void processSystem(){
+    protected void processSystem() {
     }
 }

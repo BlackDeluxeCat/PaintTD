@@ -21,32 +21,32 @@ import static io.bdc.painttd.ui.Styles.*;
  * 显示单个实体的状态信息, 对每个组件构建ui.
  */
 //TODO基于Aspect的多组件UI
-public class HoveredTable extends Table{
+public class HoveredTable extends Table {
     Bag<Component> tmpBag = new Bag<>();
 
-    public HoveredTable(){
+    public HoveredTable() {
         pad(2);
         background(black3);
         defaults().minHeight(8).minWidth(200f);
     }
 
-    public void build(int e){
+    public void build(int e) {
         clear();
-        if(e == -1) return;
+        if (e == -1) return;
         ActorUtils.wrapper.set(this).update(t -> {
-            if(!Game.world.getEntityManager().isActive(e)) build(-1);
+            if (!Game.world.getEntityManager().isActive(e)) build(-1);
         });
 
         tmpBag.clear();
         Game.world.getComponentManager().getComponentsFor(e, tmpBag).sort(orderComparator);
-        for(Component comp : tmpBag){
-            if(comp instanceof CopyableComponent cc){
+        for (Component comp : tmpBag) {
+            if (comp instanceof CopyableComponent cc) {
                 var cont = new Table();
                 boolean built = false;
-                if(Game.rules.isEditor){
+                if (Game.rules.isEditor) {
                     built = buildEditorStrategy.buildObj(cc, cont);
                 }
-                if(!built) buildStrategy.buildObj(cc, cont);
+                if (!built) buildStrategy.buildObj(cc, cont);
                 add(cont).row();
             }
         }
@@ -66,27 +66,27 @@ public class HoveredTable extends Table{
 
             register(PositionComp.class, (comp, t) -> {
                 t.add(ActorUtils.wrapper.set(new Label(null, sLabel))
-                          .with(l -> l.setColor(Color.GRAY))
-                          .update(a -> ((Label)a).setText(comp.tileX() + ", " + comp.tileY()))
+                                        .with(l -> l.setColor(Color.GRAY))
+                                        .update(a -> ((Label)a).setText(comp.tileX() + ", " + comp.tileY()))
                           .actor);
             });
 
             register(HealthComp.class, (comp, t) -> {
                 t.add(ActorUtils.wrapper.set(new Label(null, sLabel))
-                          .update(a -> ((Label)a).setText("HP: " + Format.fixedBuilder(comp.health, 1)))
+                                        .update(a -> ((Label)a).setText("HP: " + Format.fixedBuilder(comp.health, 1)))
                           .actor);
             });
 
             register(HealthRegenComp.class, (comp, t) -> {
                 t.add(ActorUtils.wrapper.set(new Label(null, sLabel))
-                          .update(a -> ((Label)a).setText("每秒回复: " + Format.fixedBuilder(comp.rate, 1)))
+                                        .update(a -> ((Label)a).setText("每秒回复: " + Format.fixedBuilder(comp.rate, 1)))
                           .actor);
             });
 
             register(SpawnGroupCompsComp.class, (comp, t) -> {
                 t.defaults().minWidth(80f);
                 comp.comps.sort(orderComparator);
-                for(CopyableComponent c : comp.comps){
+                for (CopyableComponent c : comp.comps) {
                     var tt = new Table();
                     t.add(tt).row();
                     buildStrategy.buildObj(c, tt);
@@ -114,40 +114,40 @@ public class HoveredTable extends Table{
         }
 
         @Override
-        public <T extends CopyableComponent> void register(Class<T> clazz, ObjBuilder<T, Table> cons){
+        public <T extends CopyableComponent> void register(Class<T> clazz, ObjBuilder<T, Table> cons) {
             super.register(clazz, cons);
             componentOrder.add(clazz);
         }
     };
 
     /** 组件编辑控件的构建策略 */
-    public final static ObjBuildStrategy<CopyableComponent, Table> buildEditorStrategy = new ObjBuildStrategy<>(){
+    public final static ObjBuildStrategy<CopyableComponent, Table> buildEditorStrategy = new ObjBuildStrategy<>() {
         {
             register(SpawnGroupCompsComp.class, (comp, t) -> {
                 t.defaults();
                 var addTable = new Table();
 
                 addTable.add(ActorUtils.wrapper.set(new TextButton("生命恢复", sTextB))
-                                 .click(b -> {
-                                     comp.add(new HealthRegenComp(1f / 45f));
-                                 })
+                                               .click(b -> {
+                                                   comp.add(new HealthRegenComp(1f / 45f));
+                                               })
                                  .actor);
 
                 var scroll = new ScrollPane(addTable);
                 t.add(scroll).growX().colspan(2).row();
 
                 comp.comps.sort(orderComparator);
-                for(CopyableComponent c : comp.comps){
+                for (CopyableComponent c : comp.comps) {
                     var tt = new Table();
                     buildEditorStrategy.buildObj(c, tt);
                     t.add(tt);
 
                     t.add(ActorUtils.wrapper.set(new TextButton("x", sTextB))
-                              .click(b -> {
-                                  comp.comps.removeValue(c, true);
-                                  tt.remove();
-                                  b.remove();
-                              })
+                                            .click(b -> {
+                                                comp.comps.removeValue(c, true);
+                                                tt.remove();
+                                                b.remove();
+                                            })
                               .actor);
                     t.row();
                 }
@@ -162,7 +162,7 @@ public class HoveredTable extends Table{
                     t.add(field1).row();
                     field1.setTextFieldFilter(filter1);
                     field1.setTextFieldListener((f, c) -> {
-                        if(!f.getText().isEmpty()){
+                        if (!f.getText().isEmpty()) {
                             cons.get(f.getText());
                         }
                     });
@@ -192,7 +192,7 @@ public class HoveredTable extends Table{
                 t.add(field1).row();
                 field1.setTextFieldFilter(ActorUtils.floatOnly);
                 field1.setTextFieldListener((f, c) -> {
-                    if(!f.getText().isEmpty()){
+                    if (!f.getText().isEmpty()) {
                         comp.rate = Float.parseFloat(f.getText());
                     }
                 });

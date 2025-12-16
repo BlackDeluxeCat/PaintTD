@@ -1,5 +1,5 @@
 package io.bdc.painttd.utils.func;
 
-public interface Boolp{
+public interface Boolp {
     boolean get();
 }

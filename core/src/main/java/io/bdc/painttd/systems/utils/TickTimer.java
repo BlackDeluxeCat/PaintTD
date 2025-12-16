@@ -5,9 +5,9 @@ import io.bdc.painttd.game.*;
 import io.bdc.painttd.systems.*;
 
 @IsLogicProcess
-public class TickTimer extends BaseSystem{
+public class TickTimer extends BaseSystem {
     @Override
-    protected void processSystem(){
+    protected void processSystem() {
         Game.rules.ticks++;
     }
 }

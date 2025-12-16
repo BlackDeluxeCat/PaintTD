@@ -4,15 +4,15 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.*;
-import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.io.*;
 
-public class MenuGroup extends Table{
+public class MenuGroup extends Table {
     public Table title;
     public VerticalGroup buttons;
 
-    public void create(){
+    public void create() {
         clear();
         setBackground(Styles.menu);
         Core.stage.addActor(this);

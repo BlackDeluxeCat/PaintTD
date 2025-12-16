@@ -1,24 +1,24 @@
 package io.bdc.painttd.content.components.logic;
 
 import io.bdc.painttd.content.components.*;
-import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.game.path.*;
 
-public class TrajectoryComp extends CopyableComponent{
+public class TrajectoryComp extends CopyableComponent {
     public NodeGraph nodeGraph = new NodeGraph();
 
-    public TrajectoryComp(){
+    public TrajectoryComp() {
     }
 
     @Override
-    public CopyableComponent copy(CopyableComponent other){
-        if(other instanceof TrajectoryComp otherComp){
+    public CopyableComponent copy(CopyableComponent other) {
+        if (other instanceof TrajectoryComp otherComp) {
             nodeGraph.copy(otherComp.nodeGraph);
         }
         return this;
     }
 
     @Override
-    protected void reset(){
+    protected void reset() {
         nodeGraph.clear();
     }
 }

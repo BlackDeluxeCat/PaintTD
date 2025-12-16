@@ -10,29 +10,29 @@ import io.bdc.painttd.content.components.render.*;
 
 import static io.bdc.painttd.game.Game.*;
 
-public class EntityTypes{
+public class EntityTypes {
     public static Array<EntityType> types = new Array<>();
     public static ObjectMap<String, Array<EntityType>> typeByCategory = new ObjectMap<>();
     static Array<EntityType> tmp = new Array<>();
 
-    public static void register(EntityType type){
+    public static void register(EntityType type) {
         types.add(type);
 
         var arr = typeByCategory.get(type.category);
-        if(arr == null) typeByCategory.put(type.category, arr = new Array<>());
+        if (arr == null) typeByCategory.put(type.category, arr = new Array<>());
         arr.add(type);
     }
 
-    public static EntityType getById(String id){
-        for(EntityType type : types){
-            if(type.id.equals(id)){
+    public static EntityType getById(String id) {
+        for (EntityType type : types) {
+            if (type.id.equals(id)) {
                 return type;
             }
         }
         return null;
     }
 
-    public static Array<EntityType> getByCategory(String category){
+    public static Array<EntityType> getByCategory(String category) {
         tmp.clear();
         tmp.addAll(typeByCategory.get(category, tmp));
         return tmp;
@@ -42,19 +42,19 @@ public class EntityTypes{
         //enemies
         eraser,
 
-        //turrets
-        building, pencil, brush, airbrush,
+    //turrets
+    building, pencil, brush, airbrush,
 
-        //bullets
-        bullet,
+    //bullets
+    bullet,
 
-        //tiles
-        tile, tileStain, spawner;
+    //tiles
+    tile, tileStain, spawner;
 
-    public static void create(World world){
+    public static void create(World world) {
         types.clear();
 
-        eraser = new EntityType("eraser", cUnit){
+        eraser = new EntityType("eraser", cUnit) {
             {
                 add(new MarkerComp.UseQuadTree());
                 add(new MarkerComp.Hoverable());
@@ -74,7 +74,7 @@ public class EntityTypes{
             }
         };
 
-        bullet = new EntityType("bullet", cHide){
+        bullet = new EntityType("bullet", cHide) {
             {
                 add(new TeamComp(0));
                 add(new MarkerComp.UseQuadTree());
@@ -83,7 +83,7 @@ public class EntityTypes{
             }
         };
 
-        building = new EntityType("building", cHide){
+        building = new EntityType("building", cHide) {
             {
                 addGroup("building");
                 add(new MarkerComp.PlaceSnapGrid());
@@ -95,7 +95,7 @@ public class EntityTypes{
             }
         };
 
-        pencil = new EntityType("pencil", building, cBuilding){
+        pencil = new EntityType("pencil", building, cBuilding) {
             {
                 add(new MarkerComp.UseQuadTree());
                 add(new TeamComp(0));
@@ -113,7 +113,7 @@ public class EntityTypes{
                 add(new CooldownComp(60f));
                 add(new ColorLevelComp(2));
 
-                add(new BulletTypeComp(1, new EntityType("pencilBullet", bullet, cHide){
+                add(new BulletTypeComp(1, new EntityType("pencilBullet", bullet, cHide) {
                     {
                         add(new HealthComp(1f));
                         add(new PositionComp());
@@ -145,7 +145,7 @@ public class EntityTypes{
             }
         };
 
-        brush = new EntityType("brush", building, cBuilding){
+        brush = new EntityType("brush", building, cBuilding) {
             {
                 add(new MarkerComp.UseQuadTree());
                 add(new TeamComp(0));
@@ -156,7 +156,7 @@ public class EntityTypes{
                 add(new TargetPriorityComp(TargetPriorityComp.CLOSEST));
                 add(new TargetPosComp());
                 add(new TargetSingleComp());
-                add(new BulletTypeComp(1, new EntityType("brushBullet", bullet, cHide){
+                add(new BulletTypeComp(1, new EntityType("brushBullet", bullet, cHide) {
                     {
                         add(new HealthComp(1f));
                         add(new PositionComp());
@@ -180,7 +180,7 @@ public class EntityTypes{
             }
         };
 
-        airbrush = new EntityType("airbrush", building, cBuilding){
+        airbrush = new EntityType("airbrush", building, cBuilding) {
             {
                 add(new MarkerComp.UseQuadTree());
                 add(new TeamComp(0));
@@ -188,7 +188,7 @@ public class EntityTypes{
                 add(new HealthComp(4));
 
                 add(new RangeComp(18));
-                add(new BulletTypeComp(4, new EntityType("airbrushBullet", bullet, cHide){
+                add(new BulletTypeComp(4, new EntityType("airbrushBullet", bullet, cHide) {
                     {
                         add(new HealthComp(1f));
                         add(new PositionComp().z(1f));
@@ -218,7 +218,7 @@ public class EntityTypes{
             }
         };
 
-        tile = new EntityType("tile", cHide){
+        tile = new EntityType("tile", cHide) {
             {
                 addGroup("tile");
                 add(new PositionComp());
@@ -229,7 +229,7 @@ public class EntityTypes{
             }
         };
 
-        tileStain = new EntityType("tileStain", cHide){
+        tileStain = new EntityType("tileStain", cHide) {
             {
                 addGroup("tileStain");
                 add(new TileStainComp());
@@ -244,7 +244,7 @@ public class EntityTypes{
         };
 
 
-        spawner = new EntityType("spawner", building, cEditor){
+        spawner = new EntityType("spawner", building, cEditor) {
             {
                 addGroup("spawner");
                 add(new SpawnGroupComp());

@@ -9,9 +9,9 @@ import io.bdc.painttd.PaintTowerDefence;
 /**
  * Launches the Android application.
  */
-public class AndroidLauncher extends AndroidApplication{
+public class AndroidLauncher extends AndroidApplication {
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration configuration = new AndroidApplicationConfiguration();
         configuration.useImmersiveMode = true; // Recommended, but not required.

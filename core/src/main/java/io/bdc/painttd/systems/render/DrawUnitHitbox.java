@@ -10,30 +10,30 @@ import io.bdc.painttd.content.components.logic.physics.*;
 
 import static io.bdc.painttd.Core.*;
 
-public class DrawUnitHitbox extends IteratingSystem{
+public class DrawUnitHitbox extends IteratingSystem {
     public static boolean pref;
 
     public ComponentMapper<PositionComp> pm;
     public ComponentMapper<HitboxComp> hbm;
     public ComponentMapper<HealthComp> hm;
 
-    public DrawUnitHitbox(){
+    public DrawUnitHitbox() {
         super(Aspect.all(PositionComp.class).exclude(TileComp.class, TileStainComp.class));
     }
 
     @Override
-    protected void initialize(){
+    protected void initialize() {
         super.initialize();
         pref = Core.prefs.getBoolean("drawUnitHitbox");
     }
 
     @Override
-    protected void process(int entityId){
+    protected void process(int entityId) {
         PositionComp pos = pm.get(entityId);
         shaper.begin(ShapeRenderer.ShapeType.Line);
         Vars.c1.set(Color.WHITE, 0.2f);
         HealthComp hpc = hm.get(entityId);
-        if(hpc != null && hpc.maxHealth != -1){
+        if (hpc != null && hpc.maxHealth != -1) {
             Vars.c1.lerp(Color.RED, 1 - hpc.health / hpc.maxHealth).a = 1f;
         }
         shaper.getColor().set(Vars.c1);

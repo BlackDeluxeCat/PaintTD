@@ -3,22 +3,22 @@ package io.bdc.painttd.io;
 import com.badlogic.gdx.files.*;
 import io.bdc.painttd.*;
 import io.bdc.painttd.content.*;
-import io.bdc.painttd.game.Game;
+import io.bdc.painttd.game.*;
 import io.bdc.painttd.game.pathfind.*;
 
 import java.io.*;
 
-public class SaveHandler{
+public class SaveHandler {
     public static FileHandle path = Core.gameDataFolder.child("save");
 
-    public static void save(String save){
+    public static void save(String save) {
         SaveFormat format = new SaveFormat(250916, 0);
         format.entities = Game.utils.allEntitiesSub.getEntities();
         format.rules = Game.rules;
         Game.worldSerializationManager.save(getSaveOutput(save), format);
     }
 
-    public static void load(String save){
+    public static void load(String save) {
         // 重置世界状态
         Game.endMap();
 
@@ -31,7 +31,7 @@ public class SaveHandler{
 
         // 读取实体类型并重建完整实体
         var entities = format.entities;
-        for(int i = 0; i < entities.size(); i++){
+        for (int i = 0; i < entities.size(); i++) {
             var e = Game.world.getEntity(entities.get(i));
             EntityTypes.getById(Game.utils.entityTypeMapper.get(e).type).refill(e);
         }
@@ -40,15 +40,15 @@ public class SaveHandler{
         Game.map.shouldRebindTile = true;
     }
 
-    public static OutputStream getSaveOutput(String fileNameNoExtension){
+    public static OutputStream getSaveOutput(String fileNameNoExtension) {
         return path.child(fileNameNoExtension + ".json").write(false);
     }
 
-    public static InputStream getLoadInput(String fileNameNoExtension){
+    public static InputStream getLoadInput(String fileNameNoExtension) {
         return path.child(fileNameNoExtension + ".json").read();
     }
 
-    public static boolean exists(String fileNameNoExtension){
+    public static boolean exists(String fileNameNoExtension) {
         return path.child(fileNameNoExtension + ".json").exists();
     }
 }

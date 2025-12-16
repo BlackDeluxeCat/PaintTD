@@ -2,21 +2,21 @@ package io.bdc.painttd.content.components.logic.target;
 
 import io.bdc.painttd.content.components.*;
 
-public class TargetPosComp extends CopyableComponent{
+public class TargetPosComp extends CopyableComponent {
     public float x, y;
     public boolean shoot;
 
-    public TargetPosComp(){
+    public TargetPosComp() {
     }
 
     @Override
-    protected void reset(){
+    protected void reset() {
         x = 0;
         y = 0;
     }
 
     @Override
-    public CopyableComponent copy(CopyableComponent other){
+    public CopyableComponent copy(CopyableComponent other) {
         TargetPosComp o = (TargetPosComp)other;
         x = o.x;
         y = o.y;

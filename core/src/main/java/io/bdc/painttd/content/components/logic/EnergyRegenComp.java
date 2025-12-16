@@ -5,25 +5,25 @@ import io.bdc.painttd.content.components.*;
 /**
  * 能量系统回复组件。
  */
-public class EnergyRegenComp extends CopyableComponent{
+public class EnergyRegenComp extends CopyableComponent {
     public float regenRate;
 
-    public EnergyRegenComp(){
+    public EnergyRegenComp() {
     }
 
-    public EnergyRegenComp(float regenPreTick){
+    public EnergyRegenComp(float regenPreTick) {
         this.regenRate = regenPreTick;
     }
 
     @Override
-    public EnergyRegenComp copy(CopyableComponent other){
+    public EnergyRegenComp copy(CopyableComponent other) {
         EnergyRegenComp energyRegenComp = (EnergyRegenComp)other;
         regenRate = energyRegenComp.regenRate;
         return this;
     }
 
     @Override
-    protected void reset(){
+    protected void reset() {
         regenRate = 0;
     }
 }

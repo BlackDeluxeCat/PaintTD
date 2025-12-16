@@ -8,7 +8,7 @@ import io.bdc.painttd.*;
 
 import static io.bdc.painttd.ui.Fonts.*;
 
-public class Styles{
+public class Styles {
     public static float buttonSize = 36f;
     public static TextureAtlas.AtlasRegion whiteRegion;
 
@@ -21,7 +21,7 @@ public class Styles{
     public static Drawable black, black3, black5, black8, menu;
     public static NinePatchDrawable ninePatch;
 
-    public static void load(){
+    public static void load() {
         whiteRegion = Core.atlas.findRegion("white");
         white = new TextureRegionDrawable(whiteRegion);
         black = white.tint(Color.BLACK);

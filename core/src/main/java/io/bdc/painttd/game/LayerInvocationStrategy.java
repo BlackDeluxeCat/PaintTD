@@ -1,6 +1,7 @@
 package io.bdc.painttd.game;
 
 import com.artemis.*;
+import com.artemis.utils.*;
 import com.artemis.utils.Sort;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.systems.*;
@@ -13,31 +14,31 @@ import static io.bdc.painttd.game.Game.*;
  * 注册的层和系统均不可删除.
  * 发生注册和修改后, 必须调用 {@link #sort()} 进行排序.
  */
-public class LayerInvocationStrategy extends InvocationStrategy{
+public class LayerInvocationStrategy extends InvocationStrategy {
     public LayerManager<BaseSystem> lm = new LayerManager<>();
 
     public boolean frameLogicProcess;
     public long time, lastTime, stackTime = 0;
 
-    public LayerInvocationStrategy(){
+    public LayerInvocationStrategy() {
     }
 
     @Override
-    protected void process(){
+    protected void process() {
 
 
         time = TimeUtils.millis();
         stackTime += time - lastTime;
         lastTime = time;
-        if(stackTime > 1000 / lfps){
+        if (stackTime > 1000 / lfps) {
             stackTime = 0;
             frameLogicProcess = true;
         }
 
         BaseSystem[] systemsData = systems.getData();
-        for(int i = 0, s = systems.size(); s > i; i++){
-            if(disabled.get(i)) continue;
-            if((frameLogicProcess && !rules.isPause) || systemsData[i].getClass().getAnnotation(IsLogicProcess.class) == null){
+        for (int i = 0, s = systems.size(); s > i; i++) {
+            if (disabled.get(i)) continue;
+            if ((frameLogicProcess && !rules.isPause) || systemsData[i].getClass().getAnnotation(IsLogicProcess.class) == null) {
                 updateEntityStates();
                 systemsData[i].process();
             }
@@ -50,7 +51,7 @@ public class LayerInvocationStrategy extends InvocationStrategy{
     }
 
     @Override
-    protected void initialize(){
+    protected void initialize() {
         super.initialize();
         sort();
     }
@@ -58,7 +59,7 @@ public class LayerInvocationStrategy extends InvocationStrategy{
     /**
      * 排序 {@link #systems}. 当修改了某个Layer之后, 进行排序. 三个Manager不参与排序.
      */
-    public void sort(){
+    public void sort() {
         lm.sort();
         Sort.instance().sort(systems.getData(), (s1, s2) -> {
             float z1 = lm.getZ(s1);

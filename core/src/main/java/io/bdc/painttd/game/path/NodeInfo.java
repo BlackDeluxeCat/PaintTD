@@ -1,4 +1,4 @@
-package io.bdc.painttd.content.trajector;
+package io.bdc.painttd.game.path;
 
 import java.lang.annotation.*;
 
@@ -36,27 +36,27 @@ public @interface NodeInfo {
      * 示例：node.scale.name → "缩放节点"
      */
     String displayName();
-    
+
     /**
      * 节点描述的国际化key，可选
      * 格式：node.{nodeType}.description
      * 示例：node.scale.description → "对输入向量进行缩放变换"
      */
     String description() default "";
-    
+
     /**
      * 节点背景色，默认蓝色
      * 格式：十六进制颜色码
      * 示例："#4CAF50" → 绿色
      */
     String backgroundColor() default "#2196F3";
-    
+
     /**
      * 节点图标名称，可选
      * 用于在UI中显示节点图标
      */
     String icon() default "";
-    
+
     /**
      * 节点分类，默认为general
      * 用于在节点库中分组显示

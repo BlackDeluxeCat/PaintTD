@@ -1,35 +1,38 @@
-package io.bdc.painttd.content.trajector.var;
+package io.bdc.painttd.game.path.var;
 
 import com.badlogic.gdx.utils.*;
-import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.game.path.*;
 
-public abstract class LinkableVar extends BaseVar implements Pool.Poolable{
+public abstract class LinkableVar extends BaseVar implements Pool.Poolable {
     public int sourceNode = -1;
     public int sourceOutputPort = -1;
     public boolean cacheValue;
-    public LinkableVar(boolean cacheValue){
+
+    public LinkableVar(boolean cacheValue) {
         this.cacheValue = cacheValue;
     }
 
-    /** input端口同步行为发起者, 向上游节点请求同步.
+    /**
+     * input端口同步行为发起者, 向上游节点请求同步.
+     *
      * @return 是否上游节点更新且同步到本地
      */
-    public boolean sync(NodeGraph nodeGraph, float frame){
-        if(sourceNode == -1 || sourceOutputPort == -1) return false;
+    public boolean sync(NodeGraph nodeGraph, float frame) {
+        if (sourceNode == -1 || sourceOutputPort == -1) return false;
         Node source = nodeGraph.get(sourceNode);
-        if(source == null) return false;
+        if (source == null) return false;
 
         //请求上游节点检查(和可能的计算), 返回true即上游计算更新, 需要同步
         //可能由上游转发请求
-        if(source.calc(frame)){
+        if (source.calc(frame)) {
             //获取上游节点的输出端口. 可能由上游转发端口
             LinkableVar sourcePort = source.getSyncOutput(frame, sourceOutputPort);
-            if(sourcePort == null) return false;
+            if (sourcePort == null) return false;
             //读取上游节点的输出端口
             readLink(sourcePort);
             return true;
         }
-        
+
         return false;
     }
 
@@ -41,11 +44,11 @@ public abstract class LinkableVar extends BaseVar implements Pool.Poolable{
 
     /** 重置变量. */
     @Override
-    public void reset(){
+    public void reset() {
         sourceNode = -1;
         sourceOutputPort = -1;
         def();
     }
 
-    public void def(){}
+    public void def() {}
 }

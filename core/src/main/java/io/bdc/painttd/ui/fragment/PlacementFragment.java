@@ -6,12 +6,12 @@ import io.bdc.painttd.*;
 import io.bdc.painttd.content.*;
 import io.bdc.painttd.ui.*;
 
-import static io.bdc.painttd.ui.Styles.buttonSize;
-import static io.bdc.painttd.ui.Styles.sTextBEmpty;
+import static io.bdc.painttd.ui.Styles.*;
 
-public class PlacementFragment extends VerticalGroup{
+public class PlacementFragment extends VerticalGroup {
     Array<EntityType> tmp = new Array<>();
-    public void rebuild(){
+
+    public void rebuild() {
         clear();
         setWidth(60f);
         wrap(false);
@@ -24,22 +24,22 @@ public class PlacementFragment extends VerticalGroup{
         tmp.addAll(EntityTypes.getByCategory(EntityTypes.cUnit));
         tmp.addAll(EntityTypes.getByCategory(EntityTypes.cEditor));
 
-        for(var ttype : tmp){
-            HudGroup.EntityBrush brush = new HudGroup.EntityBrush(ttype.id){
+        for (var ttype : tmp) {
+            HudGroup.EntityBrush brush = new HudGroup.EntityBrush(ttype.id) {
                 @Override
-                public void getType(){
+                public void getType() {
                     type = EntityTypes.getById(ttype.id);
                 }
             };
 
             addActor(ActorUtils.wrapper
-                           .set(new TextButton(ttype.id, sTextBEmpty))
-                           .with(tt -> {
-                               var b = (Button)tt;
-                               b.setSize(buttonSize, buttonSize);
-                           })
-                           .click(b -> Vars.hud.current = brush)
-                           .actor);
+                         .set(new TextButton(ttype.id, sTextBEmpty))
+                         .with(tt -> {
+                             var b = (Button)tt;
+                             b.setSize(buttonSize, buttonSize);
+                         })
+                         .click(b -> Vars.hud.current = brush)
+                         .actor);
         }
     }
 }

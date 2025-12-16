@@ -1,6 +1,6 @@
-package io.bdc.painttd.content.trajector.var;
+package io.bdc.painttd.game.path.var;
 
-import io.bdc.painttd.content.trajector.*;
+import io.bdc.painttd.game.path.*;
 
 
 /**
@@ -8,27 +8,29 @@ import io.bdc.painttd.content.trajector.*;
  * <p>应在外部使用这些转发信息
  * <p>例: 外部方法使用转发信息. {@code Node upStreamNode = node.nodeGraph.get(inputRouterV.sourceNode);}
  */
-public class RouterV extends LinkableVar{
-    public RouterV(){
+public class RouterV extends LinkableVar {
+    public RouterV() {
         super(false);
     }
 
-    /** 无逻辑, 不应被调用
+    /**
+     * 无逻辑, 不应被调用
+     *
      * @return 接口一致性, 无实际意义
      */
     @Override
-    public boolean sync(NodeGraph nodeGraph, float frame){
+    public boolean sync(NodeGraph nodeGraph, float frame) {
         return false;
     }
 
     /** 路由变量不缓存实际值 */
     @Override
-    public void readLink(LinkableVar port){
+    public void readLink(LinkableVar port) {
     }
 
     /** 任何类型都可链接 */
     @Override
-    public boolean canLink(LinkableVar port){
+    public boolean canLink(LinkableVar port) {
         return true;
     }
 }

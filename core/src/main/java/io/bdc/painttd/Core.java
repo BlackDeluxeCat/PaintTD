@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.viewport.*;
 import io.bdc.painttd.io.*;
 
-public class Core{
+public class Core {
     public static AssetManager assets = new AssetManager();
     public static TextureAtlas atlas = new TextureAtlas("PaintTDAssets.atlas");
     public static SpriteBatch batch = new SpriteBatch();
@@ -29,19 +29,19 @@ public class Core{
     public static I18NBundle i18n;
     public static FileHandle i18nFile;
 
-    public static void load(){
+    public static void load() {
         prefs.load();
 
         i18nFile = Gdx.files.internal("i18n/bundle");
-        try{
-            if(prefs.get("i18n") == null){
+        try {
+            if (prefs.get("i18n") == null) {
                 //系统默认语言
                 i18n = I18NBundle.createBundle(i18nFile);
-            }else{
+            } else {
                 //设置项语言
                 i18n = I18NBundle.createBundle(i18nFile, prefs.getString("i18n", "zh_CN"));
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             Gdx.app.error("I18N", "Load failed", e);
         }
         I18NBundle.setExceptionOnMissingKey(false);

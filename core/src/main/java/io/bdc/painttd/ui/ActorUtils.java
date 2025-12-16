@@ -11,44 +11,44 @@ import io.bdc.painttd.utils.func.*;
  * 对类型不严格的场景, 可以复用静态的{@link #wrapper}
  * 频繁更新的场景, 可以复用自行构造的单例
  */
-public class ActorUtils<T extends Actor>{
+public class ActorUtils<T extends Actor> {
     public static ActorUtils<Actor> wrapper = new ActorUtils<>();
 
     public T actor;
 
-    protected ActorUtils(){
+    protected ActorUtils() {
     }
 
-    public ActorUtils(T actor){
+    public ActorUtils(T actor) {
         this.actor = actor;
     }
 
-    public ActorUtils<T> set(T actor){
+    public ActorUtils<T> set(T actor) {
         this.actor = actor;
         return this;
     }
 
-    public ActorUtils<T> update(Cons<T> updater){
+    public ActorUtils<T> update(Cons<T> updater) {
         ActorUtils.updater(actor, updater);
         return this;
     }
 
-    public ActorUtils<T> visible(Boolf<T> visible){
+    public ActorUtils<T> visible(Boolf<T> visible) {
         ActorUtils.setVisible(actor, visible);
         return this;
     }
 
-    public ActorUtils<T> click(Cons<T> clicked){
+    public ActorUtils<T> click(Cons<T> clicked) {
         ActorUtils.clicked(actor, clicked);
         return this;
     }
 
-    public ActorUtils<T> with(Cons<T> cons){
+    public ActorUtils<T> with(Cons<T> cons) {
         cons.get(actor);
         return this;
     }
 
-    public static <T extends Actor> T updater(T actor, Cons<T> updater){
+    public static <T extends Actor> T updater(T actor, Cons<T> updater) {
         RunnableAction run = new RunnableAction();
         run.setRunnable(() -> updater.get(actor));
         RepeatAction repeat = new RepeatAction();
@@ -59,7 +59,7 @@ public class ActorUtils<T extends Actor>{
         return actor;
     }
 
-    public static <T extends Actor> T setVisible(T actor, Boolf<T> visible){
+    public static <T extends Actor> T setVisible(T actor, Boolf<T> visible) {
         RunnableAction run = new RunnableAction();
         run.setRunnable(() -> actor.setVisible(visible.get(actor)));
         RepeatAction repeat = new RepeatAction();
@@ -70,10 +70,10 @@ public class ActorUtils<T extends Actor>{
         return actor;
     }
 
-    public static <T extends Actor> T clicked(T actor, Cons<T> clicked){
-        actor.addListener(new ClickListener(){
+    public static <T extends Actor> T clicked(T actor, Cons<T> clicked) {
+        actor.addListener(new ClickListener() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 clicked.get(actor);
                 return super.touchDown(event, x, y, pointer, button);
             }

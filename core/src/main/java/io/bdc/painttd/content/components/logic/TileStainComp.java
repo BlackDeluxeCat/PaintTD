@@ -2,20 +2,20 @@ package io.bdc.painttd.content.components.logic;
 
 import io.bdc.painttd.content.components.*;
 
-public class TileStainComp extends CopyableComponent{
+public class TileStainComp extends CopyableComponent {
     public boolean isCore;
     public transient boolean lastIsCore;
 
-    public TileStainComp(){
+    public TileStainComp() {
     }
 
-    public TileStainComp(boolean isCore){
+    public TileStainComp(boolean isCore) {
         this.isCore = isCore;
         lastIsCore = !isCore;
     }
 
     @Override
-    public TileStainComp copy(CopyableComponent other){
+    public TileStainComp copy(CopyableComponent other) {
         TileStainComp o = (TileStainComp)other;
         this.isCore = o.isCore;
         this.lastIsCore = o.lastIsCore;
@@ -23,7 +23,7 @@ public class TileStainComp extends CopyableComponent{
     }
 
     @Override
-    protected void reset(){
+    protected void reset() {
         isCore = false;
         lastIsCore = false;
     }

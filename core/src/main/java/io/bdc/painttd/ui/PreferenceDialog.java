@@ -2,7 +2,6 @@ package io.bdc.painttd.ui;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.*;
@@ -10,13 +9,13 @@ import io.bdc.painttd.*;
 import io.bdc.painttd.io.*;
 import io.bdc.painttd.systems.render.*;
 
-public class PreferenceDialog extends BaseDialog{
+public class PreferenceDialog extends BaseDialog {
     public Array<PrefCategory> categories = new Array<>();
     public int cateIndex = 0;
 
     Table cateTab = new Table(), prefTab = new Table();
 
-    public PreferenceDialog(){
+    public PreferenceDialog() {
         super("选项");
         setBackground(Styles.black8);
         addCloseButton();
@@ -42,31 +41,31 @@ public class PreferenceDialog extends BaseDialog{
         rebuild();
     }
 
-    public PrefCategory getCategory(String name){
-        for(PrefCategory category : categories){
-            if(category.name.equals(name)){
+    public PrefCategory getCategory(String name) {
+        for (PrefCategory category : categories) {
+            if (category.name.equals(name)) {
                 return category;
             }
         }
         return null;
     }
 
-    public void addCategory(PrefCategory category){
+    public void addCategory(PrefCategory category) {
         categories.add(category);
     }
 
-    public void rebuild(){
+    public void rebuild() {
         cont.clear();
 
         cateTab.clear();
         cateTab.top();
 
-        for(int i = 0; i < categories.size; i++){
+        for (int i = 0; i < categories.size; i++) {
             int fi = i;
             PrefCategory category = categories.get(i);
             cateTab.add(new ActorUtils<>(new Button(Styles.sTextB))
                             .with(t -> {
-                                if(category.icon != null) t.add(new Image(category.icon)).size(Styles.buttonSize);
+                                if (category.icon != null) t.add(new Image(category.icon)).size(Styles.buttonSize);
                                 t.add(new Label(Core.i18n.get(category.name), Styles.sLabel)).growX();
                             })
                             .click(b -> {
@@ -84,10 +83,10 @@ public class PreferenceDialog extends BaseDialog{
 
         ActorUtils.updater(cateScroller, t -> {
             var stageHit = t.getStage().hit(Gdx.input.getX(), Gdx.input.getY(), false);
-            if(stageHit != null && stageHit.isDescendantOf(cateScroller)){
+            if (stageHit != null && stageHit.isDescendantOf(cateScroller)) {
                 cateScroller.setWidth(400f);
                 cateScroller.toFront();
-            }else{
+            } else {
                 cateScroller.setWidth(200f);
                 cateScroller.toBack();
             }
@@ -95,11 +94,11 @@ public class PreferenceDialog extends BaseDialog{
         cont.add(new ScrollPane(prefTab)).grow();
     }
 
-    public void rebuildPrefTab(){
+    public void rebuildPrefTab() {
         prefTab.clear();
         prefTab.top();
         PrefCategory category = categories.get(cateIndex);
-        for(PrefCategory.PrefElem elem : category.elems){
+        for (PrefCategory.PrefElem elem : category.elems) {
             var t = new Table();
             buildStrategy.buildObj(elem, t);
             prefTab.add(t).growX().minHeight(Styles.buttonSize * 2).pad(8f).row();
@@ -119,7 +118,7 @@ public class PreferenceDialog extends BaseDialog{
                           )
                           .click(tt -> {
                               Core.prefs.putBoolean(be.name, be.value = !be.value);
-                              if(be.changed != null) be.changed.get(be.value);
+                              if (be.changed != null) be.changed.get(be.value);
                           })
                           .actor);
             });

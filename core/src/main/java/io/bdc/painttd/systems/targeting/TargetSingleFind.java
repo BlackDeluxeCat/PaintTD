@@ -15,7 +15,7 @@ import io.bdc.painttd.utils.func.*;
  * 一个基础索敌系统. 根据索敌标识使用过滤器筛选 **一个** 敌人.
  */
 @IsLogicProcess
-public class TargetSingleFind extends IteratingSystem{
+public class TargetSingleFind extends IteratingSystem {
     public ComponentMapper<TeamComp> tm;
     public ComponentMapper<PositionComp> pm;
     public ComponentMapper<TargetSingleComp> tcm;
@@ -25,12 +25,12 @@ public class TargetSingleFind extends IteratingSystem{
     protected final Vector2 entityPos = new Vector2();
     protected int currentProcessId;
 
-    public TargetSingleFind(){
+    public TargetSingleFind() {
         super(Aspect.all(TeamComp.class, PositionComp.class, TargetSingleComp.class, TargetPriorityComp.class).exclude(MarkerComp.Dead.class));
     }
 
     @Override
-    protected void process(int entityId){
+    protected void process(int entityId) {
         currentProcessId = entityId;
         //TeamComp team = tm.get(entityId);
         TargetSingleComp current = tcm.get(entityId);
@@ -38,27 +38,27 @@ public class TargetSingleFind extends IteratingSystem{
         PositionComp pos = pm.get(entityId);
         RangeComp range = rm.get(entityId);
 
-        if(current.targetId != -1){
+        if (current.targetId != -1) {
             PositionComp epos = pm.get(current.targetId);
-            if(epos != null){
-                if(Vars.v1.set(epos.x, epos.y).dst(pos.x, pos.y) > range.range) current.targetId = -1;
+            if (epos != null) {
+                if (Vars.v1.set(epos.x, epos.y).dst(pos.x, pos.y) > range.range) current.targetId = -1;
             }
         }
 
-        if(current.targetId == -1 || Game.utils.isDead(current.targetId)){
+        if (current.targetId == -1 || Game.utils.isDead(current.targetId)) {
             entityPos.set(pos.x, pos.y);
             current.targetId = Game.entities.closestCircle(pos.x, pos.y, range.range, other -> {
                 //排除友军
-                if(!tm.has(other) || Game.utils.isTeammateOrFriendly(entityId, other)) return Float.MAX_VALUE;
+                if (!tm.has(other) || Game.utils.isTeammateOrFriendly(entityId, other)) return Float.MAX_VALUE;
                 return getDistanceFilter(priority.priority).get(other);
             });
         }
     }
 
-    public IntFloatf getDistanceFilter(int priority){
-        return switch(priority){
+    public IntFloatf getDistanceFilter(int priority) {
+        return switch (priority) {
             case TargetPriorityComp.CLOSEST -> (id) -> {
-                if(currentProcessId == id) return Float.MAX_VALUE;  //排除自身
+                if (currentProcessId == id) return Float.MAX_VALUE;  //排除自身
                 PositionComp pos = pm.get(id);
                 return Vars.v1.set(pos.x, pos.y).sub(entityPos).len2();
             };

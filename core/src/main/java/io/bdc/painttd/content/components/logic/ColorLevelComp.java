@@ -2,25 +2,25 @@ package io.bdc.painttd.content.components.logic;
 
 import io.bdc.painttd.content.components.*;
 
-public class ColorLevelComp extends CopyableComponent{
+public class ColorLevelComp extends CopyableComponent {
     public int level;
 
-    public ColorLevelComp(){
+    public ColorLevelComp() {
     }
 
-    public ColorLevelComp(int level){
+    public ColorLevelComp(int level) {
         this.level = level;
     }
 
     @Override
-    public ColorLevelComp copy(CopyableComponent other){
+    public ColorLevelComp copy(CopyableComponent other) {
         ColorLevelComp colorLevelComp = (ColorLevelComp)other;
         level = colorLevelComp.level;
         return this;
     }
 
     @Override
-    protected void reset(){
+    protected void reset() {
         level = 0;
     }
 }

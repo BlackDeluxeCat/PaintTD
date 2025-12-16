@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
+import io.bdc.painttd.game.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.ui.*;
 import io.bdc.painttd.utils.*;
@@ -15,10 +16,10 @@ import static io.bdc.painttd.game.Game.*;
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
-public class PaintTowerDefence extends ApplicationAdapter{
+public class PaintTowerDefence extends ApplicationAdapter {
 
     @Override
-    public void create(){
+    public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
@@ -36,7 +37,7 @@ public class PaintTowerDefence extends ApplicationAdapter{
     }
 
     @Override
-    public void render(){
+    public void render() {
         Time.update();
         prefs.save();
 
@@ -50,7 +51,7 @@ public class PaintTowerDefence extends ApplicationAdapter{
 
         //world的现实时间增量
         //多数时候, world使用帧为时间单位
-        if(inGame){
+        if (inGame) {
             world.setDelta(Time.delta((long)world.getDelta()));
             world.process();
         }
@@ -61,25 +62,25 @@ public class PaintTowerDefence extends ApplicationAdapter{
     }
 
     @Override
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         super.resize(width, height);
         Core.stage.getViewport().update(width, height, true);
     }
 
     @Override
-    public void resume(){
+    public void resume() {
         super.resume();
     }
 
     @Override
-    public void dispose(){
+    public void dispose() {
         Game.dispose();
         Core.atlas.dispose();
         Core.assets.dispose();
     }
 
     @Override
-    public void pause(){
+    public void pause() {
         super.pause();
     }
 }

@@ -5,14 +5,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.*;
 
-public class BaseDialog extends Table{
+public class BaseDialog extends Table {
     public Table titleTable;
     public Label titleLabel;
 
     public Table cont;
     public Table buttons;
 
-    public BaseDialog(String title){
+    public BaseDialog(String title) {
         setFillParent(true);
         setTouchable(Touchable.enabled);
         pad(40);
@@ -35,20 +35,20 @@ public class BaseDialog extends Table{
         add(buttons).growX().minHeight(0f);
     }
 
-    public void addCloseButton(){
+    public void addCloseButton() {
         buttons.add(ActorUtils.wrapper
-                           .set(new TextButton(Core.i18n.get("button.back"), Styles.sTextB))
-                           .click(b -> {
-                               this.hide();
-                           })
-                           .actor).height(Styles.buttonSize * 2);
+                        .set(new TextButton(Core.i18n.get("button.back"), Styles.sTextB))
+                        .click(b -> {
+                            this.hide();
+                        })
+                        .actor).height(Styles.buttonSize * 2);
     }
 
-    public void show(){
+    public void show() {
         Core.stage.addActor(this);
     }
 
-    public void hide(){
+    public void hide() {
         remove();
     }
 }

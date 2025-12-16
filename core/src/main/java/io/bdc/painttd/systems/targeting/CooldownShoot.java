@@ -10,19 +10,19 @@ import io.bdc.painttd.systems.*;
  * 带有冷却的武器的攻击
  */
 @IsLogicProcess
-public class CooldownShoot extends IteratingSystem{
+public class CooldownShoot extends IteratingSystem {
     public ComponentMapper<CooldownComp> cm;
 
-    public CooldownShoot(){
+    public CooldownShoot() {
         super(Aspect.all(CooldownComp.class).exclude(MarkerComp.Dead.class));
     }
 
     @Override
-    protected void process(int entityId){
+    protected void process(int entityId) {
         CooldownComp cooldown = cm.get(entityId);
         cooldown.shootCount = 0;
         cooldown.currentCooldown -= 1;
-        while(cooldown.currentCooldown <= 0){
+        while (cooldown.currentCooldown <= 0) {
             cooldown.currentCooldown += cooldown.cooldown;
             cooldown.shootCount += 1;
         }

@@ -1,5 +1,5 @@
 package io.bdc.painttd.utils.func;
 
-public interface Floatc{
+public interface Floatc {
     void get(float f);
 }

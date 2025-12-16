@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import io.bdc.painttd.*;
 import io.bdc.painttd.content.*;
 import io.bdc.painttd.content.components.marker.*;
+import io.bdc.painttd.game.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.io.*;
 import io.bdc.painttd.ui.fragment.*;
@@ -15,7 +16,7 @@ import static io.bdc.painttd.Core.*;
 import static io.bdc.painttd.game.Game.*;
 import static io.bdc.painttd.ui.Styles.*;
 
-public class HudGroup extends WidgetGroup{
+public class HudGroup extends WidgetGroup {
     //placement brush
     public MapEditBrush current;
 
@@ -26,14 +27,14 @@ public class HudGroup extends WidgetGroup{
     public ColorFragment colors;
     public MapEditorFragment mapEditorTable;
 
-    public HudGroup(){
+    public HudGroup() {
         placement = new PlacementFragment();
         colors = new ColorFragment();
         mapEditorTable = new MapEditorFragment();
         hoveredTable = new HoveredTable();
     }
 
-    public void rebuild(){
+    public void rebuild() {
         clear();
         setFillParent(true);
         ActorUtils.setVisible(this, g -> Vars.inGame);
@@ -44,19 +45,19 @@ public class HudGroup extends WidgetGroup{
             t.right().top();
             t.defaults().right();
             t.add(ActorUtils.wrapper.set(new Label("", sLabel))
-                      .update(a -> {
-                          var l = (Label)a;
-                          l.setText("FPS: " + Gdx.graphics.getFramesPerSecond() + ", RAM: " + (int)(Gdx.app.getJavaHeap() / 1000000f) + "MB");
-                      })
+                                    .update(a -> {
+                                        var l = (Label)a;
+                                        l.setText("FPS: " + Gdx.graphics.getFramesPerSecond() + ", RAM: " + (int)(Gdx.app.getJavaHeap() / 1000000f) + "MB");
+                                    })
                       .actor);
 
             t.row();
 
             t.add(ActorUtils.wrapper.set(new Label("", sLabel))
-                      .update(a -> {
-                          var l = (Label)a;
-                          l.setText("Wave " + rules.wave + "(" + Format.fixedBuilder(rules.waveTimer / lfps, 0) + ")");
-                      })
+                                    .update(a -> {
+                                        var l = (Label)a;
+                                        l.setText("Wave " + rules.wave + "(" + Format.fixedBuilder(rules.waveTimer / lfps, 0) + ")");
+                                    })
                       .actor);
         });
 
@@ -120,7 +121,7 @@ public class HudGroup extends WidgetGroup{
         }).bottom().left();
     }
 
-    public Table fill(Cons<Table> cons){
+    public Table fill(Cons<Table> cons) {
         Table table = new Table();
         table.setFillParent(true);
         cons.get(table);
@@ -128,31 +129,31 @@ public class HudGroup extends WidgetGroup{
         return table;
     }
 
-    public abstract static class MapEditBrush{
+    public abstract static class MapEditBrush {
         public String name;
         public boolean longPress;
 
-        public MapEditBrush(String name){
+        public MapEditBrush(String name) {
             this.name = name;
         }
 
         public abstract void draw(float worldX, float worldY);
     }
 
-    public abstract static class EntityBrush extends MapEditBrush{
+    public abstract static class EntityBrush extends MapEditBrush {
         public EntityType type;
 
-        public EntityBrush(String name){
+        public EntityBrush(String name) {
             super(name);
         }
 
         public abstract void getType();
 
         @Override
-        public void draw(float worldX, float worldY){
+        public void draw(float worldX, float worldY) {
             getType();
             var e = type.create();
-            if(world.getMapper(MarkerComp.PlaceSnapGrid.class).has(e)){
+            if (world.getMapper(MarkerComp.PlaceSnapGrid.class).has(e)) {
                 worldX = Math.round(worldX);
                 worldY = Math.round(worldY);
             }

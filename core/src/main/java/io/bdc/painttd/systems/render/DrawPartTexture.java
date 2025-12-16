@@ -11,17 +11,17 @@ import io.bdc.painttd.content.components.render.*;
 import static io.bdc.painttd.Core.*;
 
 @Wire
-public class DrawPartTexture extends IteratingSystem{
+public class DrawPartTexture extends IteratingSystem {
     public ComponentMapper<PartTextureComp> partTextureMapper;
     public ComponentMapper<PositionComp> positionMapper;
     public ComponentMapper<HitboxComp> hitboxMapper;
 
-    public DrawPartTexture(){
+    public DrawPartTexture() {
         super(Aspect.all(PartTextureComp.class, PositionComp.class));
     }
 
     @Override
-    protected void process(int entityId){
+    protected void process(int entityId) {
         batch.setColor(Color.WHITE);
 
         PartTextureComp partTextureComp = partTextureMapper.get(entityId);

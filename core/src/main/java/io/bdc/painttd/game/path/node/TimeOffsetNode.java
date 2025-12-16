@@ -1,7 +1,7 @@
-package io.bdc.painttd.content.trajector.node;
+package io.bdc.painttd.game.path.node;
 
-import io.bdc.painttd.content.trajector.*;
-import io.bdc.painttd.content.trajector.var.*;
+import io.bdc.painttd.game.path.*;
+import io.bdc.painttd.game.path.var.*;
 
 @NodeInfo(
     displayName = "node.timeOffset.name",
@@ -29,17 +29,17 @@ import io.bdc.painttd.content.trajector.var.*;
         )
     }
 )
-public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode{
+public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
     public FloatV offset = new FloatV(false);
 
     @Override
-    public void registerVars(){
+    public void registerVars() {
         super.registerVars();
         outputs.add(offset);
     }
 
     @Override
-    public boolean calc(float frame){
+    public boolean calc(float frame) {
         //特别留意时间参考系在不同分支间隔离
         //offset及其分支仍然在未映射的参考系中
         offset.sync(nodeGraph, frame);

@@ -6,12 +6,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.*;
 
 import static io.bdc.painttd.Core.*;
 
-public class Fonts{
+public class Fonts {
     public static FreetypeFontLoader.FreeTypeFontLoaderParameter params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 
     public static BitmapFont standard;
 
-    public static void load(){
+    public static void load() {
         assets.setLoader(BitmapFont.class, new FreetypeFontLoader(assets.getFileHandleResolver()));
         assets.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(assets.getFileHandleResolver()));
 

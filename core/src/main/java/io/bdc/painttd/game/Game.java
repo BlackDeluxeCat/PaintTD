@@ -17,7 +17,7 @@ import io.bdc.painttd.systems.targeting.*;
 import io.bdc.painttd.systems.utils.*;
 import io.bdc.painttd.utils.*;
 
-public class Game{
+public class Game {
     public static Rule rules;
 
     //技术性
@@ -38,13 +38,13 @@ public class Game{
     public static FlowField flowField;
 
     /** 初始化Game类及系统 */
-    public static void create(){
+    public static void create() {
         createSystems();
 
         WorldConfigurationBuilder builder = new WorldConfigurationBuilder();
         builder.register(lm);
         lm.lm.layers.forEach(layer -> layer.objects.forEach(builder::with));
-        if(world != null) world.dispose();
+        if (world != null) world.dispose();
         world = new World(builder.build());
 
         worldSerializationManager.setSerializer(new JsonArtemisSerializer(world));
@@ -54,7 +54,7 @@ public class Game{
     }
 
     /** 创建一张全新的地图 */
-    public static void createNewMap(){
+    public static void createNewMap() {
         endMap();
         rules = new Rule();
         rules.width = 20;
@@ -64,7 +64,7 @@ public class Game{
 
         Color color = Vars.c1.set(Color.FOREST);
 
-        for(int i = 0; i < l; i++){
+        for (int i = 0; i < l; i++) {
             color.lerp(Color.ORANGE, i / (float)l);
             rules.colorPalette.addColor(color);
         }
@@ -73,8 +73,8 @@ public class Game{
         endMap();
         map.createMap(rules.width, rules.height);
         flowField = new FlowField(map);
-        for(int x = 0; x < map.width; x++){
-            for(int y = 0; y < map.height; y++){
+        for (int x = 0; x < map.width; x++) {
+            for (int y = 0; y < map.height; y++) {
                 int e = EntityTypes.tileStain.create().getId();
                 utils.setPosition(e, x, y);
                 map.putEntity(e, "tileStain", x, y);
@@ -88,27 +88,27 @@ public class Game{
     }
 
     /** 移除所有实体, 清空世界状态 */
-    public static void endMap(){
+    public static void endMap() {
         var oldBag = utils.allEntitiesSub.getEntities();
-        for(int i = 0; i < oldBag.size(); i++){
+        for (int i = 0; i < oldBag.size(); i++) {
             world.delete(oldBag.get(i));
         }
     }
 
-    public static void dispose(){
+    public static void dispose() {
         world.dispose();
     }
 
     /**
      * 持有实体引用的组件, 在此注册{@link com.artemis.annotations.EntityId}字段监听器
      */
-    public static void createLinks(){
+    public static void createLinks() {
         entityLinkManager.register(TargetSingleComp.class,
-            new LinkAdapter(){
+            new LinkAdapter() {
                 private ComponentMapper<TargetSingleComp> comp;// relevant fields are injected by default
 
                 @Override
-                public void onTargetDead(int sourceId, int deadTargetId){
+                public void onTargetDead(int sourceId, int deadTargetId) {
                     comp.get(sourceId).targetId = -1;
                 }
             });
@@ -127,7 +127,7 @@ public class Game{
         logicPost = lm.lm.registerLayer("logicLastWork", 9000),
         render = lm.lm.registerLayer("render", 10000);
 
-    public static void createSystems(){
+    public static void createSystems() {
         backend.with(l -> {
             l.add(groups = new GroupManager());
             l.add(entityLinkManager = new EntityLinkManager());
@@ -185,18 +185,18 @@ public class Game{
         });
 
         render.with(l -> {
-            l.add(new BaseSystem(){
+            l.add(new BaseSystem() {
                 @Override
-                protected void processSystem(){
+                protected void processSystem() {
                     Core.batch.begin();
                 }
             });
 
             l.add(new DrawPartTexture());
 
-            l.add(new BaseSystem(){
+            l.add(new BaseSystem() {
                 @Override
-                protected void processSystem(){
+                protected void processSystem() {
                     Core.batch.end();
                 }
             });
