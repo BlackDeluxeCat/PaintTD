@@ -123,8 +123,8 @@ public class NodeGraphEditorDialog extends BaseDialog {
             outputsTable = new Table();
 
             cont.clear();
-            cont.add(inputsTable);
-            cont.add(outputsTable);
+            cont.add(inputsTable).growX().top();
+            cont.add(outputsTable).width(Styles.buttonSize).growY().top();
             rebuildTitle();
             rebuildInputs();
 
@@ -146,10 +146,15 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 NodeMetadata.PortMetadata meta = inputPortMetas.get(i);
                 boolean isInput = meta.isInput;
 
-                it.add(ActorUtils.wrapper.set(new Label(isInput ? "I" : "O", Styles.sLabel)).actor);
-                it.add(ActorUtils.wrapper.set(new Label(meta.getDisplayName(), Styles.sLabel)).actor);
+                it.add(ActorUtils.wrapper.set(new Label(isInput ? "I" : "O", Styles.sLabel))
+                                         .with(l -> ((Label)l).setAlignment(Align.center)).actor
+                ).size(Styles.buttonSize);
 
-                inputsTable.add(it).row();
+                it.add(ActorUtils.wrapper.set(new Label(meta.getDisplayName(), Styles.sLabel))
+                                         .with(l -> ((Label)l).setAlignment(Align.center)).actor
+                ).minHeight(Styles.buttonSize).growX();
+
+                inputsTable.add(it).growX().row();
             }
         }
 

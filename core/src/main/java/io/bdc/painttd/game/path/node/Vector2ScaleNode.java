@@ -5,26 +5,27 @@ import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.path.var.*;
 
 @NodeInfo(
-    displayName = "node.scale.name",
-    description = "node.scale.description",
+    nodeType = "vector2Scale",
+    displayName = "name",
+    description = "description",
     backgroundColor = "#4CAF50",  // 绿色，表示变换节点
     icon = "scale_icon",
     category = "transform",
     inputPorts = {
         @NodeInfo.Port(
-            varName = "shift",
+            fieldName = "shift",
             color = "#FF9800",  // 橙色
             icon = "input_vector"
         ),
         @NodeInfo.Port(
-            varName = "scale",
+            fieldName = "scale",
             color = "#E91E63",  // 粉色
             icon = "input_vector"
         )
     },
     outputPorts = {
         @NodeInfo.Port(
-            varName = "shift",
+            fieldName = "shift",
             color = "#2196F3",  // 蓝色
             icon = "output_vector"
         )

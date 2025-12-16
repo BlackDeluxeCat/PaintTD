@@ -1,8 +1,9 @@
 package io.bdc.painttd.game.path;
 
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.utils.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 import io.bdc.painttd.*;
+import io.bdc.painttd.utils.Format;
 
 /**
  * 节点元数据类，使用享元模式
@@ -23,9 +24,9 @@ import io.bdc.painttd.*;
  * @see NodeMetadataRegistry
  */
 public class NodeMetadata {
-    /** 节点类型，如"Vector2ScaleNode" */
+    /** 节点类型，如"ScaleNode" */
     public final String nodeType;
-    /** 国际化key，如"node.scale.name" */
+    /** 国际化key，如"scale.name" */
     public final String displayNameKey;
     /** 描述的国际化key */
     public final String descriptionKey;
@@ -74,7 +75,7 @@ public class NodeMetadata {
      * @return 本地化后的显示名称
      */
     public String getDisplayName() {
-        return Core.i18n.get(displayNameKey);
+        return Format.getI18NWithFallback(displayNameKey, nodeType);
     }
 
     /**
@@ -84,19 +85,19 @@ public class NodeMetadata {
      */
     public String getDescription() {
         if (descriptionKey == null || descriptionKey.isEmpty()) return "";
-        return Core.i18n.get(descriptionKey);
+        return Format.getI18NWithFallback(descriptionKey, "");
     }
 
     /**
      * 根据变量名获取输入端口元数据
      *
-     * @param varName 变量字段名
+     * @param fieldName 变量字段名
      *
      * @return 端口元数据，如果不存在则返回null
      */
-    public PortMetadata getInputPortMetadata(String varName) {
+    public PortMetadata getInputPortMetadata(String fieldName) {
         for (PortMetadata port : inputPorts) {
-            if (port.varName.equals(varName)) {
+            if (port.fieldName.equals(fieldName)) {
                 return port;
             }
         }
@@ -106,13 +107,13 @@ public class NodeMetadata {
     /**
      * 根据变量名获取输出端口元数据
      *
-     * @param varName 变量字段名
+     * @param fieldName 变量字段名
      *
      * @return 端口元数据，如果不存在则返回null
      */
-    public PortMetadata getOutputPortMetadata(String varName) {
+    public PortMetadata getOutputPortMetadata(String fieldName) {
         for (PortMetadata port : outputPorts) {
-            if (port.varName.equals(varName)) {
+            if (port.fieldName.equals(fieldName)) {
                 return port;
             }
         }
@@ -170,7 +171,7 @@ public class NodeMetadata {
      */
     public static class PortMetadata {
         /** 变量字段名 */
-        public final String varName;
+        public final String fieldName;
         /** 显示名国际化key（可能为空，表示自动生成） */
         public final String displayNameKey;
         /** 描述国际化key（可能为空，表示自动生成） */
@@ -184,21 +185,25 @@ public class NodeMetadata {
         /** 所属节点类型，用于自动生成key */
         private final String nodeType;
 
+        /** 缓存的生成key */
+        private String cachedDisplayNameKey;
+        private String cachedDescriptionKey;
+
         /**
          * 构造函数
          *
-         * @param varName        变量字段名
-         * @param displayNameKey 显示名key
-         * @param descriptionKey 描述key
-         * @param portColor      端口颜色
-         * @param iconName       端口图标
-         * @param isInput        是否为输入端口
-         * @param nodeType       节点类型
+         * @param fieldName        变量字段名
+         * @param displayNameKey   显示名key
+         * @param descriptionKey   描述key
+         * @param portColor        端口颜色
+         * @param iconName         端口图标
+         * @param isInput          是否为输入端口
+         * @param nodeType         节点类型
          */
-        public PortMetadata(String varName, String displayNameKey,
+        public PortMetadata(String fieldName, String displayNameKey,
                             String descriptionKey, Color portColor,
                             String iconName, boolean isInput, String nodeType) {
-            this.varName = varName;
+            this.fieldName = fieldName;
             this.displayNameKey = displayNameKey;
             this.descriptionKey = descriptionKey;
             this.portColor = portColor;
@@ -214,7 +219,7 @@ public class NodeMetadata {
          */
         public String getDisplayName() {
             String key = getDisplayNameKey();
-            return Core.i18n.get(key);
+            return Format.getI18NWithFallback(key, fieldName);
         }
 
         /**
@@ -223,16 +228,11 @@ public class NodeMetadata {
          * @return 显示名国际化key
          */
         public String getDisplayNameKey() {
-            if (displayNameKey != null && !displayNameKey.isEmpty()) {
-                return displayNameKey;
+            if (cachedDisplayNameKey == null) {
+                cachedDisplayNameKey = generateKey("name", displayNameKey);
             }
-            // 自动生成：node.{nodeType}.{portType}.{varName}
-            return String.format("node.%s.%s.%s",
-                nodeType.toLowerCase(),
-                isInput ? "input" : "output",
-                varName);
+            return cachedDisplayNameKey;
         }
-
         /**
          * 获取本地化的描述
          *
@@ -241,7 +241,7 @@ public class NodeMetadata {
         public String getDescription() {
             String key = getDescriptionKey();
             if (key == null || key.isEmpty()) return "";
-            return Core.i18n.get(key);
+            return Format.getI18NWithFallback(key, "");
         }
 
         /**
@@ -250,14 +250,34 @@ public class NodeMetadata {
          * @return 描述国际化key
          */
         public String getDescriptionKey() {
-            if (descriptionKey != null && !descriptionKey.isEmpty()) {
-                return descriptionKey;
+            if (cachedDescriptionKey == null) {
+                cachedDescriptionKey = generateKey("description", descriptionKey);
             }
-            // 自动生成：node.{nodeType}.{portType}.{varName}.desc
-            return String.format("node.%s.%s.%s.desc",
-                nodeType.toLowerCase(),
-                isInput ? "input" : "output",
-                varName);
+            return cachedDescriptionKey;
+        }
+
+        /**
+         * 生成i18n key
+         *
+         * @param defaultField     默认字段名（name/description）
+         * @param annotationValue 注解中的值
+         * @return 生成的key
+         */
+        private String generateKey(String defaultField, String annotationValue) {
+            // 如果注解值为空，使用默认字段名
+            if (annotationValue == null || annotationValue.isEmpty()) {
+                annotationValue = defaultField;
+            }
+
+            // 如果包含点号，视为完整key
+            if (annotationValue.contains(".")) {
+                return annotationValue;
+            }
+
+            // 生成相对key
+            String portType = isInput ? "input" : "output";
+            return String.format("%s.%s.%s.%s",
+                nodeType, portType, fieldName, annotationValue);
         }
     }
 

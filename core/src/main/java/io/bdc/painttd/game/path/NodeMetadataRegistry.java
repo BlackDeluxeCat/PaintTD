@@ -14,26 +14,35 @@ import io.bdc.painttd.game.path.NodeMetadata.*;
  *   <li>享元模式：缓存NodeMetadata避免重复创建</li>
  *   <li>注解解析：从{@link NodeInfo}注解创建元数据</li>
  *   <li>继承支持：智能合并父类和子类的注解</li>
- *   <li>自动生成：为端口自动生成i18n key</li>
+ *   <li>自动生成：为节点和端口自动生成i18n key</li>
+ * </ul>
+ *
+ * <p>i18n key生成规则：
+ * <ul>
+ *   <li>节点级别：{nodeType}.{fieldName}</li>
+ *   <li>端口级别：{nodeType}.{portType}.{fieldName}.{fieldName}</li>
+ *   <li>如果字段值包含"."：视为完整key，直接使用</li>
+ *   <li>如果字段值为空：使用默认字段名生成完整key</li>
+ *   <li>如果字段值不为空且不含"."：生成相对key</li>
  * </ul>
  *
  * <p>使用示例：
  * <pre>{@code
  * NodeMetadata metadata = NodeMetadataRegistry.getInstance()
- *     .getMetadata(Vector2ScaleNode.class);
+ *     .getMetadata(ScaleNode.class);
  * }</pre>
  *
  * @see NodeInfo
  * @see NodeMetadata
  */
-public class NodeMetadataRegistry {
+public class NodeMetadataRegistry{
     private static final NodeMetadataRegistry instance = new NodeMetadataRegistry();
     private final ObjectMap<Class<? extends Node>, NodeMetadata> metadataMap = new ObjectMap<>();
 
     /**
      * 私有构造函数，防止外部创建实例
      */
-    private NodeMetadataRegistry() {
+    private NodeMetadataRegistry(){
     }
 
     /**
@@ -41,7 +50,7 @@ public class NodeMetadataRegistry {
      *
      * @return 注册中心单例
      */
-    public static NodeMetadataRegistry getInstance() {
+    public static NodeMetadataRegistry getInstance(){
         return instance;
     }
 
@@ -50,12 +59,11 @@ public class NodeMetadataRegistry {
      * 如果已存在则返回缓存的实例，否则创建新的并缓存
      *
      * @param nodeClass Node类
-     *
      * @return 节点元数据
      */
-    public NodeMetadata getMetadata(Class<? extends Node> nodeClass) {
+    public NodeMetadata getMetadata(Class<? extends Node> nodeClass){
         // 如果已经存在，直接返回（享元）
-        if (metadataMap.containsKey(nodeClass)) {
+        if(metadataMap.containsKey(nodeClass)){
             return metadataMap.get(nodeClass);
         }
 
@@ -69,17 +77,16 @@ public class NodeMetadataRegistry {
      * 从注解创建metadata，支持智能继承合并
      *
      * @param nodeClass Node类
-     *
      * @return 创建的元数据
      */
-    private NodeMetadata createMetadataFromAnnotation(Class<? extends Node> nodeClass) {
+    private NodeMetadata createMetadataFromAnnotation(Class<? extends Node> nodeClass){
         // 1. 先获取当前类的注解
         NodeInfo currentAnnotation = nodeClass.getAnnotation(NodeInfo.class);
 
         // 2. 获取父类的注解（如果支持继承）
         Class<? extends Node> superClass = findNodeSuperClass(nodeClass);
         NodeInfo parentAnnotation = null;
-        if (superClass != null) {
+        if(superClass != null){
             parentAnnotation = superClass.getAnnotation(NodeInfo.class);
         }
 
@@ -94,14 +101,13 @@ public class NodeMetadataRegistry {
      * 查找Node父类
      *
      * @param nodeClass Node类
-     *
      * @return 最近的Node父类，如果没有则返回null
      */
     @SuppressWarnings("unchecked")
-    private Class<? extends Node> findNodeSuperClass(Class<? extends Node> nodeClass) {
+    private Class<? extends Node> findNodeSuperClass(Class<? extends Node> nodeClass){
         Class<?> superClass = nodeClass.getSuperclass();
-        while (superClass != null && superClass != Object.class) {
-            if (Node.class.isAssignableFrom(superClass)) {
+        while(superClass != null && superClass != Object.class){
+            if(Node.class.isAssignableFrom(superClass)){
                 return (Class<? extends Node>)superClass;
             }
             superClass = superClass.getSuperclass();
@@ -113,55 +119,59 @@ public class NodeMetadataRegistry {
      * 智能合并注解：子类注解覆盖父类，但只覆盖非空值
      *
      * @param parent 父类注解
-     * @param child  子类注解
-     *
+     * @param child 子类注解
      * @return 合并后的注解
      */
-    private NodeInfo mergeAnnotations(NodeInfo parent, NodeInfo child) {
-        if (child == null && parent == null) return null;
-        if (child != null && parent == null) return child;
-        if (child == null && parent != null) return parent;
+    private NodeInfo mergeAnnotations(NodeInfo parent, NodeInfo child){
+        if(child == null && parent == null) return null;
+        if(child != null && parent == null) return child;
+        if(child == null && parent != null) return parent;
 
         // 创建合并后的注解实现
-        return new NodeInfo() {
+        return new NodeInfo(){
             @Override
-            public String displayName() {
+            public String nodeType(){
+                return !child.nodeType().isEmpty() ? child.nodeType() : parent.nodeType();
+            }
+
+            @Override
+            public String displayName(){
                 return !child.displayName().isEmpty() ? child.displayName() : parent.displayName();
             }
 
             @Override
-            public String description() {
+            public String description(){
                 return !child.description().isEmpty() ? child.description() : parent.description();
             }
 
             @Override
-            public String backgroundColor() {
+            public String backgroundColor(){
                 return !child.backgroundColor().isEmpty() && !child.backgroundColor().equals("#2196F3")
                            ? child.backgroundColor() : parent.backgroundColor();
             }
 
             @Override
-            public String icon() {
+            public String icon(){
                 return !child.icon().isEmpty() ? child.icon() : parent.icon();
             }
 
             @Override
-            public String category() {
+            public String category(){
                 return !child.category().equals("general") ? child.category() : parent.category();
             }
 
             @Override
-            public Port[] inputPorts() {
+            public Port[] inputPorts(){
                 return child.inputPorts().length > 0 ? child.inputPorts() : parent.inputPorts();
             }
 
             @Override
-            public Port[] outputPorts() {
+            public Port[] outputPorts(){
                 return child.outputPorts().length > 0 ? child.outputPorts() : parent.outputPorts();
             }
 
             @Override
-            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+            public Class<? extends java.lang.annotation.Annotation> annotationType(){
                 return NodeInfo.class;
             }
         };
@@ -170,29 +180,32 @@ public class NodeMetadataRegistry {
     /**
      * 从合并后的注解创建NodeMetadata
      *
-     * @param nodeClass  Node类
+     * @param nodeClass Node类
      * @param annotation 合并后的注解
-     *
      * @return 创建的元数据
      */
-    private NodeMetadata createMetadataFromMergedAnnotation(Class<? extends Node> nodeClass, NodeInfo annotation) {
-        if (annotation == null) {
+    private NodeMetadata createMetadataFromMergedAnnotation(Class<? extends Node> nodeClass, NodeInfo annotation){
+        if(annotation == null){
             // 如果没有注解，使用默认值
             return createDefaultMetadata(nodeClass);
         }
 
-        String nodeType = nodeClass.getSimpleName();
-        String displayNameKey = annotation.displayName();
-        String descriptionKey = annotation.description();
+        // 确定nodeType
+        String nodeType = determineNodeType(nodeClass, annotation);
+
+        // 生成节点级别的key
+        String displayNameKey = generateNodeKey(nodeType, "name", annotation.displayName());
+        String descriptionKey = generateNodeKey(nodeType, "description", annotation.description());
+
         Color backgroundColor = Color.valueOf(annotation.backgroundColor());
         String iconName = annotation.icon();
         String category = annotation.category();
 
         // 解析输入端口（保持注解声明的顺序）
         Array<PortMetadata> inputPorts = new Array<>();
-        for (NodeInfo.Port port : annotation.inputPorts()) {
+        for(NodeInfo.Port port : annotation.inputPorts()){
             PortMetadata pm = new PortMetadata(
-                port.varName(),
+                port.fieldName(),
                 port.displayName(),      // 可能为空
                 port.description(),      // 可能为空
                 Color.valueOf(port.color()),
@@ -205,9 +218,9 @@ public class NodeMetadataRegistry {
 
         // 解析输出端口（保持注解声明的顺序）
         Array<PortMetadata> outputPorts = new Array<>();
-        for (NodeInfo.Port port : annotation.outputPorts()) {
+        for(NodeInfo.Port port : annotation.outputPorts()){
             PortMetadata pm = new PortMetadata(
-                port.varName(),
+                port.fieldName(),
                 port.displayName(),      // 可能为空
                 port.description(),      // 可能为空
                 Color.valueOf(port.color()),
@@ -225,15 +238,76 @@ public class NodeMetadataRegistry {
     }
 
     /**
+     * 确定节点类型
+     *
+     * @param nodeClass Node类
+     * @param annotation 节点注解
+     * @return 节点类型标识
+     */
+    private String determineNodeType(Class<? extends Node> nodeClass, NodeInfo annotation) {
+        // 如果注解中指定了nodeType，使用它
+        if (annotation.nodeType() != null && !annotation.nodeType().isEmpty()) {
+            return annotation.nodeType();
+        }
+
+        // 否则使用类名（大驼峰转小驼峰）
+        String className = nodeClass.getSimpleName();
+        return camelToCamel(className, true);
+    }
+
+    /**
+     * 生成节点级别的i18n key
+     *
+     * @param nodeType 节点类型
+     * @param defaultField 默认字段名
+     * @param annotationValue 注解中的值
+     * @return 生成的key
+     */
+    private String generateNodeKey(String nodeType, String defaultField, String annotationValue) {
+        // 如果注解值为空，使用默认字段名
+        if (annotationValue == null || annotationValue.isEmpty()) {
+            annotationValue = defaultField;
+        }
+
+        // 如果包含点号，视为完整key
+        if (annotationValue.contains(".")) {
+            return annotationValue;
+        }
+
+        // 生成相对key
+        return String.format("%s.%s", nodeType, annotationValue);
+    }
+
+    /**
+     * 驼峰命名转换
+     *
+     * @param input 输入字符串
+     * @param toLowerCamel 是否转换为小驼峰（true）或保持原样
+     * @return 转换后的字符串
+     */
+    private String camelToCamel(String input, boolean toLowerCamel) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        if (toLowerCamel) {
+            // 大驼峰转小驼峰：首字母小写
+            return Character.toLowerCase(input.charAt(0)) + input.substring(1);
+        } else {
+            // 小驼峰转大驼峰：首字母大写
+            return Character.toUpperCase(input.charAt(0)) + input.substring(1);
+        }
+    }
+
+    /**
      * 创建默认metadata（没有注解的类）
      *
      * @param nodeClass Node类
-     *
      * @return 默认元数据
      */
-    private NodeMetadata createDefaultMetadata(Class<? extends Node> nodeClass) {
-        String nodeType = nodeClass.getSimpleName();
-        String displayNameKey = "node." + nodeType.toLowerCase() + ".name";
+    private NodeMetadata createDefaultMetadata(Class<? extends Node> nodeClass){
+        String nodeType = camelToCamel(nodeClass.getSimpleName(), true);
+        String displayNameKey = nodeType + ".name";
         String descriptionKey = "";
         Color backgroundColor = Color.valueOf("#2196F3"); // 默认蓝色
         String iconName = "";
@@ -251,7 +325,7 @@ public class NodeMetadataRegistry {
     /**
      * 清除所有缓存的metadata（主要用于测试）
      */
-    public void clearCache() {
+    public void clearCache(){
         metadataMap.clear();
     }
 
@@ -260,7 +334,7 @@ public class NodeMetadataRegistry {
      *
      * @return 缓存数量
      */
-    public int getCachedCount() {
+    public int getCachedCount(){
         return metadataMap.size;
     }
 
@@ -268,10 +342,9 @@ public class NodeMetadataRegistry {
      * 检查某个类的metadata是否已缓存
      *
      * @param nodeClass Node类
-     *
      * @return 是否已缓存
      */
-    public boolean isCached(Class<? extends Node> nodeClass) {
+    public boolean isCached(Class<? extends Node> nodeClass){
         return metadataMap.containsKey(nodeClass);
     }
 }

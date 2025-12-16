@@ -1,5 +1,7 @@
 package io.bdc.painttd.utils;
 
+import io.bdc.painttd.*;
+
 public class Format {
     private static final StringBuilder tmp1 = new StringBuilder();
     private static final StringBuilder tmp2 = new StringBuilder();
@@ -45,5 +47,57 @@ public class Format {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    /**
+     * 安全获取i18n字符串，key不存在时返回美化后的fallback
+     *
+     * @param key i18n key
+     * @param fallbackSource 用于生成fallback显示的源字符串
+     * @return 翻译值或美化后的fallback
+     */
+    public static String getI18NWithFallback(String key, String fallbackSource) {
+        if (Core.i18n == null) {
+            return beautifyKey(fallbackSource);
+        }
+        try {
+            String value = Core.i18n.get(key);
+            // 检查是否返回了"???" + key + "???"（表示key不存在）
+            String missingMarker = "???" + key + "???";
+            if (value.equals(missingMarker)) {
+                return beautifyKey(fallbackSource);
+            }
+            return value;
+        } catch (Exception e) {
+            return beautifyKey(fallbackSource);
+        }
+    }
+
+    /**
+     * 安全获取i18n字符串（单参数版本）
+     * key不存在时返回美化后的key本身
+     */
+    public static String getI18NWithFallback(String key) {
+        return getI18NWithFallback(key, key);
+    }
+
+    /**
+     * 美化key值
+     * 驼峰转空格，首字母大写
+     */
+    public static String beautifyKey(String source) {
+        if (source == null || source.isEmpty()) {
+            return source;
+        }
+
+        // 驼峰转空格
+        String result = source.replaceAll("([a-z])([A-Z])", "$1 $2");
+
+        // 首字母大写
+        if (result.length() > 0) {
+            result = Character.toUpperCase(result.charAt(0)) + result.substring(1);
+        }
+
+        return result;
     }
 }

@@ -2,28 +2,28 @@ package io.bdc.painttd.game.path.node;
 
 import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.path.var.*;
-
 @NodeInfo(
-    displayName = "node.timeOffset.name",
-    description = "node.timeOffset.description",
+    nodeType = "timeOffset",
+    displayName = "name",
+    description = "description",
     backgroundColor = "#FF9800",  // 橙色，表示时间相关节点
     icon = "time_icon",
     category = "time",
     inputPorts = {
         @NodeInfo.Port(
-            varName = "inPort",
+            fieldName = "inPort",
             color = "#9C27B0",  // 紫色
             icon = "input_router"
         ),
         @NodeInfo.Port(
-            varName = "offset",
+            fieldName = "offset",
             color = "#FF5722",  // 深橙色
             icon = "output_float"
         )
     },
     outputPorts = {
         @NodeInfo.Port(
-            varName = "outPort",
+            fieldName = "outPort",
             color = "#3F51B5",  // 靛蓝色
             icon = "output_router"
         )
