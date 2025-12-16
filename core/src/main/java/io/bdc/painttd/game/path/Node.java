@@ -10,8 +10,8 @@ public abstract class Node implements Pool.Poolable {
 
     public transient NodeGraph nodeGraph;
 
-    // 享元元数据 - transient表示不参与序列化
-    public transient NodeMetadata metadata;
+    // 享元元数据
+    protected transient NodeMetadata metadata;
 
     //编辑器元素信息
     public float x, y;
@@ -19,14 +19,18 @@ public abstract class Node implements Pool.Poolable {
 
     public Node() {
         registerVars();
-        // 初始化metadata（享元模式）
-        initMetadata();
+    }
+
+    /** 懒惰获取metadata */
+    public NodeMetadata getMetadata(){
+        if(metadata == null) initMetadata();
+        return metadata;
     }
 
     /**
      * 初始化享元元数据
      */
-    private void initMetadata() {
+    protected void initMetadata() {
         this.metadata = NodeMetadataRegistry.getInstance().getMetadata(this.getClass());
     }
 

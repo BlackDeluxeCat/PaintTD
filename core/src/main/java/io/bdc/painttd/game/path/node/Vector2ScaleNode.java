@@ -12,25 +12,25 @@ import io.bdc.painttd.game.path.var.*;
     category = "transform",
     inputPorts = {
         @NodeInfo.Port(
-            varName = "shiftI",
+            varName = "shift",
             color = "#FF9800",  // 橙色
             icon = "input_vector"
         ),
         @NodeInfo.Port(
-            varName = "scaleI",
+            varName = "scale",
             color = "#E91E63",  // 粉色
             icon = "input_vector"
         )
     },
     outputPorts = {
         @NodeInfo.Port(
-            varName = "shiftO",
+            varName = "shift",
             color = "#2196F3",  // 蓝色
             icon = "output_vector"
         )
     }
 )
-public class ScaleNode extends Node {
+public class Vector2ScaleNode extends Node {
     public Vector2V scaleI = new Vector2V(true) {
         @Override
         public void reset() {
@@ -63,11 +63,11 @@ public class ScaleNode extends Node {
     }
 
     @Override
-    public ScaleNode obtain() {
+    public Vector2ScaleNode obtain() {
         return pool.obtain();
     }
 
-    private final Pool<ScaleNode> pool = new ReflectionPool<>(ScaleNode.class, 100);
+    private final Pool<Vector2ScaleNode> pool = new ReflectionPool<>(Vector2ScaleNode.class, 100);
 
     @Override
     public void free() {

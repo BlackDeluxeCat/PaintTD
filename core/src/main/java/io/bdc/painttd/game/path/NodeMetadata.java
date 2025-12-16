@@ -23,7 +23,7 @@ import io.bdc.painttd.*;
  * @see NodeMetadataRegistry
  */
 public class NodeMetadata {
-    /** 节点类型，如"ScaleNode" */
+    /** 节点类型，如"Vector2ScaleNode" */
     public final String nodeType;
     /** 国际化key，如"node.scale.name" */
     public final String displayNameKey;

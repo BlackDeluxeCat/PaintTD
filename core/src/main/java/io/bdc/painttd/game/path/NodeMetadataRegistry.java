@@ -20,7 +20,7 @@ import io.bdc.painttd.game.path.NodeMetadata.*;
  * <p>使用示例：
  * <pre>{@code
  * NodeMetadata metadata = NodeMetadataRegistry.getInstance()
- *     .getMetadata(ScaleNode.class);
+ *     .getMetadata(Vector2ScaleNode.class);
  * }</pre>
  *
  * @see NodeInfo

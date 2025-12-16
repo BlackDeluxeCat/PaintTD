@@ -14,6 +14,11 @@ import io.bdc.painttd.game.path.var.*;
             varName = "inPort",
             color = "#9C27B0",  // 紫色
             icon = "input_router"
+        ),
+        @NodeInfo.Port(
+            varName = "offset",
+            color = "#FF5722",  // 深橙色
+            icon = "output_float"
         )
     },
     outputPorts = {
@@ -21,11 +26,6 @@ import io.bdc.painttd.game.path.var.*;
             varName = "outPort",
             color = "#3F51B5",  // 靛蓝色
             icon = "output_router"
-        ),
-        @NodeInfo.Port(
-            varName = "offset",
-            color = "#FF5722",  // 深橙色
-            icon = "output_float"
         )
     }
 )
@@ -35,7 +35,7 @@ public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
     @Override
     public void registerVars() {
         super.registerVars();
-        outputs.add(offset);
+        inputs.add(offset);
     }
 
     @Override

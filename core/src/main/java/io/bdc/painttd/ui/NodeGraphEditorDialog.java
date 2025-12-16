@@ -29,13 +29,13 @@ public class NodeGraphEditorDialog extends BaseDialog {
      */
     private void createNodeButtons() {
         // ScaleNode按钮
-        NodeMetadata scaleMetadata = NodeMetadataRegistry.getInstance().getMetadata(ScaleNode.class);
+        NodeMetadata scaleMetadata = NodeMetadataRegistry.getInstance().getMetadata(Vector2ScaleNode.class);
         buttons.add(ActorUtils.wrapper.set(new TextButton(
             scaleMetadata.getDisplayName(),
             Styles.sTextB
         )).click(b -> {
             if (graph != null) {
-                graph.add(new ScaleNode());
+                graph.add(new Vector2ScaleNode());
                 rebuild();
             }
         }).actor).growY();
@@ -74,52 +74,6 @@ public class NodeGraphEditorDialog extends BaseDialog {
         }
     }
 
-    public static class NodeTable extends Table {
-        protected Node node;
-
-        public NodeTable(Node node) {
-            this.node = node;
-            setBackground(Styles.white);
-
-            // 使用metadata获取节点显示名称和背景色
-            NodeMetadata metadata = NodeMetadataRegistry.getInstance().getMetadata(node.getClass());
-            String displayName = metadata.getDisplayName();
-            Color bgColor = metadata.backgroundColor;  // 直接访问public字段
-
-            // 设置背景色（如果有定义）
-            if (bgColor != null) setColor(bgColor);
-
-            add(ActorUtils.wrapper.set(new Label(displayName, Styles.sLabel)).with(l -> {
-                Label ll = (Label)l;
-                ll.setAlignment(Align.center);
-            }).actor).minSize(200f, Styles.buttonSize);
-            addListener(new DragListener() {
-                {
-                    setTapSquareSize(10f);
-                }
-
-                @Override
-                public void dragStop(InputEvent event, float x, float y, int pointer) {
-                    super.dragStop(event, x, y, pointer);
-                    float dx = x - this.getTouchDownX();
-                    float dy = y - this.getTouchDownY();
-                    NodeTable.this.moveBy(dx, dy);
-                    NodeTable.this.node.x += dx;
-                    NodeTable.this.node.y += dy;
-                }
-            });
-
-            row();
-
-            //设置节点配置栏
-            add(new Table()).minSize(100f, Styles.buttonSize);
-
-            //设置节点位置
-            setPosition(node.x, node.y);
-            pack();
-        }
-    }
-
     public static class NodeGraphGroup extends WidgetGroup {
         public Vector2 translate = new Vector2();
 
@@ -147,6 +101,88 @@ public class NodeGraphEditorDialog extends BaseDialog {
         @Override
         public Vector2 localToParentCoordinates(Vector2 localCoords) {
             return super.localToParentCoordinates(localCoords).add(translate);
+        }
+    }
+
+    public static class NodeTable extends Table {
+        protected Node node;
+        public Table title, cont;
+        public Table inputsTable, outputsTable;
+
+        public NodeTable(Node node) {
+            this.node = node;
+            setBackground(Styles.white);
+            Color bgColor = node.getMetadata().backgroundColor;
+            // 设置背景色（如果有定义）
+            if (bgColor != null) setColor(bgColor);
+
+            title = new Table();
+            cont = new Table();
+            cont.setBackground(Styles.black3);
+            inputsTable = new Table();
+            outputsTable = new Table();
+
+            cont.clear();
+            cont.add(inputsTable);
+            cont.add(outputsTable);
+            rebuildTitle();
+            rebuildInputs();
+
+            defaults().minHeight(Styles.buttonSize);
+            add(title).growX();
+            row();
+            add(cont).growX();
+
+            reLocate();
+        }
+
+        public void rebuildInputs() {
+            inputsTable.clear();
+            inputsTable.defaults().growX().minHeight(Styles.buttonSize).left();
+            Array<NodeMetadata.PortMetadata> inputPortMetas = node.getMetadata().getInputPorts();
+            for (int i = 0; i < node.inputs.size; i++) {
+                Table it = new Table();
+
+                NodeMetadata.PortMetadata meta = inputPortMetas.get(i);
+                boolean isInput = meta.isInput;
+
+                it.add(ActorUtils.wrapper.set(new Label(isInput ? "I" : "O", Styles.sLabel)).actor);
+                it.add(ActorUtils.wrapper.set(new Label(meta.getDisplayName(), Styles.sLabel)).actor);
+
+                inputsTable.add(it).row();
+            }
+        }
+
+        public void reLocate() {
+            //设置节点位置
+            setPosition(node.x, node.y);
+            pack();
+        }
+
+        public void rebuildTitle() {
+            title.clear();
+
+            String displayName = node.getMetadata().getDisplayName();
+
+            title.add(ActorUtils.wrapper.set(new Label(displayName, Styles.sLabel)).with(l -> {
+                Label ll = (Label)l;
+                ll.setAlignment(Align.center);
+            }).actor).minSize(200f, Styles.buttonSize);
+            title.addListener(new DragListener() {
+                {
+                    setTapSquareSize(10f);
+                }
+
+                @Override
+                public void dragStop(InputEvent event, float x, float y, int pointer) {
+                    super.dragStop(event, x, y, pointer);
+                    float dx = x - this.getTouchDownX();
+                    float dy = y - this.getTouchDownY();
+                    NodeTable.this.moveBy(dx, dy);
+                    NodeTable.this.node.x += dx;
+                    NodeTable.this.node.y += dy;
+                }
+            });
         }
     }
 }
