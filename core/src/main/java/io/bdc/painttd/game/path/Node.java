@@ -1,6 +1,7 @@
 package io.bdc.painttd.game.path;
 
 import com.badlogic.gdx.utils.*;
+import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.var.*;
 
 public abstract class Node implements Pool.Poolable {
@@ -10,33 +11,37 @@ public abstract class Node implements Pool.Poolable {
 
     public transient NodeGraph nodeGraph;
 
-    // 享元元数据
-    protected transient NodeMetadata metadata;
+    protected transient NodeMeta meta;
 
     //编辑器元素信息
     public float x, y;
     public boolean minimized, flipIOPosition;
 
     public Node() {
+        initVars();
         registerVars();
     }
 
     /** 懒惰获取metadata */
-    public NodeMetadata getMetadata(){
-        if(metadata == null) initMetadata();
-        return metadata;
+    public NodeMeta getMeta() {
+        if (meta == null) initMeta();
+        return meta;
     }
 
     /**
      * 初始化享元元数据
      */
-    protected void initMetadata() {
-        this.metadata = NodeMetadataRegistry.getInstance().getMetadata(this.getClass());
+    protected void initMeta() {
+        this.meta = NodeMetaRegistry.getInstance().getMeta(this.getClass());
     }
 
+    /** 初始化变量字段 */
+    public abstract void initVars();
+
+    /** 注册变量到inputs/outputs数组 */
     public abstract void registerVars();
 
-    public void setNet(NodeGraph nodeGraph) {
+    public void setNodeGraph(NodeGraph nodeGraph) {
         this.nodeGraph = nodeGraph;
     }
 

@@ -7,7 +7,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.*;
+import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.node.*;
+import io.bdc.painttd.game.path.var.*;
 
 public class NodeGraphEditorDialog extends BaseDialog {
     NodeGraph graph;
@@ -28,10 +30,13 @@ public class NodeGraphEditorDialog extends BaseDialog {
      * 使用metadata系统创建节点按钮
      */
     private void createNodeButtons() {
-        // ScaleNode按钮
-        NodeMetadata scaleMetadata = NodeMetadataRegistry.getInstance().getMetadata(Vector2ScaleNode.class);
+        // 使用新metadata系统
+        NodeMetaRegistry metaRegistry = NodeMetaRegistry.getInstance();
+
+        // Vector2ScaleNode按钮
+        NodeMeta scaleMeta = metaRegistry.getMeta(Vector2ScaleNode.class);
         buttons.add(ActorUtils.wrapper.set(new TextButton(
-            scaleMetadata.getDisplayName(),
+            scaleMeta.getDisplayName(),
             Styles.sTextB
         )).click(b -> {
             if (graph != null) {
@@ -41,9 +46,9 @@ public class NodeGraphEditorDialog extends BaseDialog {
         }).actor).growY();
 
         // TimeOffsetNode按钮
-        NodeMetadata timeOffsetMetadata = NodeMetadataRegistry.getInstance().getMetadata(TimeOffsetNode.class);
+        NodeMeta timeOffsetMeta = metaRegistry.getMeta(TimeOffsetNode.class);
         buttons.add(ActorUtils.wrapper.set(new TextButton(
-            timeOffsetMetadata.getDisplayName(),
+            timeOffsetMeta.getDisplayName(),
             Styles.sTextB
         )).click(b -> {
             if (graph != null) {
@@ -112,7 +117,10 @@ public class NodeGraphEditorDialog extends BaseDialog {
         public NodeTable(Node node) {
             this.node = node;
             setBackground(Styles.white);
-            Color bgColor = node.getMetadata().backgroundColor;
+
+            // 使用新metadata系统获取背景色
+            NodeMeta meta = node.getMeta();
+            Color bgColor = meta.backgroundColor;
             // 设置背景色（如果有定义）
             if (bgColor != null) setColor(bgColor);
 
@@ -139,22 +147,34 @@ public class NodeGraphEditorDialog extends BaseDialog {
         public void rebuildInputs() {
             inputsTable.clear();
             inputsTable.defaults().growX().minHeight(Styles.buttonSize).left();
-            Array<NodeMetadata.PortMetadata> inputPortMetas = node.getMetadata().getInputPorts();
+
+            // 使用新metadata系统
+            NodeMeta meta = node.getMeta();
+            Array<PortMeta> inputPortMetas = meta.inputPorts;
+
             for (int i = 0; i < node.inputs.size; i++) {
-                Table it = new Table();
+                Table portRow = new Table();
+                PortMeta portMeta = inputPortMetas.get(i);
+                LinkableVar var = node.inputs.get(i);
 
-                NodeMetadata.PortMetadata meta = inputPortMetas.get(i);
-                boolean isInput = meta.isInput;
-
-                it.add(ActorUtils.wrapper.set(new Label(isInput ? "I" : "O", Styles.sLabel))
-                                         .with(l -> ((Label)l).setAlignment(Align.center)).actor
+                // 左侧：端口标识
+                portRow.add(ActorUtils.wrapper.set(new Label(portMeta.isInput() ? "I" : "O", Styles.sLabel))
+                                              .with(l -> ((Label)l).setAlignment(Align.center)).actor
                 ).size(Styles.buttonSize);
 
-                it.add(ActorUtils.wrapper.set(new Label(meta.getDisplayName(), Styles.sLabel))
-                                         .with(l -> ((Label)l).setAlignment(Align.center)).actor
+                // 中间：端口名称
+                portRow.add(ActorUtils.wrapper.set(new Label(portMeta.getDisplayName(), Styles.sLabel))
+                                              .with(l -> ((Label)l).setAlignment(Align.center)).actor
                 ).minHeight(Styles.buttonSize).growX();
 
-                inputsTable.add(it).growX().row();
+                // 右侧：值编辑器（如果有uiBuilder）
+                Table editorContainer = new Table();
+                boolean hasEditor = portMeta.build(var, editorContainer);
+                if (hasEditor) {
+                    portRow.add(editorContainer).width(100);
+                }
+
+                inputsTable.add(portRow).growX().row();
             }
         }
 
@@ -167,7 +187,8 @@ public class NodeGraphEditorDialog extends BaseDialog {
         public void rebuildTitle() {
             title.clear();
 
-            String displayName = node.getMetadata().getDisplayName();
+            // 使用新metadata系统获取显示名
+            String displayName = node.getMeta().getDisplayName();
 
             title.add(ActorUtils.wrapper.set(new Label(displayName, Styles.sLabel)).with(l -> {
                 Label ll = (Label)l;

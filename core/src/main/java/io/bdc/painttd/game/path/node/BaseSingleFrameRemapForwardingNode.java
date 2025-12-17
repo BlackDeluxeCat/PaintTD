@@ -4,10 +4,20 @@ import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.path.var.*;
 
 public abstract class BaseSingleFrameRemapForwardingNode extends Node {
-    public RouterV inPort = new RouterV();
-    public RouterV outPort = new RouterV();
+    public RouterV inPort;
+    public RouterV outPort;
 
     protected float remappedFrame;
+
+    public static void registerMeta() {
+        // 抽象类不直接注册，由子类实现
+    }
+
+    @Override
+    public void initVars() {
+        inPort = new RouterV();
+        outPort = new RouterV();
+    }
 
     @Override
     public void registerVars() {

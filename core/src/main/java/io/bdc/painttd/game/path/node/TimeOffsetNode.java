@@ -1,36 +1,50 @@
 package io.bdc.painttd.game.path.node;
 
+import com.badlogic.gdx.graphics.*;
 import io.bdc.painttd.game.path.*;
+import io.bdc.painttd.game.path.metadata.*;
+import io.bdc.painttd.game.path.metadata.builders.*;
 import io.bdc.painttd.game.path.var.*;
-@NodeInfo(
-    nodeType = "timeOffset",
-    displayName = "name",
-    description = "description",
-    backgroundColor = "#FF9800",  // 橙色，表示时间相关节点
-    icon = "time_icon",
-    category = "time",
-    inputPorts = {
-        @NodeInfo.Port(
-            fieldName = "inPort",
-            color = "#9C27B0",  // 紫色
-            icon = "input_router"
-        ),
-        @NodeInfo.Port(
-            fieldName = "offset",
-            color = "#FF5722",  // 深橙色
-            icon = "output_float"
-        )
-    },
-    outputPorts = {
-        @NodeInfo.Port(
-            fieldName = "outPort",
-            color = "#3F51B5",  // 靛蓝色
-            icon = "output_router"
-        )
-    }
-)
+
 public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
-    public FloatV offset = new FloatV(false);
+    public FloatV offset;  // 应该是输入端口
+
+    public static void registerMeta() {
+        NodeMetaRegistry.getInstance().register(TimeOffsetNode.class,
+            new NodeMeta()
+                .setNodeType("timeOffset")
+                .setDisplayNameKey("name")
+                .setDescriptionKey("description")
+                .setBackgroundColor(Color.valueOf("#FF9800"))  // 橙色
+                .setIconName("time_icon")
+                .setCategory("time")
+                .addInputPort(new PortMeta()
+                                  .setFieldName("inPort")
+                                  .setDisplayNameKey("")  // 自动生成
+                                  .setColor(Color.valueOf("#9C27B0"))  // 紫色
+                                  .setIconName("input_router"))
+                .addInputPort(new PortMeta()
+                                  .setFieldName("offset")
+                                  .setDisplayNameKey("")  // 自动生成
+                                  .setColor(Color.valueOf("#FF5722"))  // 深橙色
+                                  .setIconName("input_float")
+                                  .setUiBuilder(new FloatVTextFieldBuilder()
+                                                    .range(-1000, 1000)
+                                                    .decimalPlaces(2)
+                                                    .placeholder("Offset")))
+                .addOutputPort(new PortMeta()
+                                   .setFieldName("outPort")
+                                   .setDisplayNameKey("")  // 自动生成
+                                   .setColor(Color.valueOf("#3F51B5"))  // 靛蓝色
+                                   .setIconName("output_router"))
+        );
+    }
+
+    @Override
+    public void initVars() {
+        super.initVars();
+        offset = new FloatV(true);
+    }
 
     @Override
     public void registerVars() {

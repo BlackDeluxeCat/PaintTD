@@ -52,8 +52,9 @@ public class Format {
     /**
      * 安全获取i18n字符串，key不存在时返回美化后的fallback
      *
-     * @param key i18n key
+     * @param key            i18n key
      * @param fallbackSource 用于生成fallback显示的源字符串
+     *
      * @return 翻译值或美化后的fallback
      */
     public static String getI18NWithFallback(String key, String fallbackSource) {
