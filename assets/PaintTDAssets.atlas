@@ -36,7 +36,7 @@ ui-button
   rotate: false
   xy: 2, 26
   size: 30, 30
-  split: 7, 7, 7, 7
+  split: 13, 13, 13, 13
   orig: 30, 30
   offset: 0, 0
   index: -1

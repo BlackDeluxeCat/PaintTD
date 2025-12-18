@@ -165,4 +165,8 @@ Thumbs.db
 /assets-raw/assets.txt
 *.aseprite
 /PaintTD.lnk
+
+## AI Data
 /.continue/
+/continue_indexed/
+/.design/

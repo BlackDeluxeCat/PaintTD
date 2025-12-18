@@ -11,7 +11,7 @@ import io.bdc.painttd.io.*;
 
 public class MenuGroup extends Table {
     public Table title;
-    public VerticalGroup buttons;
+    public Table buttons;
 
     public void create() {
         clear();
@@ -20,61 +20,61 @@ public class MenuGroup extends Table {
         setFillParent(true);
         ActorUtils.setVisible(this, t -> Vars.inMenu);
         title = new Table();
-        buttons = new VerticalGroup();
-        add(title).growX().height(400f).row();
-        add(buttons).grow();
+        buttons = new Table();
+        add(title).growX().height(300f).row();
+        add(buttons).top();
 
         title.add(new ActorUtils<>(new Label("Paint TD", Styles.sLabel)).with(l -> {
             l.setFontScale(3);
             l.setAlignment(Align.center);
         }).actor);
 
-        buttons.space(10);
         buttons.pad(20);
-        buttons.addActor(ActorUtils.wrapper
+        buttons.defaults().growX().space(20);
+        buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.new"), Styles.sTextB))
                              .click(b -> {
                                  Vars.inGame = true;
                                  Vars.inMenu = false;
                                  Game.createNewMap();
                              })
-                             .actor);
+                             .actor).row();
 
-        buttons.addActor(ActorUtils.wrapper
+        buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.custom"), Styles.sTextB))
                              .click(b -> {
 
                              })
-                             .actor);
+                             .actor).row();
 
-        buttons.addActor(ActorUtils.wrapper
+        buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.load"), Styles.sTextB))
                              .click(b -> {
                                  Vars.inGame = true;
                                  Vars.inMenu = false;
                                  SaveHandler.load("save0");
                              })
-                             .actor);
+                             .actor).row();
 
-        buttons.addActor(ActorUtils.wrapper
+        buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.testNodeGraphEditor"), Styles.sTextB))
                              .click(b -> {
                                  Vars.nodeGraphEditorDialog.show(new NodeGraph());
                              })
-                             .actor);
+                             .actor).row();
 
-        buttons.addActor(ActorUtils.wrapper
+        buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.pref"), Styles.sTextB))
                              .click(b -> {
                                  Vars.preferenceDialog.show();
                              })
-                             .actor);
+                             .actor).row();
 
-        buttons.addActor(ActorUtils.wrapper
+        buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.exit"), Styles.sTextB))
                              .click(b -> {
                                  Gdx.app.exit();
                              })
-                             .actor);
+                             .actor).row();
     }
 }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
-import io.bdc.painttd.game.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.ui.*;
 import io.bdc.painttd.utils.*;
@@ -29,7 +28,7 @@ public class PaintTowerDefence extends ApplicationAdapter {
         Styles.load();
 
         stage.setDebugUnderMouse(true);
-        stage.setDebugAll(true);
+        //stage.setDebugAll(true);
         menu.create();
 
         InputProcessors.create();
