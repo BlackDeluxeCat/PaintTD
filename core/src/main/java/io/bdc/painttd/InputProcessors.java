@@ -3,7 +3,6 @@ package io.bdc.painttd;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
-import io.bdc.painttd.game.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.utils.*;
 
@@ -26,11 +25,11 @@ public class InputProcessors {
 
         @Override
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-            if (Vars.hud.current != null && button == Input.Buttons.LEFT) {
+            if (UI.hud.current != null && button == Input.Buttons.LEFT) {
                 var v = Vars.v1;
                 worldViewport.unproject(v.set(screenX, screenY));
                 if (!Game.map.validPos(Math.round(v.x), Math.round(v.y))) return false;
-                Vars.hud.current.draw(v.x, v.y);
+                UI.hud.current.draw(v.x, v.y);
 
                 pressed = TimeUtils.millis();
                 drawing = true;
@@ -42,7 +41,7 @@ public class InputProcessors {
 
         @Override
         public boolean touchDragged(int screenX, int screenY, int pointer) {
-            return drawing && hud.current != null && hud.current.longPress && TimeUtils.millis() - pressed > 100 ? touchDown(screenX, screenY, pointer, Input.Buttons.LEFT) : super.touchDragged(screenX, screenY, pointer);
+            return drawing && UI.hud.current != null && UI.hud.current.longPress && TimeUtils.millis() - pressed > 100 ? touchDown(screenX, screenY, pointer, Input.Buttons.LEFT) : super.touchDragged(screenX, screenY, pointer);
         }
     },
 
@@ -85,14 +84,14 @@ public class InputProcessors {
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             if (button == Input.Buttons.LEFT) {
                 int e = Game.hovered.hovered;
-                hud.hoveredTable.build(e);
+                UI.hud.hoveredTable.build(e);
             }
             return false;
         }
     };
 
     public static void create() {
-        stage.add(Core.stage);
+        stage.add(UI.stage);
         placement.add(placementInput);
         camera.add(cameraZoom);
         camera.add(cameraMove);

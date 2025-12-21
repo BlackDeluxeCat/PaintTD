@@ -45,7 +45,7 @@ public class BaseDialog extends Table {
     }
 
     public void show() {
-        Core.stage.addActor(this);
+        UI.stage.addActor(this);
     }
 
     public void hide() {

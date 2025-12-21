@@ -38,7 +38,7 @@ public class PlacementFragment extends VerticalGroup {
                              var b = (Button)tt;
                              b.setSize(buttonSize, buttonSize);
                          })
-                         .click(b -> Vars.hud.current = brush)
+                         .click(b -> UI.hud.current = brush)
                          .actor);
         }
     }

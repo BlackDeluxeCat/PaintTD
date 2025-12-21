@@ -16,35 +16,35 @@ public class MapEditorFragment extends Table {
             t1.add(ActorUtils.wrapper
                        .set(new TextButton(drawStainCore.name, sTextB))
                        .click(b -> {
-                           Vars.hud.current = drawStainCore;
+                           UI.hud.current = drawStainCore;
                        })
                        .actor);
 
             t1.add(ActorUtils.wrapper
                        .set(new TextButton(removeStainCore.name, sTextB))
                        .click(b -> {
-                           Vars.hud.current = removeStainCore;
+                           UI.hud.current = removeStainCore;
                        })
                        .actor);
 
             t1.add(ActorUtils.wrapper
                        .set(new TextButton(drawWall.name, sTextB))
                        .click(b -> {
-                           Vars.hud.current = drawWall;
+                           UI.hud.current = drawWall;
                        })
                        .actor);
 
             t1.add(ActorUtils.wrapper
                        .set(new TextButton(removeWall.name, sTextB))
                        .click(b -> {
-                           Vars.hud.current = removeWall;
+                           UI.hud.current = removeWall;
                        })
                        .actor);
 
             t1.add(ActorUtils.wrapper
                        .set(new TextButton("染色", sTextB))
                        .click(b -> {
-                           Vars.hud.current = drawStainColor;
+                           UI.hud.current = drawStainColor;
                        })
                        .actor);
 
@@ -119,7 +119,7 @@ public class MapEditorFragment extends Table {
             var mapper = world.getMapper(HealthComp.class);
             if (!mapper.has(e)) return;
             var hp = mapper.get(e);
-            hp.health = Vars.hud.colors.selectColorIndex + 1;
+            hp.health = UI.hud.colors.selectColorIndex + 1;
         }
     };
 }

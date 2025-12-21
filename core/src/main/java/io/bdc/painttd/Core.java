@@ -5,10 +5,9 @@ import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.files.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.*;
-import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.utils.*;
-import com.badlogic.gdx.utils.viewport.*;
 import io.bdc.painttd.io.*;
+import io.bdc.painttd.render.*;
 
 public class Core {
     public static AssetManager assets = new AssetManager();
@@ -16,7 +15,6 @@ public class Core {
     public static SpriteBatch batch = new SpriteBatch();
     public static ShapeRenderer shaper = new ShapeRenderer();
 
-    public static Stage stage = new Stage(new ScreenViewport());
     /**
      * 集成的输入处理器。任何自定义处理器自行持有、在此插入一个InputProcessor。
      */
@@ -45,6 +43,5 @@ public class Core {
             Gdx.app.error("I18N", "Load failed", e);
         }
         I18NBundle.setExceptionOnMissingKey(false);
-
     }
 }

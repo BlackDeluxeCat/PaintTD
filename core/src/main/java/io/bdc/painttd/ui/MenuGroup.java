@@ -4,7 +4,6 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.*;
-import io.bdc.painttd.game.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.io.*;
@@ -16,9 +15,9 @@ public class MenuGroup extends Table {
     public void create() {
         clear();
         setBackground(Styles.menu);
-        Core.stage.addActor(this);
+        UI.stage.addActor(this);
         setFillParent(true);
-        ActorUtils.setVisible(this, t -> Vars.inMenu);
+        ActorUtils.setVisible(this, t -> UI.inMenu);
         title = new Table();
         buttons = new Table();
         add(title).growX().height(300f).row();
@@ -34,8 +33,8 @@ public class MenuGroup extends Table {
         buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.new"), Styles.sTextB))
                              .click(b -> {
-                                 Vars.inGame = true;
-                                 Vars.inMenu = false;
+                                 UI.inGame = true;
+                                 UI.inMenu = false;
                                  Game.createNewMap();
                              })
                              .actor).row();
@@ -50,8 +49,8 @@ public class MenuGroup extends Table {
         buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.load"), Styles.sTextB))
                              .click(b -> {
-                                 Vars.inGame = true;
-                                 Vars.inMenu = false;
+                                 UI.inGame = true;
+                                 UI.inMenu = false;
                                  SaveHandler.load("save0");
                              })
                              .actor).row();
@@ -59,14 +58,14 @@ public class MenuGroup extends Table {
         buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.testNodeGraphEditor"), Styles.sTextB))
                              .click(b -> {
-                                 Vars.nodeGraphEditorDialog.show(new NodeGraph());
+                                 UI.nodeGraphEditorDialog.show(new NodeGraph());
                              })
                              .actor).row();
 
         buttons.add(ActorUtils.wrapper
                              .set(new TextButton(Core.i18n.get("menu.pref"), Styles.sTextB))
                              .click(b -> {
-                                 Vars.preferenceDialog.show();
+                                 UI.preferenceDialog.show();
                              })
                              .actor).row();
 

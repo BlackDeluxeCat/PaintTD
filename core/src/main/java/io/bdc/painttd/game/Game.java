@@ -68,7 +68,7 @@ public class Game {
             color.lerp(Color.ORANGE, i / (float)l);
             rules.colorPalette.addColor(color);
         }
-        Vars.hud.rebuild();
+        UI.hud.rebuild();
 
         endMap();
         map.createMap(rules.width, rules.height);
@@ -189,6 +189,12 @@ public class Game {
                 @Override
                 protected void processSystem() {
                     Core.batch.begin();
+                    Core.batch.setColor(Color.WHITE);
+                    //Core.fill.tri(10, 2, 11, 4, 9, 3);
+                    //Core.fill.quad(4, 4, 4, 10, 5, 10, 5, 4);
+                    //Core.fill.polygon(10, 5, 2, 15, 16);
+                    //Core.line.line(2, 5, 10, 7, false);
+                    //Core.line.line(2, 2, 10, 4);
                 }
             });
 

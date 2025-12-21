@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import io.bdc.painttd.*;
 import io.bdc.painttd.content.*;
 import io.bdc.painttd.content.components.marker.*;
-import io.bdc.painttd.game.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.io.*;
 import io.bdc.painttd.ui.fragment.*;
@@ -37,8 +36,8 @@ public class HudGroup extends WidgetGroup {
     public void rebuild() {
         clear();
         setFillParent(true);
-        ActorUtils.setVisible(this, g -> Vars.inGame);
-        stage.addActor(this);
+        ActorUtils.setVisible(this, g -> UI.inGame);
+        UI.stage.addActor(this);
 
         fill(t -> {
             t.setName("info");
@@ -114,8 +113,8 @@ public class HudGroup extends WidgetGroup {
             menu.add(ActorUtils.wrapper
                          .set(new TextButton(i18n.get("button.exit"), sTextB))
                          .click(b -> {
-                             Vars.inGame = false;
-                             Vars.inMenu = true;
+                             UI.inGame = false;
+                             UI.inMenu = true;
                              Game.endMap();
                          }).actor);
         }).bottom().left();
