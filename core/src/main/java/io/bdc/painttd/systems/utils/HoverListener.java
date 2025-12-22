@@ -9,6 +9,7 @@ import io.bdc.painttd.*;
 import io.bdc.painttd.content.components.logic.*;
 import io.bdc.painttd.content.components.logic.physics.*;
 import io.bdc.painttd.content.components.marker.*;
+import io.bdc.painttd.render.*;
 
 @Wire
 public class HoverListener extends BaseSystem {
@@ -31,7 +32,7 @@ public class HoverListener extends BaseSystem {
             PositionComp pos = posMapper.get(e);
             HitboxComp hitbox = hitboxMapper.get(e);
             if (rect.setSize(hitbox.x(), hitbox.y()).setCenter(pos.x, pos.y)
-                    .contains(Vars.worldViewport.unproject(Vars.v1.set(Gdx.input.getX(), Gdx.input.getY()))
+                    .contains(Renderer.viewport.unproject(Vars.v1.set(Gdx.input.getX(), Gdx.input.getY()))
                     )) {
                 hovered = e;
             }

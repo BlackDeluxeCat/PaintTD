@@ -4,10 +4,10 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.Game;
+import io.bdc.painttd.render.*;
 import io.bdc.painttd.utils.*;
 
 import static io.bdc.painttd.Core.*;
-import static io.bdc.painttd.Vars.*;
 
 public class InputProcessors {
     public static LayerManager<InputProcessor> inputProcessors = new LayerManager<>();
@@ -27,7 +27,7 @@ public class InputProcessors {
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             if (UI.hud.current != null && button == Input.Buttons.LEFT) {
                 var v = Vars.v1;
-                worldViewport.unproject(v.set(screenX, screenY));
+                Renderer.viewport.unproject(v.set(screenX, screenY));
                 if (!Game.map.validPos(Math.round(v.x), Math.round(v.y))) return false;
                 UI.hud.current.draw(v.x, v.y);
 
@@ -48,7 +48,7 @@ public class InputProcessors {
     cameraZoom = new InputAdapter() {
         @Override
         public boolean scrolled(float amountX, float amountY) {
-            Vars.zoom = MathUtils.clamp(Vars.zoom - amountY * 5, 1f, 200);
+            Renderer.targetZoom = MathUtils.clamp(Renderer.targetZoom - amountY * 5, 1f, 200);
             return super.scrolled(amountX, amountY);
         }
     },
@@ -71,8 +71,8 @@ public class InputProcessors {
         @Override
         public boolean touchUp(int screenX, int screenY, int pointer, int button) {
             if (button == Input.Buttons.RIGHT) {
-                v.set(ox, screenY).sub(screenX, oy).scl(worldViewport.getUnitsPerPixel());
-                worldViewport.getCamera().position.add(v.x, v.y, 0);
+                v.set(ox, screenY).sub(screenX, oy).scl(Renderer.viewport.getUnitsPerPixel());
+                Renderer.targetPos.add(v.x, v.y, 0);
                 return true;
             }
             return false;

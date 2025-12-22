@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
-import io.bdc.painttd.*;
 
 import static io.bdc.painttd.Core.batch;
 
@@ -20,6 +19,10 @@ public class Line {
     public void setRegion(TextureRegion region) {
         this.region = region;
         this.texture = region.getTexture();
+    }
+
+    public void setStroke(float stk){
+        this.stroke = stk;
     }
 
     public void line(float x1, float y1, float x2, float y2) {
@@ -88,5 +91,45 @@ public class Line {
         vertices[idx] = v;
 
         batch.draw(texture, vertices, 0, 20);
+    }
+
+    public void tri(float x1, float y1, float x2, float y2, float x3, float y3) {
+        line(x1, y1, x2, y2);
+        line(x2, y2, x3, y3);
+        line(x3, y3, x1, y1);
+    }
+
+    public void rect(float x, float y, float w, float h) {
+        line(x, y, x + w, y);
+        line(x + w, y, x + w, y + h);
+        line(x + w, y + h, x, y + h);
+        line(x, y + h, x, y);
+    }
+
+    public void rectCenter(float cx, float cy, float w, float h) {
+        rect(cx - w / 2, cy - h / 2, w, h);
+    }
+
+    public void rect(Rectangle rect) {
+        rect(rect.x, rect.y, rect.width, rect.height);
+    }
+
+    public void begin() {
+        points.clear();
+    }
+
+    public void point(float x, float y) {
+        points.add(x, y);
+    }
+
+    public void end() {
+        if (points.size == 0) return;
+        float x1 = points.get(points.size - 2), y1 = points.get(points.size - 1);
+        for (int i = 0; i < points.size; i += 2) {
+            float x2 = points.get(i), y2 = points.get(i + 1);
+            line(x1, y1, x2, y2);
+            x1 = x2;
+            y1 = y2;
+        }
     }
 }

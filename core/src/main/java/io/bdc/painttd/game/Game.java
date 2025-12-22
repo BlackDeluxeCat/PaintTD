@@ -4,17 +4,20 @@ import com.artemis.*;
 import com.artemis.io.*;
 import com.artemis.link.*;
 import com.artemis.managers.*;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import io.bdc.painttd.*;
 import io.bdc.painttd.content.*;
 import io.bdc.painttd.content.components.logic.target.*;
 import io.bdc.painttd.game.pathfind.*;
 import io.bdc.painttd.map.*;
+import io.bdc.painttd.render.*;
 import io.bdc.painttd.systems.*;
 import io.bdc.painttd.systems.render.*;
 import io.bdc.painttd.systems.request.*;
 import io.bdc.painttd.systems.targeting.*;
 import io.bdc.painttd.systems.utils.*;
+import io.bdc.painttd.ui.*;
 import io.bdc.painttd.utils.*;
 
 public class Game {
@@ -164,7 +167,7 @@ public class Game {
             l.add(new TargetSingleFind());
             l.add(new TargetSingleToTargetPos());
             l.add(new CooldownShoot());
-            l.add(new ShootBullet());
+            //l.add(new ShootBullet());
         });
 
         logic.with(l -> {
@@ -189,15 +192,11 @@ public class Game {
                 @Override
                 protected void processSystem() {
                     Core.batch.begin();
-                    Core.batch.setColor(Color.WHITE);
-                    //Core.fill.tri(10, 2, 11, 4, 9, 3);
-                    //Core.fill.quad(4, 4, 4, 10, 5, 10, 5, 4);
-                    //Core.fill.polygon(10, 5, 2, 15, 16);
-                    //Core.line.line(2, 5, 10, 7, false);
-                    //Core.line.line(2, 2, 10, 4);
                 }
             });
 
+            l.add(new DrawTile());
+            l.add(new DrawFlowFieldDebug());
             l.add(new DrawPartTexture());
 
             l.add(new BaseSystem() {
@@ -208,9 +207,7 @@ public class Game {
             });
 
             //使用了ShapeRenderer的系统
-            l.add(new DrawFlowFieldDebug());
             l.add(new DrawTileStain());
-            l.add(new DrawTile());
             l.add(new DrawUnitHitbox());
             l.add(new DrawTarget());
         });
