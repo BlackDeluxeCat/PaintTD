@@ -196,8 +196,13 @@ public class Game {
             });
 
             l.add(new DrawTile());
+            l.add(new DrawTileStain());
+
             l.add(new DrawFlowFieldDebug());
+
             l.add(new DrawPartTexture());
+            l.add(new DrawUnitHitbox());
+            l.add(new DrawTarget());
 
             l.add(new BaseSystem() {
                 @Override
@@ -207,9 +212,6 @@ public class Game {
             });
 
             //使用了ShapeRenderer的系统
-            l.add(new DrawTileStain());
-            l.add(new DrawUnitHitbox());
-            l.add(new DrawTarget());
         });
     }
 

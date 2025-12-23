@@ -2,12 +2,10 @@ package io.bdc.painttd.systems.render;
 
 import com.artemis.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.glutils.*;
 import io.bdc.painttd.*;
 import io.bdc.painttd.game.*;
 import io.bdc.painttd.render.*;
 
-import static io.bdc.painttd.Core.*;
 import static io.bdc.painttd.game.Game.*;
 
 public class DrawFlowFieldDebug extends BaseSystem {

@@ -114,6 +114,40 @@ public class Line {
         rect(rect.x, rect.y, rect.width, rect.height);
     }
 
+    public void circle(float x, float y, float radius, int segments) {
+        polygon(x, y, radius, 0, segments);
+    }
+
+    public void polygon(float x, float y, float size, float rotation, int sides) {
+        // 确保至少有3条边
+        sides = Math.max(3, sides);
+
+        // 计算每个顶点的角度
+        float angleStep = 2 * MathUtils.PI / sides;
+
+        // 将旋转角度转换为弧度
+        float rotationRad = rotation * MathUtils.degreesToRadians;
+
+        // 计算多边形的顶点坐标
+        points.clear();
+        for (int i = 0; i < sides; i++) {
+            float angle = i * angleStep + rotationRad;
+            points.add(x + size * MathUtils.cos(angle));
+            points.add(y + size * MathUtils.sin(angle));
+        }
+
+        // 使用tri函数绘制多边形，将多边形分解为多个三角形
+        // 所有三角形共享中心点
+        float x1 = points.items[sides * 2 - 2], y1 = points.items[sides * 2 - 1], x2, y2;
+        for (int i = 0; i < sides; i++) {
+            x2 = points.items[i * 2];
+            y2 = points.items[i * 2 + 1];
+            line(x1, y1, x2, y2);
+            x1 = x2;
+            y1 = y2;
+        }
+    }
+
     public void begin() {
         points.clear();
     }
