@@ -17,6 +17,7 @@ public class NodeGraph {
     public int add(Node node) {
         int index = nodes.size;
         nodes.add(node);
+        node.setNodeGraph(this);
         return index;
     }
 

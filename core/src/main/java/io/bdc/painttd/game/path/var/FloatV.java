@@ -3,8 +3,8 @@ package io.bdc.painttd.game.path.var;
 public class FloatV extends LinkableVar {
     public float cache;
 
-    public FloatV(boolean cacheValue) {
-        super(cacheValue);
+    public FloatV() {
+        super();
     }
 
     @Override

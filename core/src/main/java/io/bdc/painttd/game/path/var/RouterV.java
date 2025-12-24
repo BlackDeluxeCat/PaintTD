@@ -10,7 +10,7 @@ import io.bdc.painttd.game.path.*;
  */
 public class RouterV extends LinkableVar {
     public RouterV() {
-        super(false);
+        super();
     }
 
     /**

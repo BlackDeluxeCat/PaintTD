@@ -65,7 +65,7 @@ public class Vector2PortBuilder implements LinkableVarBuilder<Vector2V> {
     }
 
     @Override
-    public void build(Table cont, Vector2V var) {
+    public void build(Table cont, Vector2V var, PortMeta meta) {
         Table vectorTable = new Table();
 
         TextField xField = createTextField(var.cache.x, xMin, xMax, xPlaceholder);

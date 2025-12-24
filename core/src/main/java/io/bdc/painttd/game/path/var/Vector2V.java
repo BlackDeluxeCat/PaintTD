@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.*;
 public class Vector2V extends LinkableVar {
     public Vector2 cache = new Vector2();
 
-    public Vector2V(boolean cacheValue) {
-        super(cacheValue);
+    public Vector2V() {
+        super();
     }
 
     @Override

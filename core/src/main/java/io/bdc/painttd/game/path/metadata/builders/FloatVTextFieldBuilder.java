@@ -50,7 +50,7 @@ public class FloatVTextFieldBuilder implements LinkableVarBuilder<FloatV> {
     }
 
     @Override
-    public void build(Table cont, FloatV var) {
+    public void build(Table cont, FloatV var, PortMeta meta) {
         String initialValue = formatFloat(var.cache);
         TextField field = new TextField(initialValue, Styles.sTextF);
 
@@ -112,6 +112,8 @@ public class FloatVTextFieldBuilder implements LinkableVarBuilder<FloatV> {
                 }
             }
         });
+
+        cont.add(new Label(meta.getDisplayName(), Styles.sLabel));
 
         cont.add(field).width(100).pad(2);
     }

@@ -2,7 +2,6 @@ package io.bdc.painttd;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.Game;
 import io.bdc.painttd.render.*;
@@ -10,7 +9,6 @@ import io.bdc.painttd.ui.*;
 import io.bdc.painttd.utils.*;
 
 import static io.bdc.painttd.Core.*;
-import static io.bdc.painttd.Vars.*;
 import static io.bdc.painttd.game.Game.*;
 
 /**
@@ -30,7 +28,7 @@ public class PaintTowerDefence extends ApplicationAdapter {
         Renderer.load();
 
         UI.stage.setDebugUnderMouse(true);
-        //stage.setDebugAll(true);
+        UI.stage.setDebugAll(true);
         UI.menu.create();
 
         InputProcessors.create();
@@ -43,9 +41,7 @@ public class PaintTowerDefence extends ApplicationAdapter {
         prefs.save();
 
         ScreenUtils.clear(Color.CLEAR);
-
         Renderer.update();
-
         //world的现实时间增量
         //多数时候, world使用帧为时间单位
         if (UI.inGame) {

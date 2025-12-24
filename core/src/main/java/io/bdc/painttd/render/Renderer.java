@@ -21,7 +21,9 @@ public class Renderer {
 
     public static void load() {
         camera = viewport.getCamera();
+        fill.setBatch(batch);
         fill.setRegion(whiteRegion);
+        line.setBatch(batch);
         line.setRegion(whiteRegion);
     }
 

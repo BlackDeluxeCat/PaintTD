@@ -6,10 +6,8 @@ import io.bdc.painttd.game.path.*;
 public abstract class LinkableVar extends BaseVar implements Pool.Poolable {
     public int sourceNode = -1;
     public int sourceOutputPort = -1;
-    public boolean cacheValue;
 
-    public LinkableVar(boolean cacheValue) {
-        this.cacheValue = cacheValue;
+    public LinkableVar() {
     }
 
     /**
@@ -40,7 +38,7 @@ public abstract class LinkableVar extends BaseVar implements Pool.Poolable {
     public abstract void readLink(@Null LinkableVar port);
 
     /** 对编辑器中创建link做有效性检查 */
-    public abstract boolean canLink(LinkableVar port);
+    public abstract boolean canLink(LinkableVar source);
 
     /** 重置变量. */
     @Override

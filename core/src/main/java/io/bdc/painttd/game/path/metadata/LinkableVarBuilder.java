@@ -4,5 +4,5 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import io.bdc.painttd.game.path.var.*;
 
 public interface LinkableVarBuilder<T extends LinkableVar> {
-    void build(Table cont, T var);
+    void build(Table cont, T var, PortMeta meta);
 }

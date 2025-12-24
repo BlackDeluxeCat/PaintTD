@@ -28,6 +28,14 @@ public abstract class Node implements Pool.Poolable {
         return meta;
     }
 
+    public PortMeta getInputMeta(int index) {
+        return getMeta().getInputPort(index);
+    }
+
+    public PortMeta getOutputMeta(int index) {
+        return getMeta().getOutputPort(index);
+    }
+
     /**
      * 初始化享元元数据
      */

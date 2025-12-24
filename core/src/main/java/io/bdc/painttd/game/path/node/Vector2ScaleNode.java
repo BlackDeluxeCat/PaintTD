@@ -50,21 +50,21 @@ public class Vector2ScaleNode extends Node {
 
     @Override
     public void initVars() {
-        scaleI = new Vector2V(true) {
+        scaleI = new Vector2V() {
             @Override
             public void reset() {
                 cache.set(1f, 1f);
             }
         };
 
-        shiftI = new Vector2V(true) {
+        shiftI = new Vector2V() {
             @Override
             public void reset() {
                 cache.set(0f, 0f);
             }
         };
 
-        shiftO = new Vector2V(false);
+        shiftO = new Vector2V();
     }
 
     @Override

@@ -82,6 +82,54 @@ public class ActorUtils<T extends Actor> {
         return actor;
     }
 
+    /**
+     * 查询元素是否存在符合条件的父母
+     */
+    public static boolean isDescendantOf(Actor self, Boolf<Actor> boolf) {
+        Actor parent = self;
+        do {
+            if (boolf.get(parent)) return true;
+            parent = parent.getParent();
+        } while (parent != null);
+        return false;
+    }
+
+    /**
+     * 查询元素是否存在符合条件的子元素
+     */
+    public static boolean isAscendantOf(Actor self, Boolf<Actor> boolf) {
+        Actor parent = self;
+        do {
+            if (boolf.get(parent)) return true;
+            parent = parent.getParent();
+        } while (parent != null);
+        return false;
+    }
+
+    /**
+     * 取得符合条件的父母. 总是返回第一个符合的元素.
+     */
+    public static Actor findDescendantOf(Actor self, Boolf<Actor> boolf) {
+        Actor parent = self;
+        do {
+            if (boolf.get(parent)) return parent;
+            parent = parent.getParent();
+        } while (parent != null);
+        return null;
+    }
+
+    /**
+     * 取得符合条件的子元素. 总是返回第一个符合的元素.
+     */
+    public static Actor findAscendantOf(Actor self, Boolf<Actor> boolf) {
+        Actor parent = self;
+        do {
+            if (boolf.get(parent)) return parent;
+            parent = parent.getParent();
+        } while (parent != null);
+        return null;
+    }
+
     public static TextField.TextFieldFilter
         digitOnly = new TextField.TextFieldFilter.DigitsOnlyFilter(),
         floatOnly = (textField, c) -> Character.isDigit(c) || (textField.getText().contains(".") && c == '.');

@@ -5,13 +5,16 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 
-import static io.bdc.painttd.Core.*;
-
 public class Fill {
+    protected Batch batch;
     protected TextureRegion region;
     protected Texture texture;
     float[] vertices = new float[128];
     FloatArray points = new FloatArray();
+
+    public void setBatch(Batch batch) {
+        this.batch = batch;
+    }
 
     public void setRegion(TextureRegion region) {
         this.region = region;

@@ -5,16 +5,19 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 
-import static io.bdc.painttd.Core.batch;
-
 public class Line {
     public float stroke = 1f;
 
+    protected Batch batch;
     protected TextureRegion region;
     protected Texture texture;
     protected float[] vertices = new float[128];
     protected FloatArray points = new FloatArray();
     protected Vector2 dv = new Vector2();
+
+    public void setBatch(Batch batch) {
+        this.batch = batch;
+    }
 
     public void setRegion(TextureRegion region) {
         this.region = region;
@@ -136,8 +139,6 @@ public class Line {
             points.add(y + size * MathUtils.sin(angle));
         }
 
-        // 使用tri函数绘制多边形，将多边形分解为多个三角形
-        // 所有三角形共享中心点
         float x1 = points.items[sides * 2 - 2], y1 = points.items[sides * 2 - 1], x2, y2;
         for (int i = 0; i < sides; i++) {
             x2 = points.items[i * 2];

@@ -149,7 +149,7 @@ public class PortMeta {
     @SuppressWarnings("unchecked")
     private <T extends LinkableVar> void buildInternal(T var, Table container) {
         LinkableVarBuilder<T> builder = (LinkableVarBuilder<T>)uiBuilder;
-        builder.build(container, var);
+        builder.build(container, var, this);
     }
     /**
      * 生成i18n key, 支持三种配置模式.

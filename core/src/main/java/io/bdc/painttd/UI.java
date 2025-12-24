@@ -8,7 +8,7 @@ public class UI {
     public static boolean inGame;
     public static boolean inMenu = true;
 
-    public static Stage stage = new Stage(new ScreenViewport());
+    public static Stage stage = new Stage(new ScreenViewport(), Core.batch);
 
     public static NodeGraphEditorDialog nodeGraphEditorDialog = new NodeGraphEditorDialog();
     public static MenuGroup menu = new MenuGroup();
