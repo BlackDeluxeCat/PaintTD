@@ -64,10 +64,10 @@ public class NodeGraphEditorDialog extends BaseDialog {
     public void show(NodeGraph graph) {
         group.graph = graph;
         group.rebuild();
+        group.setTranslate(group.getWidth() / 2f, group.getHeight() / 2f);
         invalidate();
         show();
         pack();
-        group.setTranslate(group.getWidth() / 2f, group.getHeight() / 2f);
     }
 
     public void rebuild() {
@@ -79,6 +79,8 @@ public class NodeGraphEditorDialog extends BaseDialog {
     public static class NodeGraphGroup extends WidgetGroup {
         public NodeGraph graph;
 
+        public Array<NodeElem> nodeElems = new Array<>();
+
         public Vector2 translate = new Vector2();
 
         public NodeGraphGroup() {
@@ -86,9 +88,11 @@ public class NodeGraphEditorDialog extends BaseDialog {
 
         public void rebuild() {
             clear();
+            nodeElems.clear();
             if (graph != null) {
                 for (var node : graph.nodes) {
                     var t = new NodeElem(node);
+                    nodeElems.add(t);
                     addActor(t);
                 }
             }
@@ -119,15 +123,17 @@ public class NodeGraphEditorDialog extends BaseDialog {
 
         public class NodeElem extends Table {
             protected Node node;
+            protected NodeMeta meta;
+
             public Table title, cont;
+            public Array<PortElem> inputElems = new Array<>(), outputElems = new Array<>();
             public Table inputsPorts, outputPorts;
 
             public NodeElem(Node node) {
                 this.node = node;
                 setBackground(Styles.white);
 
-                // 使用新metadata系统获取背景色
-                NodeMeta meta = node.getMeta();
+                meta = node.getMeta();
                 Color bgColor = meta.backgroundColor;
                 // 设置背景色（如果有定义）
                 if (bgColor != null) setColor(bgColor);
@@ -187,6 +193,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
             }
 
             public void rebuildInputs() {
+                inputElems.clear();
                 inputsPorts.clear();
                 inputsPorts.defaults().growX().minHeight(Styles.buttonSize).left();
 
@@ -196,7 +203,9 @@ public class NodeGraphEditorDialog extends BaseDialog {
                     LinkableVar var = node.inputs.get(i);
 
                     // 左侧：端口标识
-                    portRow.add(new PortElem(node, i, true)).size(Styles.buttonSize);
+                    PortElem port = new PortElem(this, i, true);
+                    inputElems.add(port);
+                    portRow.add(port).size(Styles.buttonSize).top();
 
                     // 右侧：值编辑器（如果有uiBuilder）
                     Table editorContainer = new Table();
@@ -216,21 +225,21 @@ public class NodeGraphEditorDialog extends BaseDialog {
             public static NodeGraphGroup.PortElem draggingElem, hitElem;
             public static boolean dragging;
 
-            public Node node;
+            protected NodeElem nodeElem;
+            protected LinkableVar linkableVar;
+            protected PortMeta meta;
             public int idx;
             public boolean isInput;
 
             public PortElem linkPort;
 
-            public Bezier<Vector2> curve = new Bezier<>();
-            public static Vector2 vstart = new Vector2(), vend = new Vector2(), p1 = new Vector2(), p2 = new Vector2(), tmp = new Vector2(), tmp2 = new Vector2();
-
-            public PortElem(Node myNode, int myIndex, boolean isInput) {
-                this.node = myNode;
+            public PortElem(NodeElem myNode, int myIndex, boolean isInput) {
+                this.nodeElem = myNode;
+                this.meta = isInput ? myNode.node.getInputMeta(myIndex) : myNode.node.getOutputMeta(myIndex);
                 this.idx = myIndex;
                 this.isInput = isInput;
+                this.linkableVar = isInput ? nodeElem.node.inputs.get(idx) : nodeElem.node.outputs.get(idx);
 
-                //setTransform(true);
                 setTouchable(Touchable.enabled);
 
                 addListener(new DragListener() {
@@ -253,7 +262,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
                     @Override
                     public void touchDragged(InputEvent event, float x, float y, int pointer) {
                         super.touchDragged(event, x, y, pointer);
-                        if(dragging) {
+                        if (dragging) {
                             NodeGraphGroup.PortElem.this.localToStageCoordinates(v.set(x, y));
                             Actor hit = UI.stage.hit(v.x, v.y, true);
                             if (hit != null) {
@@ -286,12 +295,11 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 });
 
                 Image img = new Image(Core.atlas.findRegion("ui-node-port"));
-                PortMeta meta = isInput ? node.getInputMeta(idx) : node.getOutputMeta(idx);
                 add(img).grow().getActor().setColor(meta.color);
             }
 
             public void createLink(@Null NodeGraphGroup.PortElem other) {
-                if (other == null || other.node == this.node || other.isInput != isInput) {
+                if (other == null || other.nodeElem.node == this.nodeElem.node || other.isInput != isInput) {
                     linkPort = null;
                     return;
                 }
@@ -299,20 +307,20 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 PortElem ine, oute;
                 LinkableVar in, out;
                 if (isInput) {
-                    in = getVar();
+                    in = linkableVar;
                     ine = this;
-                    out = other.getVar();
+                    out = other.linkableVar;
                     oute = other;
                 } else {
-                    out = getVar();
+                    out = linkableVar;
                     oute = this;
-                    in = other.getVar();
+                    in = other.linkableVar;
                     ine = other;
                 }
 
                 if (in == null || out == null) return;
                 if (in.canLink(out)) {
-                    in.sourceNode = graph.get(other.node);
+                    in.sourceNode = graph.get(other.nodeElem.node);
                     in.sourceOutputPort = other.idx;
                     ine.linkPort = oute;
                 }
@@ -321,46 +329,55 @@ public class NodeGraphEditorDialog extends BaseDialog {
             @Override
             public void draw(Batch batch, float parentAlpha) {
                 super.draw(batch, parentAlpha);
-                if (linkPort != null) {
-                    tmp.set(getX(Align.center), getY(Align.center));//这个是正常地渲染到节点图标上了
-                    tmp2.set(linkPort.getX(Align.center), linkPort.getY(Align.center));//这样只能拿到似乎是NodeElem坐标系的坐标, 直接拿去渲染就会指向左下角
-                    linkPort.localToAscendantCoordinates(NodeGraphGroup.this, tmp2);//这样就稍微好一点, 但是随着双亲元素(portRow)高的不同, 产生不同的向上偏移
-                    drawLink(tmp.x, tmp.y, tmp2.x, tmp2.y);
-                }
 
-                if (draggingElem == this) {
-                    tmp.set(getX(Align.center), getY(Align.center));
-                    tmp2.set(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());
-                    NodeGraphGroup.this.stageToLocalCoordinates(tmp2);
-                    if(isInput) {
-                        drawLink(tmp.x, tmp.y, tmp2.x, tmp2.y);
-                    } else {
-                        drawLink(tmp2.x, tmp2.y, tmp.x, tmp.y);
-                    }
-                }
-            }
+                if (isTransform()) applyTransform(batch, computeTransform());
 
-            public void drawLink(float inX, float inY, float outX, float outY) {
-                vstart.set(inX, inY);
-                p1.set(inX - 10f, inY);
-                p2.set(outX + 10f, outY);
-                vend.set(outX, outY);
-                curve.set(vstart, p1, p2, vend);
                 Renderer.setColor(Color.WHITE);
-                Renderer.line.setStroke(4f);
+                Renderer.line.setStroke(2f);
 
-                Renderer.line.begin();
-                float segments = 10;
-                for (int i = 0; i < segments + 1; i++) {
-                    curve.valueAt(tmp, i / segments);
-                    Renderer.line.point(tmp.x, tmp.y);
+                if (linkPort != null) {
+                    localToAscendantCoordinates(NodeGraphGroup.this, tmp.set(getWidth(), getHeight()).scl(0.5f));
+                    linkPort.localToAscendantCoordinates(NodeGraphGroup.this, tmp2.set(linkPort.getWidth(), linkPort.getHeight()).scl(0.5f));
+
+                    //Renderer.line.line(tmp.x, tmp.y, tmp2.x, tmp2.y);
+                    float off = tmp3.set(tmp).sub(tmp2).len() / 2f;
+                    drawLink(tmp.x, tmp.y, tmp2.x, tmp2.y, off, -off);
                 }
-                Renderer.line.end();
-            }
 
-            public LinkableVar getVar() {
-                return isInput ? node.inputs.get(idx) : node.outputs.get(idx);
+                if (dragging && draggingElem == this) {
+                    localToAscendantCoordinates(NodeGraphGroup.this, tmp.set(getWidth(), getHeight()).scl(0.5f));
+                    NodeGraphGroup.this.stageToLocalCoordinates(tmp2.set(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()));
+                    Renderer.a(0.5f);
+
+                    //Renderer.line.line(tmp.x, tmp.y, tmp2.x, tmp2.y);
+                    float off = tmp3.set(tmp).sub(tmp2).len() / 2f;
+                    drawLink(tmp.x, tmp.y, tmp2.x, tmp2.y, off, -off);
+                }
+
+                if (isTransform()) resetTransform(batch);
             }
+        }
+
+        public static Bezier<Vector2> curve = new Bezier<>();
+
+        public static Vector2 vstart = new Vector2(), vend = new Vector2(), p1 = new Vector2(), p2 = new Vector2(), tmp = new Vector2(), tmp2 = new Vector2(), tmp3 = new Vector2();
+
+        public void drawLink(float inX, float inY, float outX, float outY, float inOffset, float outOffset) {
+            vstart.set(inX, inY);
+            p1.set(inX + inOffset, inY);
+            p2.set(outX + outOffset, outY);
+            vend.set(outX, outY);
+            curve.set(vstart, p1, p2, vend);
+            Renderer.setColor(Color.WHITE);
+            Renderer.line.setStroke(4f);
+
+            Renderer.line.polylineStart();
+            float segments = 20;
+            for (int i = 0; i < segments + 1; i++) {
+                curve.valueAt(tmp, i / segments);
+                Renderer.line.polylineAdd(tmp.x, tmp.y);
+            }
+            Renderer.line.polylineEnd();
         }
     }
 }

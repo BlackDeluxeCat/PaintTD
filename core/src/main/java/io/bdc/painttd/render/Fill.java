@@ -98,16 +98,16 @@ public class Fill {
         polygon(x, y, radius, rotation, sides);
     }
 
-    public void begin() {
+    public void polygonStart() {
         points.clear();
     }
 
-    public void next(float x, float y) {
+    public void polygonAdd(float x, float y) {
         points.add(x);
         points.add(y);
     }
 
-    public void end() {
+    public void polygonEnd() {
         if (points.size > 0) {
             fill(points.items, points.size);
         }

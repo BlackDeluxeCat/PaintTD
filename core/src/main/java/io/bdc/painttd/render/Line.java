@@ -24,7 +24,7 @@ public class Line {
         this.texture = region.getTexture();
     }
 
-    public void setStroke(float stk){
+    public void setStroke(float stk) {
         this.stroke = stk;
     }
 
@@ -37,10 +37,10 @@ public class Line {
         if (len == 0) return;
         dv.nor();
         float halfStroke = stroke / 2;
-        
+
         // 计算四边形的四个顶点, lt, lb, rb, rt
         float px1, py1, px2, py2, px3, py3, px4, py4;
-        if(cap){
+        if (cap) {
             float cx = dv.x - dv.y, cy = dv.y + dv.x;
             px1 = x1 - cy * halfStroke;
             py1 = y1 + cx * halfStroke;
@@ -50,7 +50,7 @@ public class Line {
             py3 = y2 - cx * halfStroke;
             px4 = x2 + cx * halfStroke;
             py4 = y2 + cy * halfStroke;
-        }else{
+        } else {
             float nx = -dv.y, ny = dv.x;
             px1 = x1 + nx * halfStroke;
             py1 = y1 + ny * halfStroke;
@@ -149,19 +149,24 @@ public class Line {
         }
     }
 
-    public void begin() {
+    public void polylineStart() {
         points.clear();
     }
 
-    public void point(float x, float y) {
+    public void polylineAdd(float x, float y) {
         points.add(x, y);
     }
 
-    public void end() {
+    public void polylineEnd() {
         if (points.size == 0) return;
-        float x1 = points.get(points.size - 2), y1 = points.get(points.size - 1);
-        for (int i = 0; i < points.size; i += 2) {
-            float x2 = points.get(i), y2 = points.get(i + 1);
+        line(points.items, points.size);
+    }
+
+    public void line(float[] vertices, int size) {
+        if (size < 2 * 2) return;
+        float x1 = vertices[0], y1 = vertices[1];
+        for (int i = 2; i < size - 2; i += 2) {
+            float x2 = vertices[i], y2 = vertices[i + 1];
             line(x1, y1, x2, y2);
             x1 = x2;
             y1 = y2;
