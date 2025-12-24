@@ -9,8 +9,8 @@ import io.bdc.painttd.game.path.*;
  * <p>例: 外部方法使用转发信息. {@code Node upStreamNode = node.nodeGraph.get(inputRouterV.sourceNode);}
  */
 public class RouterV extends LinkableVar {
-    public RouterV() {
-        super();
+    public RouterV(int ownerNode) {
+        super(ownerNode);
     }
 
     /**

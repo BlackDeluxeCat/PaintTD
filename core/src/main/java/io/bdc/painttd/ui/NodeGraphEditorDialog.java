@@ -27,6 +27,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
         addCloseButton();
         // 使用metadata创建节点按钮
         createNodeButtons();
+        rebuild();
     }
 
     /**
@@ -36,6 +37,11 @@ public class NodeGraphEditorDialog extends BaseDialog {
         // 使用新metadata系统
         NodeMetaRegistry metaRegistry = NodeMetaRegistry.getInstance();
 
+        buttons.add(ActorUtils.wrapper.set(new TextButton(
+            "Rebuild UI",
+            Styles.sTextB
+        )).click(b -> group.rebuild()).actor).growY();
+
         // Vector2ScaleNode按钮
         NodeMeta scaleMeta = metaRegistry.getMeta(Vector2ScaleNode.class);
         buttons.add(ActorUtils.wrapper.set(new TextButton(
@@ -44,7 +50,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
         )).click(b -> {
             if (group.graph != null) {
                 group.graph.add(new Vector2ScaleNode());
-                rebuild();
+                group.rebuild();
             }
         }).actor).growY();
 
@@ -86,39 +92,51 @@ public class NodeGraphEditorDialog extends BaseDialog {
         public NodeGraphGroup() {
         }
 
+        public void setNodeGraph(NodeGraph graph) {
+            this.graph = graph;
+            rebuild();
+        }
+
         public void rebuild() {
             clear();
             nodeElems.clear();
             if (graph != null) {
-                for (var node : graph.nodes) {
+                //重建节点元素
+                for (int i = 0; i < graph.nodes.size; i++) {
+                    var node = graph.nodes.get(i);
                     var t = new NodeElem(node);
                     nodeElems.add(t);
                     addActor(t);
                 }
+
+                //重连端口
+                for (int i = 0; i < nodeElems.size; i++) {
+                    NodeElem current = nodeElems.get(i);
+                    for (var currentPort : current.inputElems) {
+                        LinkableVar currentInputVar = currentPort.linkableVar;
+                        //以下寻找源节点的output端口元素
+                        if(currentInputVar.sourceNode != -1){
+                            Node sourceNode = graph.get(currentInputVar.sourceNode);
+                            NodeElem sourceNodeElem = findNodeElem(sourceNode);
+                            if(sourceNodeElem != null){
+                                LinkableVar sourceOutputVar = sourceNode.getOutput(currentInputVar.sourceOutputPort);
+                                PortElem sourcePort = sourceNodeElem.findOutputPortElem(sourceOutputVar);
+                                if(sourcePort != null){
+                                    //已经拿到源节点output端口了, 和当前节点的input端口链接
+                                    currentPort.linkPort = sourcePort;
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        public void setTranslate(float x, float y) {
-            translate.set(x, y);
-        }
-
-        public void translateBy(float x, float y) {
-            translate.add(x, y);
-        }
-
-        @Override
-        protected Matrix4 computeTransform() {
-            return super.computeTransform().translate(translate.x, translate.y, 0);
-        }
-
-        @Override
-        public Vector2 parentToLocalCoordinates(Vector2 parentCoords) {
-            return super.parentToLocalCoordinates(parentCoords).sub(translate);
-        }
-
-        @Override
-        public Vector2 localToParentCoordinates(Vector2 localCoords) {
-            return super.localToParentCoordinates(localCoords).add(translate);
+        public NodeElem findNodeElem(Node node) {
+            for (var elem : nodeElems) {
+                if (elem.node == node) return elem;
+            }
+            return null;
         }
 
         public class NodeElem extends Table {
@@ -127,7 +145,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
 
             public Table title, cont;
             public Array<PortElem> inputElems = new Array<>(), outputElems = new Array<>();
-            public Table inputsPorts, outputPorts;
+            public Table inputPortTable, outputPortTable;
 
             public NodeElem(Node node) {
                 this.node = node;
@@ -140,8 +158,12 @@ public class NodeGraphEditorDialog extends BaseDialog {
 
                 title = new Table();
                 cont = new Table();
-                inputsPorts = new Table();
-                outputPorts = new Table();
+                inputPortTable = new Table();
+                outputPortTable = new Table();
+
+                rebuildTitle();
+                rebuildInputs();
+                rebuildOutputs();
 
                 defaults().minSize(Styles.buttonSize);
                 add(title).growX();
@@ -150,12 +172,9 @@ public class NodeGraphEditorDialog extends BaseDialog {
 
                 cont.setBackground(Styles.black3);
                 cont.defaults().growX().top().minSize(Styles.buttonSize);
-                cont.add(outputPorts);
+                cont.add(outputPortTable);
                 cont.row();
-                cont.add(inputsPorts);
-
-                rebuildTitle();
-                rebuildInputs();
+                cont.add(inputPortTable);
 
                 reLocate();
             }
@@ -194,20 +213,20 @@ public class NodeGraphEditorDialog extends BaseDialog {
 
             public void rebuildInputs() {
                 inputElems.clear();
-                inputsPorts.clear();
-                inputsPorts.defaults().growX().minHeight(Styles.buttonSize).left();
+                inputPortTable.clear();
+                inputPortTable.defaults().growX().minHeight(Styles.buttonSize).left();
 
                 for (int i = 0; i < node.inputs.size; i++) {
                     Table portRow = new Table();
                     PortMeta portMeta = node.getInputMeta(i);
                     LinkableVar var = node.inputs.get(i);
 
-                    // 左侧：端口标识
+                    // 左侧: 端口标识
                     PortElem port = new PortElem(this, i, true);
                     inputElems.add(port);
-                    portRow.add(port).size(Styles.buttonSize).top();
+                    portRow.add(port).size(Styles.buttonSize);
 
-                    // 右侧：值编辑器（如果有uiBuilder）
+                    // 右侧: 值编辑器
                     Table editorContainer = new Table();
                     boolean hasEditor = portMeta.build(var, editorContainer);
                     if (hasEditor) {
@@ -216,8 +235,50 @@ public class NodeGraphEditorDialog extends BaseDialog {
                         portRow.add(new Label(portMeta.getDisplayName(), Styles.sLabel)).minWidth(100).growX();
                     }
 
-                    inputsPorts.add(portRow).growX().row();
+                    inputPortTable.add(portRow).growX().row();
                 }
+            }
+
+            public void rebuildOutputs() {
+                outputElems.clear();
+                outputPortTable.clear();
+                outputPortTable.defaults().minHeight(Styles.buttonSize).right();
+
+                for (int i = 0; i < node.outputs.size; i++) {
+                    Table portRow = new Table();
+                    PortMeta portMeta = node.getOutputMeta(i);
+                    LinkableVar var = node.outputs.get(i);
+
+                    // 左侧: 值编辑器
+                    Table editorContainer = new Table();
+                    boolean hasEditor = portMeta.build(var, editorContainer);
+                    if (hasEditor) {
+                        portRow.add(editorContainer).minWidth(100).growX();
+                    } else {
+                        portRow.add(new Label(portMeta.getDisplayName(), Styles.sLabel)).minWidth(100).growX();
+                    }
+
+                    // 右侧: 端口标识
+                    PortElem port = new PortElem(this, i, false);
+                    outputElems.add(port);
+                    portRow.add(port).size(Styles.buttonSize);
+
+                    outputPortTable.add(portRow).growX().row();
+                }
+            }
+
+            public PortElem findInputPortElem(LinkableVar var){
+                for (var elem : inputElems) {
+                    if (elem.linkableVar == var) return elem;
+                }
+                return null;
+            }
+
+            public PortElem findOutputPortElem(LinkableVar var){
+                for (var elem : outputElems) {
+                    if (elem.linkableVar == var) return elem;
+                }
+                return null;
             }
         }
 
@@ -231,6 +292,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
             public int idx;
             public boolean isInput;
 
+            /** 与本端口链接的外部端口, 总是output */
             public PortElem linkPort;
 
             public PortElem(NodeElem myNode, int myIndex, boolean isInput) {
@@ -298,8 +360,9 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 add(img).grow().getActor().setColor(meta.color);
             }
 
+            /** 该方法自动识别IO */
             public void createLink(@Null NodeGraphGroup.PortElem other) {
-                if (other == null || other.nodeElem.node == this.nodeElem.node || other.isInput != isInput) {
+                if (other == null || other.nodeElem.node == this.nodeElem.node || other.isInput == isInput) {
                     linkPort = null;
                     return;
                 }
@@ -319,9 +382,10 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 }
 
                 if (in == null || out == null) return;
+                //TODO解决routerV的canlink问题
                 if (in.canLink(out)) {
-                    in.sourceNode = graph.get(other.nodeElem.node);
-                    in.sourceOutputPort = other.idx;
+                    in.sourceNode = graph.get(oute.nodeElem.node);
+                    in.sourceOutputPort = oute.idx;
                     ine.linkPort = oute;
                 }
             }
@@ -339,9 +403,8 @@ public class NodeGraphEditorDialog extends BaseDialog {
                     localToAscendantCoordinates(NodeGraphGroup.this, tmp.set(getWidth(), getHeight()).scl(0.5f));
                     linkPort.localToAscendantCoordinates(NodeGraphGroup.this, tmp2.set(linkPort.getWidth(), linkPort.getHeight()).scl(0.5f));
 
-                    //Renderer.line.line(tmp.x, tmp.y, tmp2.x, tmp2.y);
                     float off = tmp3.set(tmp).sub(tmp2).len() / 2f;
-                    drawLink(tmp.x, tmp.y, tmp2.x, tmp2.y, off, -off);
+                    drawLink(tmp.x, tmp.y, tmp2.x, tmp2.y, -off, off);
                 }
 
                 if (dragging && draggingElem == this) {
@@ -349,8 +412,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
                     NodeGraphGroup.this.stageToLocalCoordinates(tmp2.set(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY()));
                     Renderer.a(0.5f);
 
-                    //Renderer.line.line(tmp.x, tmp.y, tmp2.x, tmp2.y);
-                    float off = tmp3.set(tmp).sub(tmp2).len() / 2f;
+                    float off = tmp3.set(tmp).sub(tmp2).len() / 2f * (draggingElem.isInput ? -1f : 1f);
                     drawLink(tmp.x, tmp.y, tmp2.x, tmp2.y, off, -off);
                 }
 
@@ -373,11 +435,34 @@ public class NodeGraphEditorDialog extends BaseDialog {
 
             Renderer.line.polylineStart();
             float segments = 20;
-            for (int i = 0; i < segments + 1; i++) {
+            for (int i = 0; i <= segments; i++) {
                 curve.valueAt(tmp, i / segments);
                 Renderer.line.polylineAdd(tmp.x, tmp.y);
             }
             Renderer.line.polylineEnd();
+        }
+
+        public void setTranslate(float x, float y) {
+            translate.set(x, y);
+        }
+
+        public void translateBy(float x, float y) {
+            translate.add(x, y);
+        }
+
+        @Override
+        protected Matrix4 computeTransform() {
+            return super.computeTransform().translate(translate.x, translate.y, 0);
+        }
+
+        @Override
+        public Vector2 parentToLocalCoordinates(Vector2 parentCoords) {
+            return super.parentToLocalCoordinates(parentCoords).sub(translate);
+        }
+
+        @Override
+        public Vector2 localToParentCoordinates(Vector2 localCoords) {
+            return super.localToParentCoordinates(localCoords).add(translate);
         }
     }
 }

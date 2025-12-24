@@ -22,6 +22,10 @@ public abstract class Node implements Pool.Poolable {
         registerVars();
     }
 
+    public int id(){
+        return nodeGraph == null ? -1 : nodeGraph.get(this);
+    }
+
     /** 懒惰获取metadata */
     public NodeMeta getMeta() {
         if (meta == null) initMeta();

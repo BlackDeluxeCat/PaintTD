@@ -15,8 +15,8 @@ public abstract class BaseSingleFrameRemapForwardingNode extends Node {
 
     @Override
     public void initVars() {
-        inPort = new RouterV();
-        outPort = new RouterV();
+        inPort = new RouterV(id());
+        outPort = new RouterV(id());
     }
 
     @Override

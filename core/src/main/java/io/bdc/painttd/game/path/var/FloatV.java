@@ -1,10 +1,12 @@
 package io.bdc.painttd.game.path.var;
 
+import io.bdc.painttd.game.path.*;
+
 public class FloatV extends LinkableVar {
     public float cache;
 
-    public FloatV() {
-        super();
+    public FloatV(int ownerNode) {
+        super(ownerNode);
     }
 
     @Override

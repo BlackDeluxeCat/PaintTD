@@ -43,7 +43,7 @@ public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
     @Override
     public void initVars() {
         super.initVars();
-        offset = new FloatV();
+        offset = new FloatV(id());
     }
 
     @Override
