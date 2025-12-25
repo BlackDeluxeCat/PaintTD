@@ -21,12 +21,12 @@ public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
                 .addInputPort(new PortMeta()
                                   .setFieldName("inPort")
                                   .setDisplayNameKey("")  // 自动生成
-                                  .setColor(Color.valueOf("#9C27B0"))  // 紫色
+                                  .setColor(PortMeta.getDefaultColor(RouterV.class))
                                   .setIconName("input_router"))
                 .addInputPort(new PortMeta()
                                   .setFieldName("offset")
                                   .setDisplayNameKey("")  // 自动生成
-                                  .setColor(Color.valueOf("#FF5722"))  // 深橙色
+                                  .setColor(PortMeta.getDefaultColor(FloatV.class))
                                   .setIconName("input_float")
                                   .setUiBuilder(new FloatVTextFieldBuilder()
                                                     .range(-1000, 1000)
@@ -35,7 +35,7 @@ public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
                 .addOutputPort(new PortMeta()
                                    .setFieldName("outPort")
                                    .setDisplayNameKey("")  // 自动生成
-                                   .setColor(Color.valueOf("#3F51B5"))  // 靛蓝色
+                                   .setColor(PortMeta.getDefaultColor(RouterV.class))
                                    .setIconName("output_router"))
         );
     }

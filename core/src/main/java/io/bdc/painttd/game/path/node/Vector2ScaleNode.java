@@ -25,7 +25,7 @@ public class Vector2ScaleNode extends Node {
                 .addInputPort(new PortMeta()
                                   .setFieldName("shiftI")
                                   .setDisplayNameKey("")  // 自动生成
-                                  .setColor(Color.valueOf("#FF9800"))  // 橙色
+                                  .setColor(PortMeta.getDefaultColor(Vector2V.class))
                                   .setIconName("input_vector")
                                   .setUiBuilder(new Vector2PortBuilder()
                                                     .setXRange(-100, 100)
@@ -34,7 +34,7 @@ public class Vector2ScaleNode extends Node {
                 .addInputPort(new PortMeta()
                                   .setFieldName("scaleI")
                                   .setDisplayNameKey("")  // 自动生成
-                                  .setColor(Color.valueOf("#E91E63"))  // 粉色
+                                  .setColor(PortMeta.getDefaultColor(Vector2V.class))
                                   .setIconName("input_vector")
                                   .setUiBuilder(new Vector2PortBuilder()
                                                     .setXRange(0.1f, 10f)
@@ -43,7 +43,7 @@ public class Vector2ScaleNode extends Node {
                 .addOutputPort(new PortMeta()
                                    .setFieldName("shiftO")
                                    .setDisplayNameKey("")  // 自动生成
-                                   .setColor(Color.valueOf("#2196F3"))  // 蓝色
+                                   .setColor(PortMeta.getDefaultColor(Vector2V.class))
                                    .setIconName("output_vector"))
         );
     }
@@ -52,14 +52,14 @@ public class Vector2ScaleNode extends Node {
     public void initVars() {
         scaleI = new Vector2V(id()) {
             @Override
-            public void reset() {
+            public void def() {
                 cache.set(1f, 1f);
             }
         };
 
         shiftI = new Vector2V(id()) {
             @Override
-            public void reset() {
+            public void def() {
                 cache.set(0f, 0f);
             }
         };

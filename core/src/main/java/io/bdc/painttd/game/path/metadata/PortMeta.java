@@ -2,6 +2,7 @@ package io.bdc.painttd.game.path.metadata;
 
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.var.*;
 import io.bdc.painttd.utils.*;
 import io.bdc.painttd.utils.func.*;
@@ -34,7 +35,16 @@ import io.bdc.painttd.utils.func.*;
  * }</pre>
  */
 public class PortMeta {
-    // 公共字段, modder可直接访问修改
+    public static ObjectMap<Class<? extends LinkableVar>, Color> DEFAULT_COLORS = new ObjectMap<>();
+    static {
+        DEFAULT_COLORS.put(FloatV.class, Color.valueOf("#FF5722"));
+        DEFAULT_COLORS.put(Vector2V.class, Color.valueOf("#FFC107"));
+        DEFAULT_COLORS.put(RouterV.class, Color.valueOf("#4CAF50"));
+    }
+
+    public static Color getDefaultColor(Class<? extends LinkableVar> varClass) {
+        return DEFAULT_COLORS.get(varClass, Color.LIGHT_GRAY);
+    }
 
     public String fieldName;
     public String displayNameKey;

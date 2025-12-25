@@ -69,6 +69,10 @@ public abstract class Node implements Pool.Poolable {
         return getOutput(targetOutputPort);
     }
 
+    public LinkableVar getInput(int index) {
+        return inputs.get(index);
+    }
+
     public LinkableVar getOutput(int index) {
         return outputs.get(index);
     }

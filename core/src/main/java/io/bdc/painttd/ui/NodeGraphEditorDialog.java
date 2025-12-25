@@ -219,7 +219,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 for (int i = 0; i < node.inputs.size; i++) {
                     Table portRow = new Table();
                     PortMeta portMeta = node.getInputMeta(i);
-                    LinkableVar var = node.inputs.get(i);
+                    LinkableVar var = node.getInput(i);
 
                     // 左侧: 端口标识
                     PortElem port = new PortElem(this, i, true);
@@ -247,15 +247,17 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 for (int i = 0; i < node.outputs.size; i++) {
                     Table portRow = new Table();
                     PortMeta portMeta = node.getOutputMeta(i);
-                    LinkableVar var = node.outputs.get(i);
+                    LinkableVar var = node.getOutput(i);
 
                     // 左侧: 值编辑器
                     Table editorContainer = new Table();
                     boolean hasEditor = portMeta.build(var, editorContainer);
                     if (hasEditor) {
-                        portRow.add(editorContainer).minWidth(100).growX();
+                        portRow.add(editorContainer).minWidth(100).growX().right();
                     } else {
-                        portRow.add(new Label(portMeta.getDisplayName(), Styles.sLabel)).minWidth(100).growX();
+                        Label l = new Label(portMeta.getDisplayName(), Styles.sLabel);
+                        l.setAlignment(Align.right);
+                        portRow.add(l).minWidth(100).growX();
                     }
 
                     // 右侧: 端口标识
@@ -300,7 +302,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 this.meta = isInput ? myNode.node.getInputMeta(myIndex) : myNode.node.getOutputMeta(myIndex);
                 this.idx = myIndex;
                 this.isInput = isInput;
-                this.linkableVar = isInput ? nodeElem.node.inputs.get(idx) : nodeElem.node.outputs.get(idx);
+                this.linkableVar = isInput ? nodeElem.node.getInput(idx) : nodeElem.node.getOutput(idx);
 
                 setTouchable(Touchable.enabled);
 
@@ -364,6 +366,8 @@ public class NodeGraphEditorDialog extends BaseDialog {
             public void createLink(@Null NodeGraphGroup.PortElem other) {
                 if (other == null || other.nodeElem.node == this.nodeElem.node || other.isInput == isInput) {
                     linkPort = null;
+                    linkableVar.sourceNode = -1;
+                    linkableVar.sourceOutputPort = -1;
                     return;
                 }
 
@@ -382,8 +386,9 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 }
 
                 if (in == null || out == null) return;
-                //TODO解决routerV的canlink问题
-                if (in.canLink(out)) {
+                //使用转发端口做类型判断
+                LinkableVar forwardingOut = oute.nodeElem.node.getSyncOutput(0, oute.idx);
+                if (in.canLink(forwardingOut)) {
                     in.sourceNode = graph.get(oute.nodeElem.node);
                     in.sourceOutputPort = oute.idx;
                     ine.linkPort = oute;
