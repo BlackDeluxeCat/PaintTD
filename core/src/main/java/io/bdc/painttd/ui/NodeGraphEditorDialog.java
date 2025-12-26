@@ -365,9 +365,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
             /** 该方法自动识别IO */
             public void createLink(@Null NodeGraphGroup.PortElem other) {
                 if (other == null || other.nodeElem.node == this.nodeElem.node || other.isInput == isInput) {
-                    linkPort = null;
-                    linkableVar.sourceNode = -1;
-                    linkableVar.sourceOutputPort = -1;
+                    clearLink();
                     return;
                 }
 
@@ -386,6 +384,12 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 }
 
                 if (in == null || out == null) return;
+                //循环检查
+                if (graph.topoCycleCheck(oute.nodeElem.node, oute.idx, ine.nodeElem.node, ine.idx)) {
+                    clearLink();
+                    return;
+                }
+
                 //使用转发端口做类型判断
                 LinkableVar forwardingOut = oute.nodeElem.node.getSyncOutput(0, oute.idx);
                 if (in.canLink(forwardingOut)) {
@@ -393,6 +397,12 @@ public class NodeGraphEditorDialog extends BaseDialog {
                     in.sourceOutputPort = oute.idx;
                     ine.linkPort = oute;
                 }
+            }
+
+            public void clearLink(){
+                linkPort = null;
+                linkableVar.sourceNode = -1;
+                linkableVar.sourceOutputPort = -1;
             }
 
             @Override
