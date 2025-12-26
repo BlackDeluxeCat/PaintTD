@@ -20,26 +20,26 @@ import java.lang.reflect.*;
  *
  * <p>注册优先级：
  * <ol>
- *   <li>显式注册（通过{@link #register}方法）</li>
  *   <li>静态注册方法（节点类的registerMeta静态方法）</li>
+ *   <li>显式注册（通过{@link #register}方法）</li>
  *   <li>默认配置</li>
  * </ol>
  *
  * <p>使用示例：
  * <pre>{@code
- * // 方式1：显式注册（推荐）
+ * // 方式1：静态注册方法在节点类中（推荐）
+ * public class MyNode extends Node {
+ *     public static void registerMeta() {
+ *         NodeMetaRegistry.getInstance().register(MyNode.class, ...);
+ *     }
+ * }
+ * // 方式2：显式注册
  * NodeMetaRegistry.getInstance().register(Vector2ScaleNode.class,
  *     new NodeMeta()
  *         .setNodeType("vector2Scale")
  *         .setDisplayNameKey("name")
  *         .addInputPort(...));
  *
- * // 方式2：静态注册方法（在节点类中）
- * public class MyNode extends Node {
- *     public static void registerMeta() {
- *         NodeMetaRegistry.getInstance().register(MyNode.class, ...);
- *     }
- * }
  * }</pre>
  */
 public class NodeMetaRegistry {

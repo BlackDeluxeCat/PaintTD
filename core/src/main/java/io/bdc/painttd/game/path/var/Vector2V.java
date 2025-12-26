@@ -1,9 +1,22 @@
 package io.bdc.painttd.game.path.var;
 
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.*;
-import io.bdc.painttd.game.path.*;
+import io.bdc.painttd.game.path.metadata.*;
+import io.bdc.painttd.game.path.metadata.builders.*;
 
 public class Vector2V extends LinkableVar {
+    public static void registerMeta() {
+        PortMeta.setDefault(Vector2V.class, meta -> {
+            meta.setColor(Color.BLUE);
+            meta.setIconName("icon_vector2");
+            meta.setUiBuilder(new Vector2PortBuilder()
+                                  .setXRange(-1, 1)
+                                  .setYRange(-1, 1)
+                                  .setDecimalPlaces(1));
+        });
+    }
+
     public Vector2 cache = new Vector2();
 
     public Vector2V(int ownerNode) {

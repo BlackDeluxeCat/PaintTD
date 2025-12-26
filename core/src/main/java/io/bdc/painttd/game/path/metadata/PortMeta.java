@@ -7,6 +7,8 @@ import io.bdc.painttd.game.path.var.*;
 import io.bdc.painttd.utils.*;
 import io.bdc.painttd.utils.func.*;
 
+import java.lang.reflect.*;
+
 /**
  * 端口元数据类, 包含UI配置和国际化支持, 采用链式API设计.
  *
@@ -35,21 +37,42 @@ import io.bdc.painttd.utils.func.*;
  * }</pre>
  */
 public class PortMeta {
-    public static ObjectMap<Class<? extends LinkableVar>, Color> DEFAULT_COLORS = new ObjectMap<>();
-    static {
-        DEFAULT_COLORS.put(FloatV.class, Color.valueOf("#FF5722"));
-        DEFAULT_COLORS.put(Vector2V.class, Color.valueOf("#FFC107"));
-        DEFAULT_COLORS.put(RouterV.class, Color.valueOf("#4CAF50"));
+    public static ObjectMap<Class<? extends LinkableVar>, PortMeta> DEFAULTS = new ObjectMap<>();
+    /** 修改默认meta, 通常由{@code LinkableVar.registerMeta()}调用 */
+    public static void setDefault(Class<? extends LinkableVar> varClass, Cons<PortMeta> metaCons) {
+        var def = DEFAULTS.get(varClass, new PortMeta());
+        metaCons.get(def);
+        DEFAULTS.put(varClass, def);
     }
 
-    public static Color getDefaultColor(Class<? extends LinkableVar> varClass) {
-        return DEFAULT_COLORS.get(varClass, Color.LIGHT_GRAY);
+    /** 懒惰静默静态注册默认meta */
+    public static PortMeta getDefault(Class<? extends LinkableVar> varClass) {
+        if (!DEFAULTS.containsKey(varClass)) {
+            try {
+                // 查找名为"registerMeta"的静态方法
+                Method registerMethod = varClass.getMethod("registerMeta");
+
+                // 调用静态方法
+                registerMethod.invoke(null);
+
+                // 检查是否已注册
+                if (DEFAULTS.containsKey(varClass)) {
+                    return DEFAULTS.get(varClass);
+                }
+            } catch (NoSuchMethodException e) {
+                // 没有静态注册方法，正常情况
+            } catch (Exception e) {
+                // 注册方法执行出错
+                System.err.println("Failed to call registerMeta for " + varClass.getName() + ": " + e.getMessage());
+            }
+        }
+        return DEFAULTS.get(varClass, new PortMeta());
     }
 
     public String fieldName;
     public String displayNameKey;
     public String descriptionKey;
-    public Color color;
+    public Color color = new Color();
     public String iconName;
     public LinkableVarBuilder<?> uiBuilder;
     public Cons<LinkableVar> onChange;
@@ -80,7 +103,7 @@ public class PortMeta {
     }
 
     public PortMeta setColor(Color color) {
-        this.color = color;
+        this.color.set(color);
         return this;
     }
 
@@ -182,6 +205,18 @@ public class PortMeta {
         // 3. 不含点号: 生成带端口类型的相对key
         String portType = isInput ? "input" : "output";
         return String.format("%s.%s.%s.%s", nodeType, portType, fieldName, annotationValue);
+    }
+
+    public PortMeta copy() {
+        var meta = new PortMeta();
+        meta.setFieldName(fieldName)
+            .setDisplayNameKey(displayNameKey)
+            .setDescriptionKey(descriptionKey)
+            .setColor(color)
+            .setIconName(iconName)
+            .setUiBuilder(uiBuilder)
+            .setOnChange(onChange);
+        return meta;
     }
 
     @Override

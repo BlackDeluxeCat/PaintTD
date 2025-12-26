@@ -1,8 +1,20 @@
 package io.bdc.painttd.game.path.var;
 
-import io.bdc.painttd.game.path.*;
+import com.badlogic.gdx.graphics.*;
+import io.bdc.painttd.game.path.metadata.*;
+import io.bdc.painttd.game.path.metadata.builders.*;
 
 public class FloatV extends LinkableVar {
+    public static void registerMeta() {
+        PortMeta.setDefault(FloatV.class, meta -> {
+            meta.setColor(Color.CYAN);
+            meta.setIconName("icon_float");
+            meta.setUiBuilder(new FloatVTextFieldBuilder()
+                                  .range(0, 1)
+                                  .decimalPlaces(2));
+        });
+    }
+
     public float cache;
 
     public FloatV(int ownerNode) {

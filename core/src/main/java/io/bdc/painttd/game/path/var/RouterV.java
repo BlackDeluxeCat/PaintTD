@@ -1,7 +1,8 @@
 package io.bdc.painttd.game.path.var;
 
+import com.badlogic.gdx.graphics.*;
 import io.bdc.painttd.game.path.*;
-
+import io.bdc.painttd.game.path.metadata.*;
 
 /**
  * 路由变量, 用于节点间连接, 仅持有转发信息, 无任何缓存
@@ -9,6 +10,13 @@ import io.bdc.painttd.game.path.*;
  * <p>例: 外部方法使用转发信息. {@code Node upStreamNode = node.nodeGraph.get(inputRouterV.sourceNode);}
  */
 public class RouterV extends LinkableVar {
+    public static void registerMeta() {
+        PortMeta.setDefault(RouterV.class, meta -> {
+            meta.setColor(Color.GRAY);
+            meta.setIconName("icon_router");
+        });
+    }
+
     public RouterV(int ownerNode) {
         super(ownerNode);
     }

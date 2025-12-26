@@ -1,7 +1,6 @@
 package io.bdc.painttd.game.path.node;
 
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.metadata.builders.*;
@@ -19,25 +18,16 @@ public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
                 .setBackgroundColor(Color.valueOf("#FF9800"))  // 橙色
                 .setIconName("time_icon")
                 .setCategory("time")
-                .addInputPort(new PortMeta()
-                                  .setFieldName("inPort")
-                                  .setDisplayNameKey("")  // 自动生成
-                                  .setColor(PortMeta.getDefaultColor(RouterV.class))
-                                  .setIconName("input_router"))
-                .addInputPort(new PortMeta()
+                .addInputPort(PortMeta.getDefault(RouterV.class).copy()
+                                  .setFieldName("inPort"))
+                .addInputPort(PortMeta.getDefault(FloatV.class).copy()
                                   .setFieldName("offset")
-                                  .setDisplayNameKey("")  // 自动生成
-                                  .setColor(PortMeta.getDefaultColor(FloatV.class))
-                                  .setIconName("input_float")
                                   .setUiBuilder(new FloatVTextFieldBuilder()
                                                     .range(-1000, 1000)
                                                     .decimalPlaces(2)
                                                     .placeholder("Offset")))
-                .addOutputPort(new PortMeta()
-                                   .setFieldName("outPort")
-                                   .setDisplayNameKey("")  // 自动生成
-                                   .setColor(PortMeta.getDefaultColor(RouterV.class))
-                                   .setIconName("output_router"))
+                .addOutputPort(PortMeta.getDefault(RouterV.class).copy()
+                                   .setFieldName("outPort"))
         );
     }
 

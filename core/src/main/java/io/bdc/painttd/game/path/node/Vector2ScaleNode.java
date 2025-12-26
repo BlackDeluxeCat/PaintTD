@@ -22,29 +22,21 @@ public class Vector2ScaleNode extends Node {
                 .setBackgroundColor(Color.valueOf("#4CAF50"))  // 绿色
                 .setIconName("scale_icon")
                 .setCategory("transform")
-                .addInputPort(new PortMeta()
+                .addInputPort(PortMeta.getDefault(Vector2V.class).copy()
                                   .setFieldName("shiftI")
-                                  .setDisplayNameKey("")  // 自动生成
-                                  .setColor(PortMeta.getDefaultColor(Vector2V.class))
-                                  .setIconName("input_vector")
                                   .setUiBuilder(new Vector2PortBuilder()
                                                     .setXRange(-100, 100)
                                                     .setYRange(-100, 100)
                                                     .setDecimalPlaces(2)))
-                .addInputPort(new PortMeta()
+                .addInputPort(PortMeta.getDefault(Vector2V.class).copy()
                                   .setFieldName("scaleI")
-                                  .setDisplayNameKey("")  // 自动生成
-                                  .setColor(PortMeta.getDefaultColor(Vector2V.class))
-                                  .setIconName("input_vector")
                                   .setUiBuilder(new Vector2PortBuilder()
-                                                    .setXRange(0.1f, 10f)
-                                                    .setYRange(0.1f, 10f)
+                                                    .setXRange(-10f, 10f)
+                                                    .setYRange(-10f, 10f)
                                                     .setDecimalPlaces(2)))
-                .addOutputPort(new PortMeta()
+                .addOutputPort(PortMeta.getDefault(Vector2V.class).copy()
                                    .setFieldName("shiftO")
-                                   .setDisplayNameKey("")  // 自动生成
-                                   .setColor(PortMeta.getDefaultColor(Vector2V.class))
-                                   .setIconName("output_vector"))
+                                   .setUiBuilder(null))
         );
     }
 
