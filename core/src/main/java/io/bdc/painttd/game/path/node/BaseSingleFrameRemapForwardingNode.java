@@ -48,15 +48,6 @@ public abstract class BaseSingleFrameRemapForwardingNode extends Node {
     }
 
     @Override
-    public Node obtain() {
-        return null;
-    }
-
-    @Override
-    public void free() {
-    }
-
-    @Override
     public void reset() {
         inPort.reset();
         outPort.reset();

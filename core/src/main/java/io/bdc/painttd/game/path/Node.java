@@ -78,7 +78,7 @@ public abstract class Node implements Pool.Poolable {
     }
 
     public Node obtainCopy() {
-        var newNode = obtain();
+        var newNode = obtain(this.getClass());
         this.copyTo(newNode);
         return newNode;
     }
@@ -86,7 +86,11 @@ public abstract class Node implements Pool.Poolable {
     public void copyTo(Node copy) {
     }
 
-    public abstract Node obtain();
+    public static <T extends Node> T obtain(Class<T> nodeClass) {
+        return Pools.get(nodeClass).obtain();
+    }
 
-    public abstract void free();
+    public void free() {
+        Pools.free(this);
+    }
 }

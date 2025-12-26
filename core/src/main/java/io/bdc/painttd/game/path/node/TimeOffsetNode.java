@@ -1,6 +1,7 @@
 package io.bdc.painttd.game.path.node;
 
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.metadata.builders.*;
@@ -62,6 +63,14 @@ public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
         remappedFrame = frame + offset.cache;
         //转发计算请求, 转发请求的返回值
         Node upStream = nodeGraph.get(inPort.sourceNode);
+        if (upStream == null) return false;
         return upStream.calc(remappedFrame);
+    }
+
+    @Override
+    public void reset() {
+        offset.reset();
+        inPort.reset();
+        outPort.reset();
     }
 }

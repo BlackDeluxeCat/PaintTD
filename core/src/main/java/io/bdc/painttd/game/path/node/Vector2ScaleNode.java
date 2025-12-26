@@ -83,18 +83,6 @@ public class Vector2ScaleNode extends Node {
     }
 
     @Override
-    public Vector2ScaleNode obtain() {
-        return pool.obtain();
-    }
-
-    private final Pool<Vector2ScaleNode> pool = new ReflectionPool<>(Vector2ScaleNode.class, 100);
-
-    @Override
-    public void free() {
-        pool.free(this);
-    }
-
-    @Override
     public void reset() {
         scaleI.reset();
         shiftI.reset();
