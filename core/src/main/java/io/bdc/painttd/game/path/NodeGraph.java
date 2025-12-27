@@ -7,8 +7,10 @@ import io.bdc.painttd.game.path.var.*;
 public class NodeGraph {
     public int rootIndex;
     public Array<Node> nodes = new Array<>();
+    @Deprecated
     public Vector2 output = new Vector2();
-    //TODO扩展单一output为选择Trigger触发不同功能
+
+    public Contexts contexts;
 
     public float frame;
 
@@ -147,6 +149,10 @@ public class NodeGraph {
 
         // 如果处理了所有节点, 说明无循环；否则有循环
         return processedCount != nodes.size;
+    }
+
+    public void inject(Contexts runtime) {
+        contexts = runtime;
     }
 
     public void update(float delta) {

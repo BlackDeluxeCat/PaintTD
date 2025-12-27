@@ -3,7 +3,7 @@ package io.bdc.painttd.game.path.var;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.*;
 
-public abstract class LinkableVar extends BaseVar implements Pool.Poolable {
+public abstract class LinkableVar implements Pool.Poolable {
     public transient int ownerNode;
     public int sourceNode = -1;
     public int sourceOutputPort = -1;

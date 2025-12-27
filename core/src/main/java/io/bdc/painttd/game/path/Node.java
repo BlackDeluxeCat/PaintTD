@@ -5,7 +5,6 @@ import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.var.*;
 
 public abstract class Node implements Pool.Poolable {
-    public Array<BaseVar> vars = new Array<>();
     public Array<LinkableVar> inputs = new Array<>();
     public Array<LinkableVar> outputs = new Array<>();
 

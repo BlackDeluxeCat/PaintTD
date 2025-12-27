@@ -4,20 +4,17 @@ import com.artemis.*;
 import com.artemis.io.*;
 import com.artemis.link.*;
 import com.artemis.managers.*;
-import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import io.bdc.painttd.*;
 import io.bdc.painttd.content.*;
 import io.bdc.painttd.content.components.logic.target.*;
 import io.bdc.painttd.game.pathfind.*;
 import io.bdc.painttd.map.*;
-import io.bdc.painttd.render.*;
 import io.bdc.painttd.systems.*;
 import io.bdc.painttd.systems.render.*;
 import io.bdc.painttd.systems.request.*;
 import io.bdc.painttd.systems.targeting.*;
 import io.bdc.painttd.systems.utils.*;
-import io.bdc.painttd.ui.*;
 import io.bdc.painttd.utils.*;
 
 public class Game {
@@ -171,10 +168,11 @@ public class Game {
         });
 
         logic.with(l -> {
+            l.add(new NodeGraphExecute());
+
             l.add(new HealthRegen());
             l.add(new MovementAccelerationPush());
             l.add(new MovementVelGenFlowField());
-            l.add(new MovementVelGenTrajectory());
 
             l.add(new MovementVelPush());
 

@@ -127,7 +127,7 @@ public class EntityTypes {
                         add(new TargetSingleComp());
                         add(new StainSplashComp(1));
 
-//                        var tc = new TrajectoryComp();
+//                        var tc = new NodeGraphExecutorComp();
 //                        add(tc);
 //                        var tree = tc.tree;
 //                        var context = new EntityContext();
