@@ -15,7 +15,7 @@ public class TimeOffsetNode extends BaseSingleFrameRemapForwardingNode {
                 .setNodeType("timeOffset")
                 .setDisplayNameKey("name")
                 .setDescriptionKey("description")
-                .setBackgroundColor(Color.valueOf("#FF9800"))  // 橙色
+                .setBackgroundColor(Color.valueOf("#FF9800"))
                 .setIconName("time_icon")
                 .setCategory("time")
                 .addInputPort(PortMeta.getDefault(RouterV.class).copy()

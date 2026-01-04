@@ -142,7 +142,8 @@ public class NodeMetaRegistry {
         return new NodeMeta()
                    .setNodeType(nodeType)
                    .setDisplayNameKey("name")
-                   .setBackgroundColor(Color.valueOf("#2196F3")) // 默认蓝色
+                   .setDescriptionKey("description")
+                   .setBackgroundColor(Color.WHITE)
                    .setCategory("general");
     }
 

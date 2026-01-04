@@ -165,7 +165,7 @@ public class Line {
     public void line(float[] vertices, int size) {
         if (size < 2 * 2) return;
         float x1 = vertices[0], y1 = vertices[1];
-        for (int i = 2; i < size - 2; i += 2) {
+        for (int i = 2; i <= size - 2; i += 2) {
             float x2 = vertices[i], y2 = vertices[i + 1];
             line(x1, y1, x2, y2);
             x1 = x2;

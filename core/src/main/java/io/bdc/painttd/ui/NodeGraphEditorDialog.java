@@ -14,6 +14,7 @@ import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.node.*;
 import io.bdc.painttd.game.path.var.*;
 import io.bdc.painttd.render.*;
+import io.bdc.painttd.utils.func.*;
 
 public class NodeGraphEditorDialog extends BaseDialog {
 
@@ -43,28 +44,25 @@ public class NodeGraphEditorDialog extends BaseDialog {
         )).click(b -> group.rebuild()).actor).growY();
 
         // Vector2ScaleNode按钮
-        NodeMeta scaleMeta = metaRegistry.getMeta(Vector2ScaleNode.class);
-        buttons.add(ActorUtils.wrapper.set(new TextButton(
-            scaleMeta.getDisplayName(),
-            Styles.sTextB
-        )).click(b -> {
-            if (group.graph != null) {
-                group.graph.add(new Vector2ScaleNode());
-                group.rebuild();
-            }
-        }).actor).growY();
+        Cons2<Class<? extends Node>, Prov<? extends Node>> addButton = (clazz, prov) -> {
+            NodeMeta meta = metaRegistry.getMeta(clazz);
+            buttons.add(ActorUtils.wrapper.set(new TextButton(
+                meta.getDisplayName(),
+                Styles.sTextB
+            )).click(b -> {
+                if (group.graph != null) {
+                    group.graph.add(prov.get());
+                    group.rebuild();
+                }
+            }).actor).growY();
+        };
 
-        // TimeOffsetNode按钮
-        NodeMeta timeOffsetMeta = metaRegistry.getMeta(TimeOffsetNode.class);
-        buttons.add(ActorUtils.wrapper.set(new TextButton(
-            timeOffsetMeta.getDisplayName(),
-            Styles.sTextB
-        )).click(b -> {
-            if (group.graph != null) {
-                group.graph.add(new TimeOffsetNode());
-                group.rebuild();
-            }
-        }).actor).growY();
+        addButton.get(EntitySetVelocityNode.class, EntitySetVelocityNode::new);
+        addButton.get(EntityPositionNode.class, EntityPositionNode::new);
+        addButton.get(EntityTargetPositionNode.class, EntityTargetPositionNode::new);
+        addButton.get(Vector2AddNode.class, Vector2AddNode::new);
+        addButton.get(Vector2ScaleNode.class, Vector2ScaleNode::new);
+        addButton.get(TimeOffsetNode.class, TimeOffsetNode::new);
     }
 
     public void show(NodeGraph graph) {
@@ -449,7 +447,7 @@ public class NodeGraphEditorDialog extends BaseDialog {
             Renderer.line.setStroke(4f);
 
             Renderer.line.polylineStart();
-            float segments = 20;
+            float segments = 16;
             for (int i = 0; i <= segments; i++) {
                 curve.valueAt(tmp, i / segments);
                 Renderer.line.polylineAdd(tmp.x, tmp.y);

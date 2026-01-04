@@ -11,8 +11,9 @@ public class Executor implements Pool.Poolable {
     public float frame;
 
     public void update(NodeGraph graph, Contexts contexts, float delta) {
-        graph.contexts = contexts;
-        graph.update(delta);
+        graph.inject(contexts);
+        frame += delta;
+        graph.calc(frame);
     }
 
     @Override

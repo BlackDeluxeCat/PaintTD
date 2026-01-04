@@ -1,18 +1,13 @@
 package io.bdc.painttd.game.path;
 
-import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.var.*;
 
 public class NodeGraph {
     public int rootIndex;
     public Array<Node> nodes = new Array<>();
-    @Deprecated
-    public Vector2 output = new Vector2();
 
     public Contexts contexts;
-
-    public float frame;
 
     protected static Array<Node> tmps = new Array<>();
     protected static ObjectIntMap<Node> tmpMap = new ObjectIntMap<>();
@@ -153,11 +148,6 @@ public class NodeGraph {
 
     public void inject(Contexts runtime) {
         contexts = runtime;
-    }
-
-    public void update(float delta) {
-        frame += delta;
-        calc(frame);
     }
 
     public void calc(float frame) {

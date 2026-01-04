@@ -6,6 +6,7 @@ public class DefaultEntityContext implements EntityContext{
     public World world;
     public int entityId;
     public Entity entity;
+
     @Override
     public void set(Entity entity, World world) {
         this.world = world;

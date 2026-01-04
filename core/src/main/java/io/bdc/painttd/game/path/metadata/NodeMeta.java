@@ -37,7 +37,7 @@ public class NodeMeta {
     public String nodeType;
     public String displayNameKey;
     public String descriptionKey;
-    public Color backgroundColor;
+    public Color backgroundColor = new Color();
     public String iconName;
     public String category;
     public Array<PortMeta> inputPorts = new Array<>();
@@ -65,7 +65,7 @@ public class NodeMeta {
     }
 
     public NodeMeta setBackgroundColor(Color color) {
-        this.backgroundColor = color;
+        this.backgroundColor.set(color);
         return this;
     }
 

@@ -1,7 +1,6 @@
 package io.bdc.painttd.game.path.node;
 
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.metadata.builders.*;
@@ -17,9 +16,7 @@ public class Vector2ScaleNode extends Node {
         NodeMetaRegistry.getInstance().register(Vector2ScaleNode.class,
             new NodeMeta()
                 .setNodeType("vector2Scale")
-                .setDisplayNameKey("name")
-                .setDescriptionKey("description")
-                .setBackgroundColor(Color.valueOf("#4CAF50"))  // 绿色
+                .setBackgroundColor(Color.valueOf("#4CAF50"))
                 .setIconName("scale_icon")
                 .setCategory("transform")
                 .addInputPort(PortMeta.getDefault(Vector2V.class).copy()
