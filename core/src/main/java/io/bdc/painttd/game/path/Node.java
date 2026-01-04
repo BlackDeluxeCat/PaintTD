@@ -14,7 +14,6 @@ public abstract class Node implements Pool.Poolable {
 
     //编辑器元素信息
     public float x, y;
-    public boolean minimized, flipIOPosition;
 
     public Node() {
         initVars();
@@ -23,6 +22,11 @@ public abstract class Node implements Pool.Poolable {
 
     public int id(){
         return nodeGraph == null ? -1 : nodeGraph.get(this);
+    }
+
+    /** 初始化享元元数据 */
+    protected void initMeta() {
+        this.meta = NodeMetaRegistry.getInstance().getMeta(this.getClass());
     }
 
     /** 懒惰获取metadata */
@@ -37,13 +41,6 @@ public abstract class Node implements Pool.Poolable {
 
     public PortMeta getOutputMeta(int index) {
         return getMeta().getOutputPort(index);
-    }
-
-    /**
-     * 初始化享元元数据
-     */
-    protected void initMeta() {
-        this.meta = NodeMetaRegistry.getInstance().getMeta(this.getClass());
     }
 
     /** 初始化变量字段 */

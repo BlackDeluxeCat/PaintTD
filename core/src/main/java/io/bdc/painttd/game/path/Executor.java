@@ -13,7 +13,7 @@ public class Executor implements Pool.Poolable {
     public void update(NodeGraph graph, Contexts contexts, float delta) {
         graph.inject(contexts);
         frame += delta;
-        graph.calc(frame);
+        graph.calc(frame, triggerNodeId);
     }
 
     @Override

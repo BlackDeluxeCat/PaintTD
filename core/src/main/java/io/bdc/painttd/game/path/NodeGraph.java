@@ -3,16 +3,16 @@ package io.bdc.painttd.game.path;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.var.*;
 
-public class NodeGraph {
-    public int rootIndex;
-    public Array<Node> nodes = new Array<>();
+public class NodeGraph implements Json.Serializable{
+    public Array<Node> nodes;
 
-    public Contexts contexts;
+    public transient Contexts contexts;
 
     protected static Array<Node> tmps = new Array<>();
     protected static ObjectIntMap<Node> tmpMap = new ObjectIntMap<>();
 
     public NodeGraph() {
+        nodes = new Array<>();
     }
 
     public int add(Node node) {
@@ -150,11 +150,11 @@ public class NodeGraph {
         contexts = runtime;
     }
 
-    public void calc(float frame) {
+    public void calc(float frame, int entryNodeIndex) {
         if (nodes == null) return;
         if (nodes.size == 0) return;
-        if (rootIndex >= nodes.size) return;
-        nodes.get(rootIndex).calc(frame);
+        if (entryNodeIndex >= nodes.size || entryNodeIndex < 0) return;
+        nodes.get(entryNodeIndex).calc(frame);
     }
 
     public void clear() {
@@ -162,7 +162,6 @@ public class NodeGraph {
             node.free();
         }
         nodes.clear();
-        rootIndex = 0;
     }
 
     public void copy(NodeGraph origin) {
@@ -170,6 +169,15 @@ public class NodeGraph {
         for (var node : origin.nodes) {
             add(node.obtainCopy());
         }
-        rootIndex = origin.rootIndex;
+    }
+
+    @Override
+    public void write(Json json) {
+        json.writeValue("nodes", nodes);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        nodes = json.readValue("nodes", Array.class, new Array<Node>(), jsonData);
     }
 }

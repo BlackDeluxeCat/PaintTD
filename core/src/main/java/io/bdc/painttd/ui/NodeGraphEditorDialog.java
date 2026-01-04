@@ -34,18 +34,9 @@ public class NodeGraphEditorDialog extends BaseDialog {
     /**
      * 使用metadata系统创建节点按钮
      */
-    private void createNodeButtons() {
-        // 使用新metadata系统
-        NodeMetaRegistry metaRegistry = NodeMetaRegistry.getInstance();
-
-        buttons.add(ActorUtils.wrapper.set(new TextButton(
-            "Rebuild UI",
-            Styles.sTextB
-        )).click(b -> group.rebuild()).actor).growY();
-
-        // Vector2ScaleNode按钮
+    protected void createNodeButtons() {
         Cons2<Class<? extends Node>, Prov<? extends Node>> addButton = (clazz, prov) -> {
-            NodeMeta meta = metaRegistry.getMeta(clazz);
+            NodeMeta meta = NodeMetaRegistry.getInstance().getMeta(clazz);
             buttons.add(ActorUtils.wrapper.set(new TextButton(
                 meta.getDisplayName(),
                 Styles.sTextB
