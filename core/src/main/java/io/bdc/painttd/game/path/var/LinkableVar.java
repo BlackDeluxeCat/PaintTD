@@ -3,7 +3,7 @@ package io.bdc.painttd.game.path.var;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.*;
 
-public abstract class LinkableVar implements Pool.Poolable {
+public abstract class LinkableVar implements Pool.Poolable, Json.Serializable {
     public transient int ownerNode;
     public int sourceNode = -1;
     public int sourceOutputPort = -1;
@@ -47,8 +47,30 @@ public abstract class LinkableVar implements Pool.Poolable {
     public void reset() {
         sourceNode = -1;
         sourceOutputPort = -1;
-        def();
     }
 
-    public void def() {}
+    public boolean sourceInvalid() {
+        return sourceNode == -1 || sourceOutputPort == -1;
+    }
+
+    @Override
+    public void write(Json json) {
+        if(sourceInvalid()) return;
+        json.writeObjectStart("source");
+        json.writeValue("node", sourceNode);
+        json.writeValue("port", sourceOutputPort);
+        json.writeObjectEnd();
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        JsonValue source = jsonData.get("source");
+        if (source == null) {
+            sourceNode = -1;
+            sourceOutputPort = -1;
+            return;
+        }
+        sourceNode = source.getInt("node");
+        sourceOutputPort = source.getInt("port");
+    }
 }

@@ -39,19 +39,9 @@ public class Vector2ScaleNode extends Node {
 
     @Override
     public void initVars() {
-        scaleI = new Vector2V(id()) {
-            @Override
-            public void def() {
-                cache.set(1f, 1f);
-            }
-        };
+        scaleI = new Vector2V(id());
 
-        shiftI = new Vector2V(id()) {
-            @Override
-            public void def() {
-                cache.set(0f, 0f);
-            }
-        };
+        shiftI = new Vector2V(id());
 
         shiftO = new Vector2V(id());
     }

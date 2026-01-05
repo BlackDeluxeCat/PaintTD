@@ -2,6 +2,7 @@ package io.bdc.painttd.game.path.var;
 
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.*;
+import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.metadata.builders.*;
 
@@ -33,5 +34,22 @@ public class Vector2V extends LinkableVar {
     @Override
     public boolean canLink(LinkableVar source) {
         return source instanceof Vector2V;
+    }
+
+
+    @Override
+    public void write(Json json) {
+        super.write(json);
+        if(sourceInvalid()) {
+            json.writeValue("value", cache);
+        }
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        super.read(json, jsonData);
+        if(sourceInvalid()) {
+            cache = json.readValue("value", Vector2.class, jsonData);
+        }
     }
 }

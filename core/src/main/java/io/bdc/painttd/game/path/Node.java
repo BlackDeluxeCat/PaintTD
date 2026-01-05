@@ -4,7 +4,7 @@ import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.var.*;
 
-public abstract class Node implements Pool.Poolable {
+public abstract class Node implements Pool.Poolable, Json.Serializable {
     public Array<LinkableVar> inputs = new Array<>();
     public Array<LinkableVar> outputs = new Array<>();
 
@@ -88,5 +88,19 @@ public abstract class Node implements Pool.Poolable {
 
     public void free() {
         Pools.free(this);
+    }
+
+    @Override
+    public void write(Json json) {
+        json.writeValue("x", x);
+        json.writeValue("y", y);
+        json.writeValue("inputs", inputs);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        x = json.readValue("x", Float.class, jsonData);
+        y = json.readValue("y", Float.class, jsonData);
+        inputs = json.readValue("inputs", Array.class, jsonData);
     }
 }

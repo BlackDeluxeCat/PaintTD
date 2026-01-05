@@ -1,6 +1,7 @@
 package io.bdc.painttd.ui;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.files.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.*;
@@ -13,11 +14,12 @@ import io.bdc.painttd.game.path.*;
 import io.bdc.painttd.game.path.metadata.*;
 import io.bdc.painttd.game.path.node.*;
 import io.bdc.painttd.game.path.var.*;
+import io.bdc.painttd.io.*;
 import io.bdc.painttd.render.*;
 import io.bdc.painttd.utils.func.*;
 
 public class NodeGraphEditorDialog extends BaseDialog {
-
+    protected FileHandle file = Core.gameDataFolder.child("nodeGraphExport.json");
     public NodeGraphGroup group;
 
     public NodeGraphEditorDialog() {
@@ -35,6 +37,17 @@ public class NodeGraphEditorDialog extends BaseDialog {
      * 使用metadata系统创建节点按钮
      */
     protected void createNodeButtons() {
+        //序列化导出
+        buttons.add(ActorUtils.wrapper
+                        .set(new TextButton("导出", Styles.sTextB))
+                        .click(b -> {
+                            if (group.graph != null) {
+                                //Gdx.app.getClipboard().setContents(JsonIO.json.toJson(group.graph, NodeGraph.class));
+                                file.writeString(JsonIO.json.prettyPrint(JsonIO.json.toJson(group.graph, NodeGraph.class)), false);
+                            }
+                        }).actor)
+               .growY();
+
         Cons2<Class<? extends Node>, Prov<? extends Node>> addButton = (clazz, prov) -> {
             NodeMeta meta = NodeMetaRegistry.getInstance().getMeta(clazz);
             buttons.add(ActorUtils.wrapper.set(new TextButton(

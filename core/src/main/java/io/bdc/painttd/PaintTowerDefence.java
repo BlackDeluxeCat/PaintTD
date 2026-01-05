@@ -4,6 +4,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.Game;
+import io.bdc.painttd.io.*;
 import io.bdc.painttd.render.*;
 import io.bdc.painttd.ui.*;
 import io.bdc.painttd.utils.*;
@@ -21,6 +22,7 @@ public class PaintTowerDefence extends ApplicationAdapter {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
+        JsonIO.load();
         Core.load();
         Fonts.load();
         assets.finishLoading();

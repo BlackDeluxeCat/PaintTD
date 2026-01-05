@@ -9,7 +9,7 @@ import io.bdc.painttd.*;
  * Json实现的首选项管理器.
  */
 public class PrefMgr {
-    public Json json = new Json();
+
 
     public FileHandle file = Core.gameDataFolder.child("prefs.json");
 
@@ -19,13 +19,7 @@ public class PrefMgr {
     public boolean changed;
 
     public PrefMgr() {
-        json.setOutputType(JsonWriter.OutputType.json);
-        json.addClassTag("str", String.class);
-        json.addClassTag("i", Integer.class);
-        json.addClassTag("f", Float.class);
-        json.addClassTag("b", Boolean.class);
-        json.addClassTag("l", Long.class);
-        json.addClassTag("d", Double.class);
+
     }
 
     public void clear() {
@@ -207,7 +201,7 @@ public class PrefMgr {
     public void load() {
         try {
             if (file.exists()) {
-                prefs = json.fromJson(ObjectMap.class, file.readString());
+                prefs = JsonIO.json.fromJson(ObjectMap.class, file.readString());
             } else {
                 prefs = new ObjectMap<>();
             }
@@ -219,7 +213,7 @@ public class PrefMgr {
 
     public void save() {
         if (changed) {
-            file.writeString(json.prettyPrint(json.toJson(prefs)), false);
+            file.writeString(JsonIO.json.prettyPrint(JsonIO.json.toJson(prefs)), false);
             Gdx.app.debug("PrefMgr", prefs.size + " prefs saved.");
             changed = false;
         }
