@@ -17,6 +17,8 @@ public class RouterV extends LinkableVar {
         });
     }
 
+    public RouterV () {}
+
     public RouterV(int ownerNode) {
         super(ownerNode);
     }

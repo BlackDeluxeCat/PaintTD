@@ -20,6 +20,8 @@ public class Vector2V extends LinkableVar {
 
     public Vector2 cache = new Vector2();
 
+    public Vector2V() {}
+
     public Vector2V(int ownerNode) {
         super(ownerNode);
     }

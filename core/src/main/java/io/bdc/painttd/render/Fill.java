@@ -25,6 +25,10 @@ public class Fill {
         batch.draw(region, x, y, width, height);
     }
 
+    public void crect(float x, float y, float width, float height) {
+        rect(x - width / 2, y - height / 2, width, height);
+    }
+
     public void tri(float x1, float y1, float x2, float y2, float x3, float y3) {
         quad(x1, y1, x2, y2, x3, y3, x3, y3);
     }

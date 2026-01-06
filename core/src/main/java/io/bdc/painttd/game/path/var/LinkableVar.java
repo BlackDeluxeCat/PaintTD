@@ -4,9 +4,11 @@ import com.badlogic.gdx.utils.*;
 import io.bdc.painttd.game.path.*;
 
 public abstract class LinkableVar implements Pool.Poolable, Json.Serializable {
-    public transient int ownerNode;
+    public int ownerNode;
     public int sourceNode = -1;
     public int sourceOutputPort = -1;
+
+    LinkableVar() {}
 
     public LinkableVar(int ownerNode) {
         this.ownerNode = ownerNode;
@@ -55,6 +57,7 @@ public abstract class LinkableVar implements Pool.Poolable, Json.Serializable {
 
     @Override
     public void write(Json json) {
+        json.writeValue("owner", ownerNode);
         if(sourceInvalid()) return;
         json.writeObjectStart("source");
         json.writeValue("node", sourceNode);
@@ -64,6 +67,7 @@ public abstract class LinkableVar implements Pool.Poolable, Json.Serializable {
 
     @Override
     public void read(Json json, JsonValue jsonData) {
+        ownerNode = jsonData.getInt("owner");
         JsonValue source = jsonData.get("source");
         if (source == null) {
             sourceNode = -1;

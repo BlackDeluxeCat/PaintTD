@@ -28,16 +28,23 @@ public class NodeGraphEditorDialog extends BaseDialog {
         group = new NodeGraphGroup();
 
         addCloseButton();
-        // 使用metadata创建节点按钮
         createNodeButtons();
         rebuild();
     }
 
-    /**
-     * 使用metadata系统创建节点按钮
-     */
     protected void createNodeButtons() {
-        //序列化导出
+        //序列化
+        buttons.add(ActorUtils.wrapper
+                        .set(new TextButton("导入", Styles.sTextB))
+                        .click(b -> {
+                            //group.graph = JsonIO.json.readValue(NodeGraph.class, JsonIO.reader.parse(Gdx.app.getClipboard().getContents()));
+                            group.graph = JsonIO.json.readValue(NodeGraph.class, JsonIO.reader.parse(file.readString()));
+                            if (group.graph != null) {
+                                group.rebuild();
+                            }
+                        }).actor)
+               .growY();
+
         buttons.add(ActorUtils.wrapper
                         .set(new TextButton("导出", Styles.sTextB))
                         .click(b -> {
@@ -55,7 +62,10 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 Styles.sTextB
             )).click(b -> {
                 if (group.graph != null) {
-                    group.graph.add(prov.get());
+                    var node = prov.get();
+                    node.x = group.getWidth() / 2f;
+                    node.y = group.getHeight() / 2f;
+                    group.graph.add(node);
                     group.rebuild();
                 }
             }).actor).growY();
@@ -72,7 +82,6 @@ public class NodeGraphEditorDialog extends BaseDialog {
     public void show(NodeGraph graph) {
         group.graph = graph;
         group.rebuild();
-        group.setTranslate(group.getWidth() / 2f, group.getHeight() / 2f);
         invalidate();
         show();
         pack();
@@ -140,7 +149,6 @@ public class NodeGraphEditorDialog extends BaseDialog {
             }
             return null;
         }
-
         public class NodeElem extends Table {
             protected Node node;
             protected NodeMeta meta;
@@ -436,6 +444,16 @@ public class NodeGraphEditorDialog extends BaseDialog {
                 if (isTransform()) resetTransform(batch);
             }
         }
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            if (isTransform()) applyTransform(batch, computeTransform());
+            Renderer.setColor(Color.DARK_GRAY, 0.5f * parentAlpha);
+            Renderer.fill.crect(0 ,0, 10, 10);
+            if (isTransform()) resetTransform(batch);
+            super.draw(batch, parentAlpha);
+        }
+
 
         public static Bezier<Vector2> curve = new Bezier<>();
 

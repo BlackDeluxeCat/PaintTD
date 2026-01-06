@@ -126,18 +126,6 @@ public class EntityTypes {
                         add(new TargetPosComp());
                         add(new TargetSingleComp());
                         add(new StainSplashComp(1));
-
-//                        var tc = new NodeGraphExecutorComp();
-//                        add(tc);
-//                        var tree = tc.tree;
-//                        var context = new EntityContext();
-//                        tree.context = context;
-//
-//                        var r = tree.add(seq, null);
-//                        SeqProcessor.repeat.setFloat(100000, r);
-//
-//                        var l = tree.add(line, r);
-//                        LineProcessor.speed.setFloat(1f / lfps, l);
                     }
                 }));
 

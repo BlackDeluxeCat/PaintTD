@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.*;
 
 public class JsonIO {
     public static Json json = new Json();
+    public static JsonReader reader = new JsonReader();
 
     public static void load() {
         json.setOutputType(JsonWriter.OutputType.json);

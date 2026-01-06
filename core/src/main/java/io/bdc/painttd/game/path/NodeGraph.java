@@ -40,9 +40,14 @@ public class NodeGraph implements Json.Serializable{
         for (int i = 0; i < newIndexes.size; i++) {
             Node node = nodes.get(i);
             for (var input : node.inputs) {
+                input.ownerNode = newIndexes.get(input.ownerNode);
                 if (input.sourceNode != -1) {
                     input.sourceNode = newIndexes.get(input.sourceNode);
                 }
+            }
+
+            for (var output : node.outputs) {
+                output.ownerNode = newIndexes.get(output.ownerNode);
             }
             tmps.set(newIndexes.get(i), node);
         }

@@ -18,6 +18,8 @@ public class FloatV extends LinkableVar {
 
     public float cache;
 
+    public FloatV() {}
+
     public FloatV(int ownerNode) {
         super(ownerNode);
     }
