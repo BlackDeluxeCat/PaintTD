@@ -1,6 +1,8 @@
 package io.bdc.painttd.screen.mainmenu;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
@@ -44,7 +46,7 @@ public class MainMenu extends Table {
         content.row();
 
         content.add(createButton("其他", () -> {
-            var w = buildWindow("其他",
+            var w = buildDialog("其他",
                 "其他内容.");
             centerWindow(w);
             app.ui.pushWindow(w);
@@ -52,8 +54,44 @@ public class MainMenu extends Table {
         content.row();
 
         content.add(createButton("关于", () -> {
-            var w = buildWindow("关于",
+            var w = buildDialog("关于",
                 "作者: BlackDeluxeCat");
+            centerWindow(w);
+            app.ui.pushWindow(w);
+        })).fillX();
+        content.row();
+
+
+        content.add(createButton("测试选项" ,()->{
+            var w = buildMenuWindow("选项",
+                "选项内容.",
+                createButton(
+                    "测试按钮1"
+                    , () -> {
+                        System.out.println("左侧");
+                        Window window = buildDialog("左侧","");
+                        leftWindow(window);
+                        app.ui.pushWindow(window);
+                    }
+                ),createButton(
+                    "测试按钮2"
+                    , () -> {
+                        System.out.println("右侧");
+                        Window window = buildDialog("右侧","");
+                        rightWindow(window);
+                        app.ui.pushWindow(window);
+                    }
+                ),createButton(
+                    "测试按钮3"
+                    , () -> {
+                        System.out.println("测试按钮3被按下");
+                        Image img = new Image(new TextureRegion(new Texture("../assets/pic/1.jpg")));
+                        Window window = buildMenuWindow("你好呀","",img);
+
+                        centerWindow(window);
+                        app.ui.pushWindow(window);
+                    }
+                ));
             centerWindow(w);
             app.ui.pushWindow(w);
         })).fillX();
@@ -79,7 +117,24 @@ public class MainMenu extends Table {
         return button;
     }
 
-    private Window buildWindow(String title, String body) {
+    //对话框既视感
+    private Window buildDialog(String title, String body) {
+        //窗口初始化
+        Window window = new Window(title, app.skins.skin);
+        window.setName(title.toLowerCase() + "-window");
+        window.setResizable(false);
+        Label bodyLabel = new Label(body, app.skins.skin);
+        bodyLabel.setWrap(true);
+        window.defaults().pad(8f);
+        window.add(bodyLabel).width(320f);
+
+        //关闭按钮
+        addCloseButtonTo(window);
+        window.pack();
+        return window;
+    }
+
+    private Window buildMenuWindow(String title, String body,Actor... actors) {
         Window window = new Window(title, app.skins.skin);
         window.setName(title.toLowerCase() + "-window");
         window.setResizable(false);
@@ -87,6 +142,23 @@ public class MainMenu extends Table {
         Label bodyLabel = new Label(body, app.skins.skin);
         bodyLabel.setWrap(true);
 
+        window.defaults().pad(8f);
+        window.add(bodyLabel).width(320f);
+
+        //添加按钮
+        for (Actor ac : actors) {
+            window.row();
+            window.add(ac);
+        }
+        //关闭按钮
+        addCloseButtonTo(window);
+        window.pack();
+        return window;
+    }
+
+
+    //单独抽取添加关闭按钮的方法
+    private void addCloseButtonTo(Window window){
         TextButton closeButton = new TextButton("Close", app.skins.skin);
         closeButton.addListener(new ChangeListener() {
             @Override
@@ -94,18 +166,29 @@ public class MainMenu extends Table {
                 app.ui.removeWindow(window);
             }
         });
-
-        window.defaults().pad(8f);
-        window.add(bodyLabel).width(320f);
         window.row();
         window.add(closeButton).right();
-        window.pack();
-        return window;
     }
 
     private void centerWindow(Window window) {
         window.pack();
         float x = Math.max(0f, (app.ui.stage.getWidth() - window.getWidth()) * 0.5f);
+        float y = Math.max(0f, (app.ui.stage.getHeight() - window.getHeight()) * 0.5f);
+        window.setPosition(x, y);
+    }
+
+    //窗口向左对齐
+    private void leftWindow(Window window) {
+        window.pack();
+        float x = 0f;
+        float y = Math.max(0f, (app.ui.stage.getHeight() - window.getHeight()) * 0.5f);
+        window.setPosition(x, y);
+    }
+
+    //窗口向右对齐
+    private void rightWindow(Window window) {
+        window.pack();
+        float x = Math.max(0f, (app.ui.stage.getWidth() - window.getWidth()));
         float y = Math.max(0f, (app.ui.stage.getHeight() - window.getHeight()) * 0.5f);
         window.setPosition(x, y);
     }
